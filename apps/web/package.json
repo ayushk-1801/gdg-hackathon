@@ -41,6 +41,7 @@
     "@repo/db": "*",
     "@repo/ui": "*",
     "@tailwindcss/postcss": "^4.0.15",
+    "better-auth": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
