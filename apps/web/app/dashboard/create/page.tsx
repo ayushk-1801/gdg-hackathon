@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -139,8 +140,8 @@ export default function CreateCoursePage() {
               </h1>
             </motion.div>
 
-            <motion.form 
-              onSubmit={handleSubmit} 
+            <motion.form
+              onSubmit={handleSubmit}
               className="mx-auto max-w-2xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -173,7 +174,7 @@ export default function CreateCoursePage() {
                 </Button>
               </div>
 
-              <motion.div 
+              <motion.div
                 className="mt-8 flex flex-wrap justify-center gap-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -211,17 +212,9 @@ export default function CreateCoursePage() {
                 >
                   Design
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Business
-                </Button>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="mt-8 text-sm text-muted-foreground"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -259,10 +252,12 @@ export default function CreateCoursePage() {
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <div className="h-32 w-56 overflow-hidden rounded-md bg-muted">
-                      <img
+                      <Image
                         src={playlistData.thumbnail || "/placeholder.svg"}
                         alt={playlistData.title}
-                        className="h-full w-full object-cover"
+                        className="object-cover"
+                        width={224}
+                        height={128}
                       />
                     </div>
                     <div className="flex-1">
@@ -306,14 +301,13 @@ export default function CreateCoursePage() {
                               key={index}
                               className="flex items-center gap-3 rounded-md border p-2"
                             >
-                              <div className="flex h-5 w-5 items-center justify-center rounded border">
-                                <Check className="h-3 w-3" />
-                              </div>
                               <div className="h-12 w-20 overflow-hidden rounded bg-muted">
-                                <img
+                                <Image
                                   src={video.thumbnail || "/placeholder.svg"}
                                   alt={video.title}
-                                  className="h-full w-full object-cover"
+                                  className="object-cover"
+                                  width={80}
+                                  height={48}
                                 />
                               </div>
                               <div className="flex-1 min-w-0">
@@ -437,7 +431,7 @@ export default function CreateCoursePage() {
               transition={{ duration: 0.4 }}
             >
               <DialogHeader className="text-center">
-                <motion.div 
+                <motion.div
                   className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -453,7 +447,7 @@ export default function CreateCoursePage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <motion.div 
+              <motion.div
                 className="space-y-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
