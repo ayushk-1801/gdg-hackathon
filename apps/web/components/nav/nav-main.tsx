@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, Sparkles, Home, Plus } from "lucide-react";
+import Link from "next/link";
 
 import {
   SidebarMenu,
@@ -33,11 +34,11 @@ export function NavMain() {
               hidden: true,
             }}
           >
-            <a href={item.url}>
+            <Link href={item.url}>
               <item.icon />
               <span>{item.title}</span>
               {/* {item.badge && <span className="ml-auto">{item.badge}</span>} */}
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

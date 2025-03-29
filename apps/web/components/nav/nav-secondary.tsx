@@ -1,5 +1,6 @@
 import * as React from "react";
 import { LifeBuoy, Send } from "lucide-react";
+import Link from "next/link";
 
 import {
   SidebarGroup,
@@ -36,10 +37,10 @@ export function NavSecondary(
                 size="sm"
                 tooltip={{ children: item.title, hidden: true }}
               >
-                <a href={item.url}>
+                <Link href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
