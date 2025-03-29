@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/nav/app-sidebar";
 
 export default function DashboardLayout({
@@ -10,7 +10,10 @@ export default function DashboardLayout({
     <>
       <SidebarProvider>
         <AppSidebar />
-        <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <SidebarTrigger />
+          {children}
+        </main>
       </SidebarProvider>
     </>
   );
