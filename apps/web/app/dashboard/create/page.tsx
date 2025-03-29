@@ -4,14 +4,6 @@ import type React from "react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -212,22 +204,6 @@ export default function CreateCoursePage() {
                 >
                   Design
                 </Button>
-              </motion.div>
-
-              <motion.div
-                className="mt-8 text-sm text-muted-foreground"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-              >
-                <p className="font-medium">Supported YouTube URL formats:</p>
-                <ul className="mt-2 space-y-1">
-                  <li>https://www.youtube.com/playlist?list=PLAYLIST_ID</li>
-                  <li>https://youtube.com/playlist?list=PLAYLIST_ID</li>
-                  <li>
-                    https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
-                  </li>
-                </ul>
               </motion.div>
             </motion.form>
           </motion.div>
