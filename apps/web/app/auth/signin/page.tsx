@@ -6,53 +6,54 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { signInUser } from "@/server/users";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+const signInSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type SignInFormData = z.infer<typeof signInSchema>;
 
 function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+  const [serverError, setServerError] = useState<string | null>(null);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    }
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!formData.email || !formData.password) {
-      setError("Please enter both email and password");
-      return;
-    }
-    
-    setError(null);
+  const onSubmit = async (data: SignInFormData) => {
+    setServerError(null);
     setIsLoading(true);
     
     try {
-      const { data, error } = await signInUser(
-        formData.email,
-        formData.password,
-        true, // Always remember user for simplicity
+      const { data: responseData, error } = await signInUser(
+        data.email,
+        data.password,
+        true,
         "/dashboard"
       );
       
       if (error) {
-        setError("Invalid email or password. Please try again.");
+        setServerError("Invalid email or password. Please try again.");
         console.error("Signin error:", error);
       } else {
-        // Successfully signed in
-        console.log("Signin successful:", data);
-        // The redirect will be handled by the signInUser function's onSuccess callback
+        console.log("Signin successful:", responseData);
       }
     } catch (err) {
       console.error("Signin error:", err);
-      setError("An unexpected error occurred. Please try again.");
+      setServerError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +87,7 @@ function SignIn() {
             </div>
 
             {/* Form */}
-            <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
+            <form className="space-y-6 mt-8" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div>
                   <label
@@ -97,12 +98,14 @@ function SignIn() {
                   </label>
                   <Input
                     id="email"
-                    name="email"
+                    {...register("email")}
                     type="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     placeholder="Enter your email"
+                    className={errors.email ? "border-red-500" : ""}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
                 </div>
                 <div>
                   <div className="flex justify-between items-center pb-2">
@@ -121,19 +124,21 @@ function SignIn() {
                   </div>
                   <Input
                     id="password"
-                    name="password"
+                    {...register("password")}
                     type="password"
-                    value={formData.password}
-                    onChange={handleChange}
                     placeholder="Enter your password"
+                    className={errors.password ? "border-red-500" : ""}
                   />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                  )}
                 </div>
               </div>
 
-              {/* Display error message if any */}
-              {error && (
+              {/* Display server error message if any */}
+              {serverError && (
                 <div className="p-3 text-sm text-white bg-red-500 rounded-md">
-                  {error}
+                  {serverError}
                 </div>
               )}
 
