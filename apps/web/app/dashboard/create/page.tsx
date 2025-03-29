@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Loader2, InfoIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -26,6 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function CreateCoursePage() {
   const [url, setUrl] = useState("");
@@ -204,6 +210,34 @@ export default function CreateCoursePage() {
                 >
                   Design
                 </Button>
+              </motion.div>
+
+              <motion.div
+                className="mt-4 flex justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" className="text-muted-foreground">
+                        <InfoIcon className="h-4 w-4 mr-1" />
+                        Supported URL formats
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" align="center" className="max-w-base p-4">
+                      <div className="text-sm">
+                        <p className="font-medium mb-2">Supported YouTube URL formats:</p>
+                        <ul className="space-y-1">
+                          <li>https://www.youtube.com/playlist?list=PLAYLIST_ID</li>
+                          <li>https://youtube.com/playlist?list=PLAYLIST_ID</li>
+                          <li>https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID</li>
+                        </ul>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </motion.div>
             </motion.form>
           </motion.div>
