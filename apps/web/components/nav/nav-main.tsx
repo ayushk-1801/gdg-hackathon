@@ -30,7 +30,7 @@ export function NavMain() {
             }
             tooltip={{
               children: item.title,
-              hidden: false,
+              hidden: true,
             }}
           >
             <a href={item.url}>

@@ -6,35 +6,8 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
-import { Home, Inbox, Search, Sparkles } from "lucide-react";
 import { NavMain } from "./nav-main";
-
-const data = {
-  navMain: [
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-    {
-      title: "Ask AI",
-      url: "#",
-      icon: Sparkles,
-    },
-    {
-      title: "Home",
-      url: "#",
-      icon: Home,
-      isActive: true,
-    },
-    {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
-      badge: "10",
-    },
-  ],
-};
+import { NavSecondary } from "./nav-secondary";
 
 export function AppSidebar() {
   return (
@@ -42,16 +15,17 @@ export function AppSidebar() {
       <SidebarHeader>
         <NavUser
           user={{
-            name: "",
-            email: "",
+            name: "Demo user",
+            email: "demo@example.com",
             avatar: "",
           }}
         />
         <NavMain />
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
+      <SidebarContent className="flex flex-col justify-between">
+        <SidebarGroup className="flex-grow" />
+        <SidebarGroup className="flex-grow" />
+        <NavSecondary />
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>
