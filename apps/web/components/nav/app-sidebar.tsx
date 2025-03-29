@@ -6,14 +6,24 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
+import { useEffect } from "react";
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { state, toggleSidebar } = useSidebar();
+
+  useEffect(() => {
+    if (state === "expanded") {
+      toggleSidebar();
+    }
+  }, [state, toggleSidebar]);
+
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser
           user={{
@@ -23,7 +33,7 @@ export function AppSidebar() {
           }}
         />
       </SidebarHeader>
-      <SidebarContent >
+      <SidebarContent>
         <SidebarGroup>
           <NavMain />
         </SidebarGroup>
@@ -31,9 +41,7 @@ export function AppSidebar() {
           <NavSecondary />
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        {/* Optional footer content */}
-      </SidebarFooter>
+      <SidebarFooter>{/* Optional footer content */}</SidebarFooter>
     </Sidebar>
   );
 }

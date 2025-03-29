@@ -32,17 +32,16 @@ export default function CoursePage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-     
-
-      <main className="container flex-1 py-6">
+    <div className="flex min-h-screen flex-col w-full">
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <div className="aspect-video overflow-hidden rounded-lg bg-black relative">
               {isPlaying ? (
                 <video
                   src={`/api/videos/${course.id}/${activeVideo}`}
-                  poster={course.videos[activeVideo].thumbnail || "/placeholder.svg"}
+                  poster={
+                    course.videos[activeVideo].thumbnail || "/placeholder.svg"
+                  }
                   controls
                   autoPlay
                   className="h-full w-full object-cover"
@@ -50,13 +49,15 @@ export default function CoursePage({ params }: { params: { id: string } }) {
               ) : (
                 <>
                   <img
-                    src={course.videos[activeVideo].thumbnail || "/placeholder.svg"}
+                    src={
+                      course.videos[activeVideo].thumbnail || "/placeholder.svg"
+                    }
                     alt={course.videos[activeVideo].title}
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Button 
-                      size="icon" 
+                    <Button
+                      size="icon"
                       className="h-16 w-16 rounded-full"
                       onClick={toggleVideoPlay}
                     >
@@ -207,7 +208,6 @@ export default function CoursePage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-      </main>
     </div>
   );
 }

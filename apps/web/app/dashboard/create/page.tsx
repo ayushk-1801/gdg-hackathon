@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export default function CreateCoursePage() {
   const [url, setUrl] = useState("");
@@ -116,23 +117,35 @@ export default function CreateCoursePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-background to-muted/30">
-      <main className="container flex-1 py-8 flex flex-col items-center justify-center">
+    <AuroraBackground>
+      <div className="flex-1 py-8 flex flex-col items-center justify-center min-h-screen">
         {/* Step 1: URL Input directly on page (not in dialog) */}
         {step === 1 && (
-          <div className="space-y-8 text-center max-w-3xl w-full">
-            <div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="space-y-8 text-center max-w-3xl w-full px-4"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 What YouTube playlist
                 <br />
                 do you want to transform?
               </h1>
-              <p className="mt-4 text-muted-foreground md:text-xl">
-                Paste a YouTube playlist URL to get started
-              </p>
-            </div>
+            </motion.div>
 
-            <form onSubmit={handleSubmit} className="mx-auto max-w-2xl">
+            <motion.form 
+              onSubmit={handleSubmit} 
+              className="mx-auto max-w-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
               <div className="relative">
                 <Input
                   value={url}
@@ -160,7 +173,12 @@ export default function CreateCoursePage() {
                 </Button>
               </div>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-2">
+              <motion.div 
+                className="mt-8 flex flex-wrap justify-center gap-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
                 <Button
                   type="button"
                   variant="outline"
@@ -201,9 +219,14 @@ export default function CreateCoursePage() {
                 >
                   Business
                 </Button>
-              </div>
+              </motion.div>
 
-              <div className="mt-8 text-sm text-muted-foreground">
+              <motion.div 
+                className="mt-8 text-sm text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
                 <p className="font-medium">Supported YouTube URL formats:</p>
                 <ul className="mt-2 space-y-1">
                   <li>https://www.youtube.com/playlist?list=PLAYLIST_ID</li>
@@ -212,257 +235,264 @@ export default function CreateCoursePage() {
                     https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
                   </li>
                 </ul>
-              </div>
-            </form>
-          </div>
+              </motion.div>
+            </motion.form>
+          </motion.div>
         )}
 
         {/* Configure Course Dialog (Step 2) */}
         <Dialog open={configDialogOpen} onOpenChange={setConfigDialogOpen}>
           <DialogContent className="sm:max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>Configure Your Course</DialogTitle>
-              <DialogDescription>
-                Review and customize the course before generating
-              </DialogDescription>
-            </DialogHeader>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <DialogHeader>
+                <DialogTitle>Configure Your Course</DialogTitle>
+                <DialogDescription>
+                  Review and customize the course before generating
+                </DialogDescription>
+              </DialogHeader>
 
-            {playlistData && (
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="h-32 w-56 overflow-hidden rounded-md bg-muted">
-                    <img
-                      src={playlistData.thumbnail || "/placeholder.svg"}
-                      alt={playlistData.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{playlistData.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {playlistData.creator}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {playlistData.videoCount} videos
-                    </p>
-                    <div className="mt-2 flex items-center gap-2">
-                      <Label htmlFor="course-title" className="text-xs">
-                        Course Title
-                      </Label>
-                      <Input
-                        id="course-title"
-                        defaultValue={playlistData.title}
-                        className="h-8 text-sm"
+              {playlistData && (
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="h-32 w-56 overflow-hidden rounded-md bg-muted">
+                      <img
+                        src={playlistData.thumbnail || "/placeholder.svg"}
+                        alt={playlistData.title}
+                        className="h-full w-full object-cover"
                       />
                     </div>
-                  </div>
-                </div>
-
-                <Tabs defaultValue="videos">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="videos">Videos</TabsTrigger>
-                    <TabsTrigger value="settings">Settings</TabsTrigger>
-                    <TabsTrigger value="advanced">Advanced</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="videos" className="space-y-4 pt-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-medium">Videos in Playlist</h3>
-                        <Button variant="outline" size="sm">
-                          Select All
-                        </Button>
-                      </div>
-                      <div className="space-y-2">
-                        {playlistData.videos.map((video, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-3 rounded-md border p-2"
-                          >
-                            <div className="flex h-5 w-5 items-center justify-center rounded border">
-                              <Check className="h-3 w-3" />
-                            </div>
-                            <div className="h-12 w-20 overflow-hidden rounded bg-muted">
-                              <img
-                                src={video.thumbnail || "/placeholder.svg"}
-                                alt={video.title}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="truncate text-sm font-medium">
-                                {video.title}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {video.duration}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="settings" className="space-y-4 pt-4">
-                    <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="summary-length">Summary Length</Label>
-                        <Select defaultValue="standard">
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select summary length" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="brief">
-                              Brief (1-2 paragraphs)
-                            </SelectItem>
-                            <SelectItem value="standard">
-                              Standard (3-4 paragraphs)
-                            </SelectItem>
-                            <SelectItem value="detailed">
-                              Detailed (5+ paragraphs)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="quiz-questions">
-                          Quiz Questions Per Video
+                    <div className="flex-1">
+                      <h3 className="font-semibold">{playlistData.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {playlistData.creator}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {playlistData.videoCount} videos
+                      </p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <Label htmlFor="course-title" className="text-xs">
+                          Course Title
                         </Label>
-                        <Select defaultValue="3">
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select number of questions" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="2">2 questions</SelectItem>
-                            <SelectItem value="3">3 questions</SelectItem>
-                            <SelectItem value="5">5 questions</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Input
+                          id="course-title"
+                          defaultValue={playlistData.title}
+                          className="h-8 text-sm"
+                        />
                       </div>
                     </div>
-                  </TabsContent>
-                  <TabsContent value="advanced" className="space-y-4 pt-4">
-                    <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="language">Summary Language</Label>
-                        <Select defaultValue="english">
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select language" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="english">English</SelectItem>
-                            <SelectItem value="spanish">Spanish</SelectItem>
-                            <SelectItem value="french">French</SelectItem>
-                            <SelectItem value="german">German</SelectItem>
-                            <SelectItem value="chinese">Chinese</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="difficulty">Quiz Difficulty</Label>
-                        <Select defaultValue="beginner">
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select difficulty" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="beginner">Beginner</SelectItem>
-                            <SelectItem value="intermediate">
-                              Intermediate
-                            </SelectItem>
-                            <SelectItem value="advanced">Advanced</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </div>
-            )}
+                  </div>
 
-            <DialogFooter className="flex justify-between border-t pt-6">
-              <Button variant="outline" onClick={handleBack}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-              <Button onClick={handleGenerate} disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Course
-                  </>
-                ) : (
-                  <>
-                    Generate Course
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
+                  <Tabs defaultValue="videos">
+                    <TabsList className="grid w-full grid-cols-3">
+                      <TabsTrigger value="videos">Videos</TabsTrigger>
+                      <TabsTrigger value="settings">Settings</TabsTrigger>
+                      <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="videos" className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium">Videos in Playlist</h3>
+                          <Button variant="outline" size="sm">
+                            Select All
+                          </Button>
+                        </div>
+                        <div className="space-y-2">
+                          {playlistData.videos.map((video, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-3 rounded-md border p-2"
+                            >
+                              <div className="flex h-5 w-5 items-center justify-center rounded border">
+                                <Check className="h-3 w-3" />
+                              </div>
+                              <div className="h-12 w-20 overflow-hidden rounded bg-muted">
+                                <img
+                                  src={video.thumbnail || "/placeholder.svg"}
+                                  alt={video.title}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="truncate text-sm font-medium">
+                                  {video.title}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {video.duration}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="settings" className="space-y-4 pt-4">
+                      <div className="grid gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="summary-length">Summary Length</Label>
+                          <Select defaultValue="standard">
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select summary length" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="brief">
+                                Brief (1-2 paragraphs)
+                              </SelectItem>
+                              <SelectItem value="standard">
+                                Standard (3-4 paragraphs)
+                              </SelectItem>
+                              <SelectItem value="detailed">
+                                Detailed (5+ paragraphs)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="quiz-questions">
+                            Quiz Questions Per Video
+                          </Label>
+                          <Select defaultValue="3">
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select number of questions" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2">2 questions</SelectItem>
+                              <SelectItem value="3">3 questions</SelectItem>
+                              <SelectItem value="5">5 questions</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="advanced" className="space-y-4 pt-4">
+                      <div className="grid gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="language">Summary Language</Label>
+                          <Select defaultValue="english">
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select language" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="english">English</SelectItem>
+                              <SelectItem value="spanish">Spanish</SelectItem>
+                              <SelectItem value="french">French</SelectItem>
+                              <SelectItem value="german">German</SelectItem>
+                              <SelectItem value="chinese">Chinese</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="difficulty">Quiz Difficulty</Label>
+                          <Select defaultValue="beginner">
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select difficulty" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="beginner">Beginner</SelectItem>
+                              <SelectItem value="intermediate">
+                                Intermediate
+                              </SelectItem>
+                              <SelectItem value="advanced">Advanced</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              )}
+
+              <DialogFooter className="flex justify-between border-t pt-6">
+                <Button variant="outline" onClick={handleBack}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button onClick={handleGenerate} disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating Course
+                    </>
+                  ) : (
+                    <>
+                      Generate Course
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </DialogFooter>
+            </motion.div>
           </DialogContent>
         </Dialog>
 
         {/* Success Dialog (Step 3) */}
         <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
           <DialogContent className="sm:max-w-md">
-            <DialogHeader className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Check className="h-6 w-6 text-primary" />
-              </div>
-              <DialogTitle className="text-xl">
-                Course Created Successfully!
-              </DialogTitle>
-              <DialogDescription>
-                Your course has been generated and is ready to use
-              </DialogDescription>
-            </DialogHeader>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <DialogHeader className="text-center">
+                <motion.div 
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                >
+                  <Check className="h-6 w-6 text-primary" />
+                </motion.div>
+                <DialogTitle className="text-xl">
+                  Course Created Successfully!
+                </DialogTitle>
+                <DialogDescription>
+                  Your course has been generated and is ready to use
+                </DialogDescription>
+              </DialogHeader>
 
-            <div className="space-y-4">
-              <div className="mx-auto max-w-md rounded-lg border bg-muted/50 p-4">
-                <h3 className="font-semibold">
-                  Complete Web Development Bootcamp
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  45 videos • 10h 45m
-                </p>
-                <div className="mt-4 flex justify-between text-sm">
-                  <span>Summaries</span>
-                  <span className="font-medium text-primary">Generated</span>
+              <motion.div 
+                className="space-y-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+              >
+                <div className="mx-auto max-w-md rounded-lg border bg-muted/50 p-4">
+                  <h3 className="font-semibold">
+                    Complete Web Development Bootcamp
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    45 videos • 10h 45m
+                  </p>
+                  <div className="mt-4 flex justify-between text-sm">
+                    <span>Summaries</span>
+                    <span className="font-medium text-primary">Generated</span>
+                  </div>
+                  <div className="mt-2 flex justify-between text-sm">
+                    <span>Quizzes</span>
+                    <span className="font-medium text-primary">Generated</span>
+                  </div>
+                  <div className="mt-2 flex justify-between text-sm">
+                    <span>Key Points</span>
+                    <span className="font-medium text-primary">Generated</span>
+                  </div>
                 </div>
-                <div className="mt-2 flex justify-between text-sm">
-                  <span>Quizzes</span>
-                  <span className="font-medium text-primary">Generated</span>
-                </div>
-                <div className="mt-2 flex justify-between text-sm">
-                  <span>Key Points</span>
-                  <span className="font-medium text-primary">Generated</span>
-                </div>
-              </div>
-            </div>
+              </motion.div>
 
-            <DialogFooter className="flex justify-center gap-4">
-              <Button variant="outline" asChild>
-                <Link href="/dashboard">Back to Dashboard</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/dashboard/courses/1">View Course</Link>
-              </Button>
-            </DialogFooter>
+              <DialogFooter className="flex justify-center gap-4">
+                <Button variant="outline" asChild>
+                  <Link href="/dashboard">Back to Dashboard</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/dashboard/courses/1">View Course</Link>
+                </Button>
+              </DialogFooter>
+            </motion.div>
           </DialogContent>
         </Dialog>
-
-        {/* Step Indicator */}
-        {/* <div className="mt-8 flex justify-center">
-          <div className="flex items-center gap-2">
-            <div
-              className={`h-2.5 w-2.5 rounded-full ${step >= 1 ? "bg-primary" : "bg-muted"}`}
-            ></div>
-            <div
-              className={`h-2.5 w-2.5 rounded-full ${step >= 2 ? "bg-primary" : "bg-muted"}`}
-            ></div>
-            <div
-              className={`h-2.5 w-2.5 rounded-full ${step >= 3 ? "bg-primary" : "bg-muted"}`}
-            ></div>
-          </div>
-        </div> */}
-      </main>
-    </div>
+      </div>
+    </AuroraBackground>
   );
 }
