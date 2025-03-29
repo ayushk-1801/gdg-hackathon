@@ -1,14 +1,69 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
+import { signInUser } from "@/server/users";
 
 function SignIn() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!formData.email || !formData.password) {
+      setError("Please enter both email and password");
+      return;
+    }
+    
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await signInUser(
+        formData.email,
+        formData.password,
+        true, // Always remember user for simplicity
+        "/dashboard"
+      );
+      
+      if (error) {
+        setError("Invalid email or password. Please try again.");
+        console.error("Signin error:", error);
+      } else {
+        // Successfully signed in
+        console.log("Signin successful:", data);
+        // The redirect will be handled by the signInUser function's onSuccess callback
+      }
+    } catch (err) {
+      console.error("Signin error:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
         {/* Left Section with Image */}
-        <div className="hidden md:flex items-center justify-center bg-gray-50">
-            <div className="relative w-full h-full">
+        <div className="hidden md:flex items-center justify-center bg-muted">
+          <div className="relative w-full h-full">
             <Image
               src="/image.jpg"
               alt="Welcome illustration"
@@ -16,69 +71,98 @@ function SignIn() {
               className="object-cover"
               priority
             />
-            </div>
+          </div>
         </div>
-        
+
         {/* Right Section with Form */}
-        <div className="flex flex-col justify-center px-8 md:px-12 py-12 bg-white">
+        <div className="flex flex-col justify-center px-8 md:px-12 py-12 bg-background">
           <div className="max-w-md mx-auto w-full space-y-8">
             {/* Header */}
             <div className="text-center space-y-2">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
-              <p className="text-gray-600">Login to your account</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                Welcome Back
+              </h1>
+              <p className="text-muted-foreground">Login to your account</p>
             </div>
-            
-            {/* Form */}
-            <form className="space-y-6 mt-8">
-              <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-                </label>
-                <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-                </label>
-                <input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              </div>
-              
-                <div className="flex items-center justify-between">
-                <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-                  Forgot password?
-                </Link>
-                </div>
 
-                
-              
+            {/* Form */}
+            <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium pb-2 text-foreground"
+                  >
+                    Email
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center pb-2">
+                    <label 
+                      htmlFor="password" 
+                      className="text-sm font-medium text-foreground"
+                    >
+                      Password
+                    </label>
+                    <Link
+                      href="/auth/forgot-password"
+                      className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                  />
+                </div>
+              </div>
+
+              {/* Display error message if any */}
+              {error && (
+                <div className="p-3 text-sm text-white bg-red-500 rounded-md">
+                  {error}
+                </div>
+              )}
+
               <div>
-                <Button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white">
-                  Sign In
+                <Button 
+                  type="submit" 
+                  className="w-full py-3"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
               </div>
-              
+
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+                  <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">or continue with</span>
+                  <span className="px-2 bg-background text-muted-foreground">
+                    or continue with
+                  </span>
                 </div>
               </div>
-              
-              <Button variant="outline" className="w-full py-3 border border-gray-300 shadow-sm hover:bg-gray-50 flex items-center justify-center space-x-2">
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full py-3 flex items-center justify-center space-x-2"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 326667 333333"
@@ -106,14 +190,17 @@ function SignIn() {
                     fill="#ea4335"
                   />
                 </svg>
-                <span className="text-black">Sign in with Google</span>
+                <span className="text-foreground">Sign in with Google</span>
               </Button>
             </form>
-            
+
             {/* Sign Up Link */}
-            <p className="text-center text-sm text-gray-600 mt-6">
-              Don't have an account?{" "}
-              <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/auth/signup"
+                className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+              >
                 Sign up
               </Link>
             </p>

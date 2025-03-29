@@ -12,9 +12,11 @@ import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { useEffect } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, toggleSidebar } = useSidebar();
+  const { data: session } = authClient.useSession();
 
   useEffect(() => {
     if (state === "expanded") {
@@ -27,9 +29,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <NavUser
           user={{
-            name: "Demo user",
-            email: "demo@example.com",
-            avatar: "",
+            name: session?.user?.name || "Guest User",
+            email: session?.user?.email || "guest@example.com",
+            avatar: session?.user?.image || "",
           }}
         />
       </SidebarHeader>

@@ -2,10 +2,15 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import Link from "next/link";
+import { signUpUser } from "@/server/users";
 
 function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,8 +20,6 @@ function SignUp() {
     agreeToTerms: false
   });
 
-  // Removed unused 'errors' and 'setErrors' state
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -25,19 +28,66 @@ function SignUp() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      agreeToTerms: checked
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add validation and submission logic here
-    console.log("Form submitted:", formData);
-    // You would typically make an API call here
+    
+    // Form validation
+    if (!formData.agreeToTerms) {
+      setError("Please agree to the Terms of Service and Privacy Policy");
+      return;
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+    
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      
+      const { data, error } = await signUpUser(
+        formData.email,
+        formData.password,
+        fullName,
+        undefined,
+        "/dashboard" 
+      );
+      
+      if (error) {
+        setError("Failed to create account. Please try again.");
+        console.error("Signup error:", error);
+      } else {
+        console.log("Signup successful:", data);
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
         {/* Left Section with Image */}
-        <div className="hidden md:flex items-center justify-center bg-gray-50">
-            <div className="relative w-full h-full">
+        <div className="hidden md:flex items-center justify-center bg-muted">
+          <div className="relative w-full h-full">
             <Image
               src="/image2.jpg"
               alt="Sign up illustration"
@@ -45,16 +95,16 @@ function SignUp() {
               className="object-cover"
               priority
             />
-            </div>
+          </div>
         </div>
         
         {/* Right Section with Form */}
-        <div className="flex flex-col justify-center px-8 md:px-12 py-12 bg-white overflow-y-auto">
+        <div className="flex flex-col justify-center px-8 md:px-12 py-12 bg-background overflow-y-auto">
           <div className="max-w-md mx-auto w-full space-y-8">
             {/* Header */}
             <div className="text-center space-y-2">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Create an Account</h1>
-              <p className="text-gray-600">Join us today and get started</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">Create an Account</h1>
+              <p className="text-muted-foreground">Join us today and get started</p>
             </div>
             
             {/* Form */}
@@ -62,117 +112,123 @@ function SignUp() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="firstName" className="block text-sm font-medium text-foreground pb-2">
                       First Name
                     </label>
-                    <input
+                    <Input
                       id="firstName"
                       name="firstName"
                       type="text"
                       value={formData.firstName}
                       onChange={handleChange}
                       placeholder="John"
-                      className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="lastName" className="block text-sm font-medium text-foreground pb-2">
                       Last Name
                     </label>
-                    <input
+                    <Input
                       id="lastName"
                       name="lastName"
                       type="text"
                       value={formData.lastName}
                       onChange={handleChange}
                       placeholder="Doe"
-                      className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground pb-2">
                     Email
                   </label>
-                  <input
+                  <Input
                     id="email"
                     name="email"
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="john.doe@example.com"
-                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="block text-sm font-medium text-foreground pb-2">
                     Password
                   </label>
-                  <input
+                  <Input
                     id="password"
                     name="password"
                     type="password"
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Create a strong password"
-                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground pb-2">
                     Confirm Password
                   </label>
-                  <input
+                  <Input
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirm your password"
-                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-                <div className="flex items-center">
-                  <input
+                <div className="flex items-center space-x-2">
+                  <Checkbox
                     id="agreeToTerms"
-                    name="agreeToTerms"
-                    type="checkbox"
                     checked={formData.agreeToTerms}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    onCheckedChange={handleCheckboxChange}
                   />
-                  <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
+                  <label 
+                    htmlFor="agreeToTerms" 
+                    className="text-sm text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
                     I agree to the{" "}
-                    <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+                    <Link href="/terms" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                       Terms of Service
                     </Link>{" "}
                     and{" "}
-                    <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
+                    <Link href="/privacy" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                       Privacy Policy
                     </Link>
                   </label>
                 </div>
               </div>
               
+              {/* Display error message if any */}
+              {error && (
+                <div className="p-3 text-sm text-white bg-red-500 rounded-md">
+                  {error}
+                </div>
+              )}
+              
               <div>
-                <Button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white">
-                  Create Account
+                <Button 
+                  type="submit" 
+                  className="w-full py-3"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
               </div>
               
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+                  <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">or sign up with</span>
+                  <span className="px-2 bg-background text-muted-foreground">or sign up with</span>
                 </div>
               </div>
               
               <Button 
                 type="button"
                 variant="outline" 
-                className="w-full py-3 border border-gray-300 shadow-sm hover:bg-gray-50 flex items-center justify-center space-x-2"
+                className="w-full py-3 flex items-center justify-center space-x-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -201,14 +257,14 @@ function SignUp() {
                     fill="#ea4335"
                   />
                 </svg>
-                <span className='text-black'>Sign up with Google</span>
+                <span className="text-foreground">Sign up with Google</span>
               </Button>
             </form>
             
             {/* Sign In Link */}
-            <p className="text-center text-sm text-gray-600 mt-6">
+            <p className="text-center text-sm text-muted-foreground mt-6">
               Already have an account?{" "}
-              <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                 Sign in
               </Link>
             </p>
