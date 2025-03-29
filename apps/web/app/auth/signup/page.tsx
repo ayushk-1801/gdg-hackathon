@@ -7,76 +7,76 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import Link from "next/link";
 import { signUpUser } from "@/server/users";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+const signUpSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+  confirmPassword: z.string(),
+  agreeToTerms: z.boolean().refine(val => val === true, {
+    message: "You must agree to the Terms and Privacy Policy",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+type SignUpFormData = z.infer<typeof signUpSchema>;
 
 function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    agreeToTerms: false
+  const [serverError, setServerError] = useState<string | null>(null);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      agreeToTerms: false
+    }
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      agreeToTerms: checked
-    }));
+    setValue("agreeToTerms", checked);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    // Form validation
-    if (!formData.agreeToTerms) {
-      setError("Please agree to the Terms of Service and Privacy Policy");
-      return;
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long");
-      return;
-    }
-    
-    setError(null);
+  const onSubmit = async (data: SignUpFormData) => {
+    setServerError(null);
     setIsLoading(true);
     
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      const fullName = `${data.firstName} ${data.lastName}`.trim();
       
-      const { data, error } = await signUpUser(
-        formData.email,
-        formData.password,
+      const { data: responseData, error } = await signUpUser(
+        data.email,
+        data.password,
         fullName,
         undefined,
         "/dashboard" 
       );
       
       if (error) {
-        setError("Failed to create account. Please try again.");
+        setServerError("Failed to create account. Please try again.");
         console.error("Signup error:", error);
       } else {
-        console.log("Signup successful:", data);
+        console.log("Signup successful:", responseData);
       }
     } catch (err) {
       console.error("Signup error:", err);
-      setError("An unexpected error occurred. Please try again.");
+      setServerError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +108,7 @@ function SignUp() {
             </div>
             
             {/* Form */}
-            <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
+            <form className="space-y-6 mt-8" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -117,12 +117,14 @@ function SignUp() {
                     </label>
                     <Input
                       id="firstName"
-                      name="firstName"
+                      {...register("firstName")}
                       type="text"
-                      value={formData.firstName}
-                      onChange={handleChange}
                       placeholder="John"
+                      className={errors.firstName ? "border-red-500" : ""}
                     />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="lastName" className="block text-sm font-medium text-foreground pb-2">
@@ -130,12 +132,14 @@ function SignUp() {
                     </label>
                     <Input
                       id="lastName"
-                      name="lastName"
+                      {...register("lastName")}
                       type="text"
-                      value={formData.lastName}
-                      onChange={handleChange}
                       placeholder="Doe"
+                      className={errors.lastName ? "border-red-500" : ""}
                     />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -144,12 +148,14 @@ function SignUp() {
                   </label>
                   <Input
                     id="email"
-                    name="email"
+                    {...register("email")}
                     type="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     placeholder="john.doe@example.com"
+                    className={errors.email ? "border-red-500" : ""}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-foreground pb-2">
@@ -157,12 +163,14 @@ function SignUp() {
                   </label>
                   <Input
                     id="password"
-                    name="password"
+                    {...register("password")}
                     type="password"
-                    value={formData.password}
-                    onChange={handleChange}
                     placeholder="Create a strong password"
+                    className={errors.password ? "border-red-500" : ""}
                   />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground pb-2">
@@ -170,17 +178,19 @@ function SignUp() {
                   </label>
                   <Input
                     id="confirmPassword"
-                    name="confirmPassword"
+                    {...register("confirmPassword")}
                     type="password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
                     placeholder="Confirm your password"
+                    className={errors.confirmPassword ? "border-red-500" : ""}
                   />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="agreeToTerms"
-                    checked={formData.agreeToTerms}
+                    checked={watch("agreeToTerms")}
                     onCheckedChange={handleCheckboxChange}
                   />
                   <label 
@@ -197,12 +207,15 @@ function SignUp() {
                     </Link>
                   </label>
                 </div>
+                {errors.agreeToTerms && (
+                  <p className="text-red-500 text-sm">{errors.agreeToTerms.message}</p>
+                )}
               </div>
               
-              {/* Display error message if any */}
-              {error && (
+              {/* Display server error message if any */}
+              {serverError && (
                 <div className="p-3 text-sm text-white bg-red-500 rounded-md">
-                  {error}
+                  {serverError}
                 </div>
               )}
               
