@@ -24,28 +24,29 @@ const navSecondary = [
 ];
 
 export function NavSecondary(
-  props: React.ComponentPropsWithoutRef<typeof SidebarGroup>,
+  props: React.ComponentPropsWithoutRef<typeof SidebarGroup>
 ) {
   return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {navSecondary.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                asChild
-                size="sm"
-                tooltip={{ children: item.title, hidden: true }}
-              >
-                <Link href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <SidebarGroupContent>
+      <SidebarMenu>
+        {navSecondary.map((item) => (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton
+              asChild
+              size="sm"
+              tooltip={{
+                children: item.title,
+                side: "right",
+              }}
+            >
+              <Link href={item.url}>
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </SidebarGroupContent>
   );
 }

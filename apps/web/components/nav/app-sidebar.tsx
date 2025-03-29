@@ -1,17 +1,29 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
+import { useEffect } from "react";
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { state, toggleSidebar } = useSidebar();
+
+  useEffect(() => {
+    if (state === "expanded") {
+      toggleSidebar();
+    }
+  }, [state, toggleSidebar]);
+
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser
           user={{
@@ -20,14 +32,16 @@ export function AppSidebar() {
             avatar: "",
           }}
         />
-        <NavMain />
       </SidebarHeader>
-      <SidebarContent className="flex flex-col justify-between">
-        <SidebarGroup className="flex-grow" />
-        <SidebarGroup className="flex-grow" />
-        <NavSecondary />
+      <SidebarContent>
+        <SidebarGroup>
+          <NavMain />
+        </SidebarGroup>
+        <SidebarGroup className="mt-auto">
+          <NavSecondary />
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>{/* Optional footer content */}</SidebarFooter>
     </Sidebar>
   );
 }
