@@ -13,6 +13,8 @@ import {
   Sun,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -46,9 +48,11 @@ type DropdownSection = {
 const DROPDOWN_SECTIONS = ({
   setTheme,
   theme,
+  handleLogout,
 }: {
   setTheme: (theme: string) => void;
   theme?: string;
+  handleLogout: () => void;
 }) => [
   {
     items: [
@@ -90,7 +94,7 @@ const DROPDOWN_SECTIONS = ({
       {
         icon: LogOut,
         label: "Log out",
-        onClick: () => console.log("Log out clicked"),
+        onClick: handleLogout,
       },
     ],
   },
@@ -99,7 +103,35 @@ const DROPDOWN_SECTIONS = ({
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
   const { setTheme, theme } = useTheme();
-  const dropdownSections = DROPDOWN_SECTIONS({ setTheme, theme });
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/auth/signin"); 
+        },
+      },
+    });
+  };
+
+  const dropdownSections = DROPDOWN_SECTIONS({
+    setTheme,
+    theme,
+    handleLogout,
+  });
+
+  const getInitials = (name: string) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  const userInitials = getInitials(user.name);
 
   return (
     <SidebarMenu>
@@ -112,7 +144,7 @@ export function NavUser({ user }: { user: User }) {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -131,7 +163,7 @@ export function NavUser({ user }: { user: User }) {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
