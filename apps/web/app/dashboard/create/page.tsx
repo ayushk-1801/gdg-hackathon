@@ -25,6 +25,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CreateCoursePage() {
   const [url, setUrl] = useState("");
@@ -298,27 +305,37 @@ export default function CreateCoursePage() {
                     <div className="grid gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="summary-length">Summary Length</Label>
-                        <select
-                          id="summary-length"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option>Brief (1-2 paragraphs)</option>
-                          <option>Standard (3-4 paragraphs)</option>
-                          <option>Detailed (5+ paragraphs)</option>
-                        </select>
+                        <Select defaultValue="standard">
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select summary length" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="brief">
+                              Brief (1-2 paragraphs)
+                            </SelectItem>
+                            <SelectItem value="standard">
+                              Standard (3-4 paragraphs)
+                            </SelectItem>
+                            <SelectItem value="detailed">
+                              Detailed (5+ paragraphs)
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="quiz-questions">
                           Quiz Questions Per Video
                         </Label>
-                        <select
-                          id="quiz-questions"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option>2 questions</option>
-                          <option>3 questions</option>
-                          <option>5 questions</option>
-                        </select>
+                        <Select defaultValue="3">
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select number of questions" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="2">2 questions</SelectItem>
+                            <SelectItem value="3">3 questions</SelectItem>
+                            <SelectItem value="5">5 questions</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </TabsContent>
@@ -326,27 +343,33 @@ export default function CreateCoursePage() {
                     <div className="grid gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="language">Summary Language</Label>
-                        <select
-                          id="language"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option>English</option>
-                          <option>Spanish</option>
-                          <option>French</option>
-                          <option>German</option>
-                          <option>Chinese</option>
-                        </select>
+                        <Select defaultValue="english">
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select language" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="english">English</SelectItem>
+                            <SelectItem value="spanish">Spanish</SelectItem>
+                            <SelectItem value="french">French</SelectItem>
+                            <SelectItem value="german">German</SelectItem>
+                            <SelectItem value="chinese">Chinese</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="difficulty">Quiz Difficulty</Label>
-                        <select
-                          id="difficulty"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option>Beginner</option>
-                          <option>Intermediate</option>
-                          <option>Advanced</option>
-                        </select>
+                        <Select defaultValue="beginner">
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="beginner">Beginner</SelectItem>
+                            <SelectItem value="intermediate">
+                              Intermediate
+                            </SelectItem>
+                            <SelectItem value="advanced">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </TabsContent>
@@ -426,7 +449,7 @@ export default function CreateCoursePage() {
         </Dialog>
 
         {/* Step Indicator */}
-        <div className="mt-8 flex justify-center">
+        {/* <div className="mt-8 flex justify-center">
           <div className="flex items-center gap-2">
             <div
               className={`h-2.5 w-2.5 rounded-full ${step >= 1 ? "bg-primary" : "bg-muted"}`}
@@ -438,7 +461,7 @@ export default function CreateCoursePage() {
               className={`h-2.5 w-2.5 rounded-full ${step >= 3 ? "bg-primary" : "bg-muted"}`}
             ></div>
           </div>
-        </div>
+        </div> */}
       </main>
     </div>
   );
