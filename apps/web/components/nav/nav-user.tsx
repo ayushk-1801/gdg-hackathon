@@ -9,7 +9,10 @@ import {
   LogOut,
   Sparkles,
   LucideIcon,
+  Moon,
+  Sun,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -40,7 +43,13 @@ type DropdownSection = {
   hasDivider?: boolean;
 };
 
-const DROPDOWN_SECTIONS: DropdownSection[] = [
+const DROPDOWN_SECTIONS = ({
+  setTheme,
+  theme,
+}: {
+  setTheme: (theme: string) => void;
+  theme?: string;
+}) => [
   {
     items: [
       {
@@ -68,6 +77,11 @@ const DROPDOWN_SECTIONS: DropdownSection[] = [
         label: "Notifications",
         onClick: () => console.log("Notifications clicked"),
       },
+      {
+        icon: theme === "dark" ? Sun : Moon,
+        label: theme === "dark" ? "Light Mode" : "Dark Mode",
+        onClick: () => setTheme(theme === "dark" ? "light" : "dark"),
+      },
     ],
     hasDivider: true,
   },
@@ -84,6 +98,8 @@ const DROPDOWN_SECTIONS: DropdownSection[] = [
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
+  const { setTheme, theme } = useTheme();
+  const dropdownSections = DROPDOWN_SECTIONS({ setTheme, theme });
 
   return (
     <SidebarMenu>
@@ -125,7 +141,7 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            {DROPDOWN_SECTIONS.map((section, sectionIndex) => (
+            {dropdownSections.map((section, sectionIndex) => (
               <React.Fragment key={sectionIndex}>
                 <DropdownMenuGroup>
                   {section.items.map((item, itemIndex) => {

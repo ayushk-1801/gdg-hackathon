@@ -1,52 +1,70 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
-import { Search, Sparkles, Home, Inbox } from "lucide-react";
+import { Search, Sparkles, Home, Plus } from "lucide-react";
 
 import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
 export function NavMain() {
-    return (
-        <SidebarMenu>
-            {navMain.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                        <a href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                            {item.badge && <span className="ml-auto">{item.badge}</span>}
-                        </a>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            ))}
-        </SidebarMenu>
-    );
+  const primaryUrls = ["/dashboard/", "/dashboard/create"];
+
+  const mappedItems = navMain.map((item) => ({
+    ...item,
+    isPrimary: primaryUrls.includes(item.url),
+  }));
+
+  return (
+    <SidebarMenu>
+      {mappedItems.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton
+            asChild
+            isActive={item.isActive}
+            className={
+              item.isPrimary
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground/90"
+                : ""
+            }
+            tooltip={{
+              children: item.title,
+              hidden: false,
+            }}
+          >
+            <a href={item.url}>
+              <item.icon />
+              <span>{item.title}</span>
+              {/* {item.badge && <span className="ml-auto">{item.badge}</span>} */}
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
 }
 
 const navMain = [
-    {
-        title: "Search",
-        url: "#",
-        icon: Search,
-    },
-    {
-        title: "Ask AI",
-        url: "#",
-        icon: Sparkles,
-    },
-    {
-        title: "Home",
-        url: "#",
-        icon: Home,
-        isActive: true,
-    },
-    {
-        title: "Create",
-        url: "#",
-        icon: Inbox,
-    },
+  {
+    title: "Search",
+    url: "#",
+    icon: Search,
+  },
+  {
+    title: "Ask AI",
+    url: "#",
+    icon: Sparkles,
+  },
+  {
+    title: "Home",
+    url: "/dashboard/",
+    icon: Home,
+    isActive: true,
+  },
+  {
+    title: "Create",
+    url: "/dashboard/create",
+    icon: Plus,
+  },
 ];
