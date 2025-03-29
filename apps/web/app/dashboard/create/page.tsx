@@ -5,95 +5,106 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight, Check, Loader2, InfoIcon } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Loader2, InfoIcon, AlertCircle } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ConfigureCourseDialog } from "@/components/course/configure-course-dialog";
+import { SuccessDialog } from "@/components/course/success-dialog";
+import { ArrowRight } from "lucide-react";
+import { YouTubePlaylist } from "@/types";
+
+// Function to extract playlist ID from a YouTube URL
+function extractPlaylistId(url: string): string | null {
+  const listRegex = /[&?]list=([^&]+)/;
+  const match = url.match(listRegex);
+  return match ? match[1] : null;
+}
+
+// Define popular course categories
+const POPULAR_CATEGORIES = [
+  { id: "dsa", name: "Data Structures & Algorithms" },
+  { id: "web-dev", name: "Web Development" },
+  { id: "data-science", name: "Data Science" },
+  { id: "machine-learning", name: "Machine Learning" }
+];
 
 export default function CreateCoursePage() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(1);
   const [configDialogOpen, setConfigDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [playlistData, setPlaylistData] = useState<null | {
-    title: string;
-    creator: string;
-    videoCount: number;
-    thumbnail: string;
-    videos: Array<{
-      title: string;
-      thumbnail: string;
-      duration: string;
-    }>;
-  }>(null);
+  const [playlistData, setPlaylistData] = useState<YouTubePlaylist | null>(null);
+  const [selectedVideos, setSelectedVideos] = useState<Set<number>>(new Set());
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist> => {
+    const response = await fetch(`/api/youtube?playlistId=${playlistId}`);
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch playlist data");
+    }
+    
+    return await response.json();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    // Simulate API call to fetch playlist data
-    setTimeout(() => {
-      setPlaylistData({
-        title: "Complete Web Development Bootcamp",
-        creator: "Programming with Mosh",
-        videoCount: 45,
-        thumbnail: "/placeholder.svg?height=200&width=350",
-        videos: [
-          {
-            title: "Course Introduction",
-            thumbnail: "/placeholder.svg?height=80&width=120",
-            duration: "8:45",
-          },
-          {
-            title: "Setting Up Your Development Environment",
-            thumbnail: "/placeholder.svg?height=80&width=120",
-            duration: "15:20",
-          },
-          {
-            title: "Web Development Overview",
-            thumbnail: "/placeholder.svg?height=80&width=120",
-            duration: "12:15",
-          },
-          {
-            title: "HTML Document Structure",
-            thumbnail: "/placeholder.svg?height=80&width=120",
-            duration: "18:30",
-          },
-          {
-            title: "HTML Elements and Attributes",
-            thumbnail: "/placeholder.svg?height=80&width=120",
-            duration: "22:10",
-          },
-        ],
-      });
-      setLoading(false);
+    setError(null);
+    
+    try {
+      // Extract the playlist ID from the URL
+      const playlistId = extractPlaylistId(url);
+      
+      if (!playlistId) {
+        throw new Error("Invalid YouTube playlist URL. Please check the URL and try again.");
+      }
+      
+      // Fetch the playlist data
+      const data = await fetchYouTubePlaylist(playlistId);
+      
+      // Initialize all videos as selected
+      const newSelectedVideos = new Set<number>();
+      data.videos.forEach((_, index) => newSelectedVideos.add(index));
+      setSelectedVideos(newSelectedVideos);
+      
+      setPlaylistData(data);
       setStep(2);
       setConfigDialogOpen(true);
-    }, 2000);
+    } catch (err: any) {
+      setError(err.message || "An error occurred while fetching the playlist.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleVideoSelection = (index: number) => {
+    const newSelectedVideos = new Set(selectedVideos);
+    if (newSelectedVideos.has(index)) {
+      newSelectedVideos.delete(index);
+    } else {
+      newSelectedVideos.add(index);
+    }
+    setSelectedVideos(newSelectedVideos);
+  };
+
+  const handleSelectAll = () => {
+    if (!playlistData) return;
+    
+    const newSelectedVideos = new Set<number>();
+    if (selectedVideos.size !== playlistData.videos.length) {
+      // Select all if not all are selected
+      playlistData.videos.forEach((_, index) => newSelectedVideos.add(index));
+    }
+    setSelectedVideos(newSelectedVideos);
   };
 
   const handleGenerate = () => {
@@ -115,10 +126,38 @@ export default function CreateCoursePage() {
     }
   };
 
+  // Calculate total duration if available
+  const calculateTotalDuration = () => {
+    if (!playlistData) return "0m";
+    
+    let totalMinutes = 0;
+    
+    playlistData.videos.forEach((video, index) => {
+      if (selectedVideos.has(index)) {
+        const parts = video.duration.split(':');
+        if (parts.length === 2) {
+          // MM:SS format
+          totalMinutes += parseInt(parts[0]);
+        } else if (parts.length === 3) {
+          // HH:MM:SS format
+          totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+      }
+    });
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
+
   return (
     <AuroraBackground>
       <div className="flex-1 py-8 flex flex-col items-center justify-center min-h-screen">
-        {/* Step 1: URL Input directly on page (not in dialog) */}
+        {/* Step 1: URL Input directly on page */}
         {step === 1 && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -145,6 +184,14 @@ export default function CreateCoursePage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
               <div className="relative">
                 <Input
                   value={url}
@@ -178,38 +225,17 @@ export default function CreateCoursePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
               >
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Web Development
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Data Science
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Machine Learning
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Design
-                </Button>
+                {POPULAR_CATEGORIES.map((category) => (
+                  <Button
+                    key={category.id}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full"
+                  >
+                    {category.name}
+                  </Button>
+                ))}
               </motion.div>
 
               <motion.div
@@ -243,259 +269,28 @@ export default function CreateCoursePage() {
           </motion.div>
         )}
 
-        {/* Configure Course Dialog (Step 2) */}
-        <Dialog open={configDialogOpen} onOpenChange={setConfigDialogOpen}>
-          <DialogContent className="sm:max-w-3xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <DialogHeader>
-                <DialogTitle>Configure Your Course</DialogTitle>
-                <DialogDescription>
-                  Review and customize the course before generating
-                </DialogDescription>
-              </DialogHeader>
+        {/* Configure Course Dialog Component (Step 2) */}
+        <ConfigureCourseDialog
+          open={configDialogOpen}
+          onOpenChange={setConfigDialogOpen}
+          playlistData={playlistData}
+          selectedVideos={selectedVideos}
+          onSelectVideo={toggleVideoSelection}
+          onSelectAll={handleSelectAll}
+          onBack={handleBack}
+          onGenerate={handleGenerate}
+          loading={loading}
+          calculateTotalDuration={calculateTotalDuration}
+        />
 
-              {playlistData && (
-                <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <div className="h-32 w-56 overflow-hidden rounded-md bg-muted">
-                      <Image
-                        src={playlistData.thumbnail || "/placeholder.svg"}
-                        alt={playlistData.title}
-                        className="object-cover"
-                        width={224}
-                        height={128}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{playlistData.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {playlistData.creator}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {playlistData.videoCount} videos
-                      </p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <Label htmlFor="course-title" className="text-xs">
-                          Course Title
-                        </Label>
-                        <Input
-                          id="course-title"
-                          defaultValue={playlistData.title}
-                          className="h-8 text-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <Tabs defaultValue="videos">
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="videos">Videos</TabsTrigger>
-                      <TabsTrigger value="settings">Settings</TabsTrigger>
-                      <TabsTrigger value="advanced">Advanced</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="videos" className="space-y-4 pt-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium">Videos in Playlist</h3>
-                          <Button variant="outline" size="sm">
-                            Select All
-                          </Button>
-                        </div>
-                        <div className="space-y-2">
-                          {playlistData.videos.map((video, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-3 rounded-md border p-2"
-                            >
-                              <div className="h-12 w-20 overflow-hidden rounded bg-muted">
-                                <Image
-                                  src={video.thumbnail || "/placeholder.svg"}
-                                  alt={video.title}
-                                  className="object-cover"
-                                  width={80}
-                                  height={48}
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="truncate text-sm font-medium">
-                                  {video.title}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {video.duration}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="settings" className="space-y-4 pt-4">
-                      <div className="grid gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="summary-length">Summary Length</Label>
-                          <Select defaultValue="standard">
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select summary length" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="brief">
-                                Brief (1-2 paragraphs)
-                              </SelectItem>
-                              <SelectItem value="standard">
-                                Standard (3-4 paragraphs)
-                              </SelectItem>
-                              <SelectItem value="detailed">
-                                Detailed (5+ paragraphs)
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="quiz-questions">
-                            Quiz Questions Per Video
-                          </Label>
-                          <Select defaultValue="3">
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select number of questions" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="2">2 questions</SelectItem>
-                              <SelectItem value="3">3 questions</SelectItem>
-                              <SelectItem value="5">5 questions</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="advanced" className="space-y-4 pt-4">
-                      <div className="grid gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="language">Summary Language</Label>
-                          <Select defaultValue="english">
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select language" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="english">English</SelectItem>
-                              <SelectItem value="spanish">Spanish</SelectItem>
-                              <SelectItem value="french">French</SelectItem>
-                              <SelectItem value="german">German</SelectItem>
-                              <SelectItem value="chinese">Chinese</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="difficulty">Quiz Difficulty</Label>
-                          <Select defaultValue="beginner">
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select difficulty" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="beginner">Beginner</SelectItem>
-                              <SelectItem value="intermediate">
-                                Intermediate
-                              </SelectItem>
-                              <SelectItem value="advanced">Advanced</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </div>
-              )}
-
-              <DialogFooter className="flex justify-between border-t pt-6">
-                <Button variant="outline" onClick={handleBack}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                <Button onClick={handleGenerate} disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating Course
-                    </>
-                  ) : (
-                    <>
-                      Generate Course
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </DialogFooter>
-            </motion.div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Success Dialog (Step 3) */}
-        <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <DialogHeader className="text-center">
-                <motion.div
-                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                >
-                  <Check className="h-6 w-6 text-primary" />
-                </motion.div>
-                <DialogTitle className="text-xl">
-                  Course Created Successfully!
-                </DialogTitle>
-                <DialogDescription>
-                  Your course has been generated and is ready to use
-                </DialogDescription>
-              </DialogHeader>
-
-              <motion.div
-                className="space-y-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-              >
-                <div className="mx-auto max-w-md rounded-lg border bg-muted/50 p-4">
-                  <h3 className="font-semibold">
-                    Complete Web Development Bootcamp
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    45 videos • 10h 45m
-                  </p>
-                  <div className="mt-4 flex justify-between text-sm">
-                    <span>Summaries</span>
-                    <span className="font-medium text-primary">Generated</span>
-                  </div>
-                  <div className="mt-2 flex justify-between text-sm">
-                    <span>Quizzes</span>
-                    <span className="font-medium text-primary">Generated</span>
-                  </div>
-                  <div className="mt-2 flex justify-between text-sm">
-                    <span>Key Points</span>
-                    <span className="font-medium text-primary">Generated</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              <DialogFooter className="flex justify-center gap-4">
-                <Button variant="outline" asChild>
-                  <Link href="/dashboard">Back to Dashboard</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/dashboard/courses/1">View Course</Link>
-                </Button>
-              </DialogFooter>
-            </motion.div>
-          </DialogContent>
-        </Dialog>
+        {/* Success Dialog Component (Step 3) */}
+        <SuccessDialog
+          open={successDialogOpen}
+          onOpenChange={setSuccessDialogOpen}
+          courseTitle={playlistData?.title || "YouTube Course"}
+          videoCount={selectedVideos.size}
+          totalDuration={calculateTotalDuration()}
+        />
       </div>
     </AuroraBackground>
   );
