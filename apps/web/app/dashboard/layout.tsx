@@ -12,7 +12,10 @@ export default function DashboardLayout({
         <AppSidebar />
         <main className="flex-1 flex flex-col overflow-hidden">
           <SidebarTrigger />
+          <div className="px-8">
           {children}
+
+          </div>
         </main>
       </SidebarProvider>
     </>

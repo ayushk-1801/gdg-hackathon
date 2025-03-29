@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -20,14 +22,18 @@ export function AppSidebar() {
             avatar: "",
           }}
         />
-        <NavMain />
       </SidebarHeader>
-      <SidebarContent className="flex flex-col justify-between">
-        <SidebarGroup className="flex-grow" />
-        <SidebarGroup className="flex-grow" />
-        <NavSecondary />
+      <SidebarContent >
+        <SidebarGroup>
+          <NavMain />
+        </SidebarGroup>
+        <SidebarGroup className="mt-auto">
+          <NavSecondary />
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        {/* Optional footer content */}
+      </SidebarFooter>
     </Sidebar>
   );
 }
