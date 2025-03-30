@@ -64,7 +64,7 @@ function SignUp() {
         data.email,
         data.password,
         fullName,
-        undefined,
+        "",
         "/dashboard" 
       );
       
