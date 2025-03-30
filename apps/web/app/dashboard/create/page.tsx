@@ -64,7 +64,7 @@ export default function CreateCoursePage() {
               transition={{ delay: 0.2, duration: 0.5 }}
             >
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                What YouTube playlist
+                Which YouTube playlist
                 <br />
                 do you want to transform?
               </h1>
