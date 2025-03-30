@@ -154,7 +154,7 @@ export function FeedbackDialog() {
               control={form.control}
               name="rating"
               render={({ field }) => (
-                <FormItem className="space-y-3">
+                <FormItem className="space-y-1">
                   <FormLabel>How would you rate your experience?</FormLabel>
                   <FormDescription>
                     Select an emoji that best represents your experience
