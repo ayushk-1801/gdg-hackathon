@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/select";
 import { YouTubePlaylist } from "@/types";
 
-
 interface ConfigureCourseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -59,7 +58,7 @@ export function ConfigureCourseDialog({
           transition={{ duration: 0.4 }}
           className="overflow-hidden flex flex-col flex-1"
         >
-          <DialogHeader>
+          <DialogHeader className="mb-4">
             <DialogTitle>Configure Your Course</DialogTitle>
             <DialogDescription>
               Review and customize the course before generating
@@ -68,12 +67,24 @@ export function ConfigureCourseDialog({
 
           {playlistData && (
             <div className="space-y-6 overflow-hidden flex-1 flex flex-col">
+              <div className="flex flex-col gap-1.5 w-full mb-4 pb-3 border-b">
+                <Label htmlFor="course-title" className="font-medium">
+                  Course Title
+                </Label>
+                <Input
+                  id="course-title"
+                  defaultValue={playlistData.title}
+                  className="text-base"
+                  placeholder="Enter a title for your course"
+                />
+              </div>
+              
               <div className="flex gap-4 flex-shrink-0">
                 <div className="h-32 w-56 overflow-hidden rounded-md bg-muted flex-shrink-0">
                   <Image
                     src={playlistData.thumbnail || "/placeholder.svg"}
                     alt={playlistData.title}
-                    className="object-cover"
+                    className="object-cover h-full w-full"
                     width={224}
                     height={128}
                     unoptimized
@@ -81,7 +92,7 @@ export function ConfigureCourseDialog({
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col">
                   <h3 className="font-semibold text-base line-clamp-2" title={playlistData.title}>
-                    {playlistData.title}
+                    Source Playlist: {playlistData.title}
                   </h3>
                   <p className="text-sm text-muted-foreground truncate" title={playlistData.creator}>
                     {playlistData.creator}
@@ -89,19 +100,9 @@ export function ConfigureCourseDialog({
                   <p className="text-sm text-muted-foreground">
                     {playlistData.videoCount} videos • {calculateTotalDuration()}
                   </p>
-                  <div className="mt-auto pt-2 flex items-center gap-2 w-full">
-                    <Label htmlFor="course-title" className="text-xs whitespace-nowrap flex-shrink-0">
-                      Course Title:
-                    </Label>
-                    <Input
-                      id="course-title"
-                      defaultValue={playlistData.title}
-                      className="h-8 text-sm flex-1 min-w-0"
-                    />
-                  </div>
                 </div>
               </div>
-
+              
               <Tabs defaultValue="videos" className="flex-1 flex flex-col overflow-hidden">
                 <TabsList className="grid w-full grid-cols-3 flex-shrink-0">
                   <TabsTrigger value="videos">Videos</TabsTrigger>
