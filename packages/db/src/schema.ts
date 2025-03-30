@@ -1,9 +1,11 @@
+import { varchar } from "drizzle-orm/mysql-core";
 import {
   pgTable,
   text,
   integer,
   timestamp,
   boolean,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -56,9 +58,22 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
+export const playlists=pgTable("playlists", {
+    playlist_link: text("link").primaryKey(),
+});
+export const videos=pgTable("videos", {
+    id:text("id").primaryKey(),
+    videoId: text("videoId").notNull(),
+    playlist_link: text("link").notNull().references(() => playlists.playlist_link, { onDelete: "cascade" }),
+    summary: text("summary").default(""),
+    quizzes:jsonb("quiz").default([]),
+    refLink:jsonb("refLink").default([])
+});
 export const schema = {
   user,
   session,
   account,
   verification,
+  playlists,
+  videos
 };
