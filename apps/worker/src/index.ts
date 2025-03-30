@@ -1,7 +1,6 @@
 import { Worker } from "bullmq";
 import { connection } from "./connection.js";
 
-// Create a worker for processing video jobs
 const videoWorker = new Worker(
   "video",
   async (job) => {
@@ -49,7 +48,6 @@ const videoWorker = new Worker(
   }
 );
 
-// Handle worker events
 videoWorker.on('completed', (job) => {
   console.log(`[Worker] Job ${job.id} has completed successfully`);
 });

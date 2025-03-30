@@ -27,5 +27,4 @@ export const addVideoJobs = async (videoIds: string[]) => {
   return await videoQueue.addBulk(jobs);
 };
 
-// Also export the queue itself
 export { videoQueue };
