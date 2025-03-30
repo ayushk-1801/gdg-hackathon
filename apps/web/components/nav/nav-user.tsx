@@ -11,6 +11,7 @@ import {
   LucideIcon,
   Moon,
   Sun,
+  Settings,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -67,19 +68,9 @@ const DROPDOWN_SECTIONS = ({
   {
     items: [
       {
-        icon: BadgeCheck,
-        label: "Account",
-        onClick: () => console.log("Account clicked"),
-      },
-      {
-        icon: CreditCard,
-        label: "Billing",
-        onClick: () => console.log("Billing clicked"),
-      },
-      {
-        icon: Bell,
-        label: "Notifications",
-        onClick: () => console.log("Notifications clicked"),
+        icon: Settings,
+        label: "Settings",
+        onClick: () => console.log("Settings clicked"),
       },
       {
         icon: theme === "dark" ? Sun : Moon,
