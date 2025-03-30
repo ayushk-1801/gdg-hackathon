@@ -12,11 +12,9 @@ const videoWorker = new Worker(
       // Simulate video processing
       console.log(`[Worker] Processing video with ID: ${videoId}`);
       
-      // Add progress updates
       await job.updateProgress(25);
       console.log(`[Worker] Video processing 25% complete`);
       
-      // Simulate some work with a delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       await job.updateProgress(50);
@@ -32,19 +30,17 @@ const videoWorker = new Worker(
       await job.updateProgress(100);
       console.log(`[Worker] Video processing 100% complete`);
       
-      // Return a result that will be stored in the job completion event
       return { processed: true, videoId, completedAt: new Date().toISOString() };
     } catch (error) {
       console.error(`[Worker] Error processing job ${job.id}:`, error);
-      throw error; // Re-throw the error to mark the job as failed
+      throw error; 
     }
   },
   {
     connection,
-    // Add some configuration for better reliability
-    concurrency: 5, // Process up to 5 jobs at a time
-    removeOnComplete: { count: 100 }, // Keep only 100 completed jobs
-    removeOnFail: { count: 100 }, // Keep only 100 failed jobs
+    concurrency: 5, 
+    removeOnComplete: { count: 100 }, 
+    removeOnFail: { count: 100 },
   }
 );
 
