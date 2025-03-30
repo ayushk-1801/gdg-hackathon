@@ -69,6 +69,7 @@ export function FeedbackDialog() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
+      console.log("Feedback submitted:", values);
       form.reset();
       setCharCount(0);
       close();

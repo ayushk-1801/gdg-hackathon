@@ -2,13 +2,9 @@
 
 import React from "react";
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
   Sparkles,
-  LucideIcon,
   Moon,
   Sun,
   Settings,
@@ -34,17 +30,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { User } from "@/types";
-
-type DropdownOption = {
-  icon: LucideIcon;
-  label: string;
-  onClick?: () => void;
-};
-
-type DropdownSection = {
-  items: DropdownOption[];
-  hasDivider?: boolean;
-};
 
 const DROPDOWN_SECTIONS = ({
   setTheme,
