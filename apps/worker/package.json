@@ -1,0 +1,30 @@
+{
+  "name": "@repo/worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./queue": "./dist/queue.js"
+  },
+  "scripts": {
+    "dev": "nodemon --exec \"node --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts\"",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bullmq": "^5.45.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
+  }
+}
