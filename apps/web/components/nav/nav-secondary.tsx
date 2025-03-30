@@ -1,33 +1,30 @@
 import * as React from "react";
-import { LifeBuoy, Send } from "lucide-react";
-import Link from "next/link";
+import { Send } from "lucide-react";
 
 import {
-  SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { FeedbackDialog } from "@/components/nav/feedback-dialog";
+import { useFeedbackStore } from "@/stores/feedback-store";
 
 const navSecondary = [
   {
-    title: "Support",
-    url: "#",
-    icon: LifeBuoy,
-  },
-  {
     title: "Feedback",
-    url: "#",
     icon: Send,
   },
 ];
 
 export function NavSecondary(
-  props: React.ComponentPropsWithoutRef<typeof SidebarGroup>
+  props: React.ComponentPropsWithoutRef<typeof SidebarGroupContent>
 ) {
+  const { open } = useFeedbackStore();
+
   return (
-    <SidebarGroupContent>
+    <SidebarGroupContent {...props}>
+      <FeedbackDialog />
       <SidebarMenu>
         {navSecondary.map((item) => (
           <SidebarMenuItem key={item.title}>
@@ -39,10 +36,10 @@ export function NavSecondary(
                 side: "right",
               }}
             >
-              <Link href={item.url}>
+              <button onClick={open}>
                 <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>
-              </Link>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

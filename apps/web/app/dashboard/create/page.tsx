@@ -16,7 +16,7 @@ import {
 import { ConfigureCourseDialog } from "@/components/course/configure-course-dialog";
 import { SuccessDialog } from "@/components/course/success-dialog";
 import { ArrowRight } from "lucide-react";
-import { useCourseCreationStore } from "@/store/useCourseCreationStore";
+import { useCourseCreationStore } from "@/stores/course-creation-store";
 
 // Define popular course categories
 const POPULAR_CATEGORIES = [
