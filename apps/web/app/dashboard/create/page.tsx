@@ -17,6 +17,7 @@ import { ConfigureCourseDialog } from "@/components/course/configure-course-dial
 import { SuccessDialog } from "@/components/course/success-dialog";
 import { ArrowRight } from "lucide-react";
 import { useCourseCreationStore } from "@/stores/course-creation-store";
+import { useRouter } from "next/navigation";
 
 // Define popular course categories
 const POPULAR_CATEGORIES = [
@@ -27,6 +28,8 @@ const POPULAR_CATEGORIES = [
 ];
 
 export default function CreateCoursePage() {
+  const router = useRouter();
+
   const {
     url,
     loading,
@@ -46,6 +49,13 @@ export default function CreateCoursePage() {
     setSuccessDialogOpen,
     calculateTotalDuration
   } = useCourseCreationStore();
+
+  // Function to navigate to explore page with search query
+  const navigateToExplore = (categoryName: string) => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('q', categoryName);
+    router.push(`/dashboard/explore?${searchParams.toString()}`);
+  };
 
   return (
     <AuroraBackground>
@@ -125,6 +135,7 @@ export default function CreateCoursePage() {
                     variant="outline"
                     size="sm"
                     className="rounded-full"
+                    onClick={() => navigateToExplore(category.name)}
                   >
                     {category.name}
                   </Button>
