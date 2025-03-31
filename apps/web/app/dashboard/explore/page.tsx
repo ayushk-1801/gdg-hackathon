@@ -3,16 +3,41 @@ import React, { useState, useEffect, useRef } from "react";
 import PlaylistGrid from "@/components/explore/playlist-grid";
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useSidebar } from "@/components/ui/sidebar";
 
 function Page() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const { state } = useSidebar(); // Use state instead of collapsed
+  const isSidebarCollapsed = state === "collapsed";
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [isSticky, setIsSticky] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const [containerPosition, setContainerPosition] = useState({ right: 0 });
+  const [searchBarWidth, setSearchBarWidth] = useState(0);
+  const [stickySearchLeft, setStickySearchLeft] = useState(0);
+
+  // Track previous sidebar state to detect changes
+  const prevSidebarStateRef = useRef(state);
+  const [sidebarStateChanged, setSidebarStateChanged] = useState(false);
+
+  // Effect to detect sidebar state changes
+  useEffect(() => {
+    if (prevSidebarStateRef.current !== state) {
+      setSidebarStateChanged(true);
+
+      // Reset flag after transition completes
+      const timer = setTimeout(() => {
+        setSidebarStateChanged(false);
+      }, 300); // Match transition duration
+
+      return () => clearTimeout(timer);
+    }
+    prevSidebarStateRef.current = state;
+  }, [state]);
 
   // Handle scroll event to detect when to make search sticky
   useEffect(() => {
@@ -27,20 +52,69 @@ function Page() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Measure container position on mount and resize
+  // Measure container position and width on mount, resize, and sidebar state change
   useEffect(() => {
     const updateContainerPosition = () => {
       if (searchContainerRef.current) {
         const rect = searchContainerRef.current.getBoundingClientRect();
         const rightDistance = window.innerWidth - rect.right;
         setContainerPosition({ right: rightDistance });
+        setSearchBarWidth(searchContainerRef.current.offsetWidth);
+      }
+
+      // Calculate available content area for centering search bar
+      if (isSticky) {
+        const sidebarWidth = isSidebarCollapsed
+          ? parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--sidebar-width-icon"
+              ) || "3rem"
+            )
+          : parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--sidebar-width"
+              ) || "16rem"
+            );
+
+        // Convert rem to pixels
+        const remValue = parseFloat(
+          getComputedStyle(document.documentElement).fontSize
+        );
+        const sidebarWidthPx = sidebarWidth * remValue;
+
+        // Calculate the center point of the available area (excluding sidebar)
+        const availableWidth = window.innerWidth - sidebarWidthPx;
+        const centerPoint = sidebarWidthPx + availableWidth / 2;
+
+        // Position the search bar centered in the available space
+        if (searchRef.current) {
+          const searchBarCenter = searchBarWidth / 2;
+          setStickySearchLeft(centerPoint - searchBarCenter);
+        }
       }
     };
 
     updateContainerPosition();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateContainerPosition();
+    });
+
     window.addEventListener("resize", updateContainerPosition);
-    return () => window.removeEventListener("resize", updateContainerPosition);
-  }, []);
+    document.addEventListener("scroll", updateContainerPosition);
+
+    // Observe the sidebar for size changes
+    const sidebarElement = document.querySelector('[data-slot="sidebar"]');
+    if (sidebarElement) {
+      resizeObserver.observe(sidebarElement);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateContainerPosition);
+      document.removeEventListener("scroll", updateContainerPosition);
+      resizeObserver.disconnect();
+    };
+  }, [state, isSticky, isSidebarCollapsed, searchBarWidth]);
 
   // Sample playlist data
   const playlists = [
@@ -213,10 +287,13 @@ function Page() {
       {/* Full-width sticky background that appears when scrolling */}
       {isSticky && (
         <div
-          className="fixed top-0 left-0 right-0 z-40 bg-blue-800 shadow-md"
+          className="fixed top-0 right-0 z-40 bg-blue-800 shadow-md transition-all duration-300"
           style={{
             height: "65px",
-            transition: "opacity 0.3s ease",
+            left: isSidebarCollapsed
+              ? "var(--sidebar-width-icon, 3rem)"
+              : "var(--sidebar-width, 16rem)",
+            transition: "left 0.3s ease, opacity 0.3s ease",
           }}
         />
       )}
@@ -225,12 +302,12 @@ function Page() {
       <div
         id="banner"
         ref={bannerRef}
-        className="w-full bg-gradient-to-br from-indigo-950 via-blue-800 to-blue-600 mb-8"
+        className="w-full bg-gradient-to-br from-indigo-950 via-blue-800 to-blue-600 mb-10"
       >
-        <div className="container mx-auto py-12 px-4">
+        <div className="container mx-auto py-14 px-6 md:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-6 md:mb-0 md:mr-8 md:flex-1">
-              <h1 className="text-3xl font-bold text-white mb-2">
+            <div className="mb-6 md:mb-0 md:mr-10 md:flex-1">
+              <h1 className="text-3xl font-bold text-white mb-3">
                 Explore Educational Playlists
               </h1>
               <p className="text-blue-100">
@@ -248,6 +325,7 @@ function Page() {
               <div className="relative">
                 {/* Search input */}
                 <input
+                  ref={searchRef}
                   type="text"
                   placeholder="Search playlists, creators, or topics..."
                   className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-lg bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
@@ -259,11 +337,17 @@ function Page() {
                       ? {
                           position: "fixed",
                           top: "12px",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          width:
-                            searchContainerRef.current?.offsetWidth || "auto",
+                          width: searchBarWidth,
+                          maxWidth: `calc(100% - ${
+                            isSidebarCollapsed
+                              ? "var(--sidebar-width-icon, 3rem)"
+                              : "var(--sidebar-width, 16rem)"
+                          } - 3rem)`,
                           zIndex: 50,
+                          left: stickySearchLeft,
+                          transform: "none",
+                          // Only apply transition when sidebar state changes
+                          transition: sidebarStateChanged ? "left 0.3s ease" : "none",
                         }
                       : {}
                   }
@@ -275,7 +359,9 @@ function Page() {
                     className="fixed z-[70] pointer-events-none"
                     style={{
                       top: "21px",
-                      left: `calc(50% - ${(searchContainerRef.current?.offsetWidth || 0) / 2 - 10}px)`,
+                      left: stickySearchLeft + 10,
+                      // Apply transition only when sidebar state changes
+                      transition: sidebarStateChanged ? "left 0.3s ease" : "none",
                     }}
                   >
                     <Search
@@ -300,17 +386,19 @@ function Page() {
       </div>
 
       {/* Spacer div to prevent content jump when search becomes sticky */}
-      {isSticky && <div className="h-12 md:h-0"></div>}
+      {isSticky && <div className="h-16 md:h-6"></div>}
 
-      <div className="container mx-auto px-4 pb-10">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 pb-16">
         {searchQuery && filteredPlaylists.length === 0 ? (
-          <div className="text-center py-10">
+          <div className="text-center py-16 my-6">
             <p className="text-lg text-gray-600">
               No playlists found matching &quot;{searchQuery}&quot;
             </p>
           </div>
         ) : (
-          <PlaylistGrid playlists={filteredPlaylists} />
+          <div className="my-4">
+            <PlaylistGrid playlists={filteredPlaylists} />
+          </div>
         )}
       </div>
     </div>
