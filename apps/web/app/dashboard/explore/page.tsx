@@ -259,7 +259,8 @@ function Page() {
                       ? {
                           position: "fixed",
                           top: "12px",
-                          right: `${containerPosition.right}px`,
+                          left: "50%",
+                          transform: "translateX(-50%)",
                           width:
                             searchContainerRef.current?.offsetWidth || "auto",
                           zIndex: 50,
@@ -274,7 +275,7 @@ function Page() {
                     className="fixed z-[70] pointer-events-none"
                     style={{
                       top: "21px",
-                      right: `calc(${containerPosition.right}px + ${(searchContainerRef.current?.offsetWidth || 0) - 30}px)`,
+                      left: `calc(50% - ${(searchContainerRef.current?.offsetWidth || 0) / 2 - 10}px)`,
                     }}
                   >
                     <Search
