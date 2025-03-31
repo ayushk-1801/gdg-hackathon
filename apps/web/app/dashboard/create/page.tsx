@@ -24,7 +24,7 @@ const POPULAR_CATEGORIES = [
   { id: "dsa", name: "Data Structures & Algorithms" },
   { id: "web-dev", name: "Web Development" },
   { id: "data-science", name: "Data Science" },
-  { id: "machine-learning", name: "Machine Learning" }
+  { id: "machine-learning", name: "Machine Learning" },
 ];
 
 export default function CreateCoursePage() {
@@ -45,13 +45,13 @@ export default function CreateCoursePage() {
     handleGenerate,
     handleBack,
     setSuccessDialogOpen,
-    calculateTotalDuration
+    calculateTotalDuration,
   } = useCourseCreationStore();
 
   // Function to navigate to explore page with search query
   const navigateToExplore = (categoryName: string) => {
     const searchParams = new URLSearchParams();
-    searchParams.set('q', categoryName);
+    searchParams.set("q", categoryName);
     router.push(`/dashboard/explore?${searchParams.toString()}`);
   };
 
@@ -143,18 +143,32 @@ export default function CreateCoursePage() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="sm" className="text-muted-foreground">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground"
+                      >
                         <InfoIcon className="h-4 w-4 mr-1" />
                         Supported URL formats
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" align="center" className="max-w-base p-4">
+                    <TooltipContent
+                      side="bottom"
+                      align="center"
+                      className="max-w-base"
+                    >
                       <div className="text-sm">
-                        <p className="font-medium mb-2">Supported YouTube URL formats:</p>
-                        <ul className="space-y-1">
-                          <li>https://www.youtube.com/playlist?list=PLAYLIST_ID</li>
+                        <p className="font-medium mb-2">
+                          Supported YouTube URL formats:
+                        </p>
+                        <ul className="">
+                          <li>
+                            https://www.youtube.com/playlist?list=PLAYLIST_ID
+                          </li>
                           <li>https://youtube.com/playlist?list=PLAYLIST_ID</li>
-                          <li>https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID</li>
+                          <li>
+                            https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
+                          </li>
                         </ul>
                       </div>
                     </TooltipContent>
