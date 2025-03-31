@@ -23,7 +23,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
         <div className="absolute bottom-3 left-3 flex items-center text-white">
           <PlayCircle className="h-5 w-5 mr-1.5" />
           <span className="text-sm">{playlist.videoCount} videos</span>
