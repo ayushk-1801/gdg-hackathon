@@ -129,151 +129,8 @@ function Page() {
       viewCount: 1250000,
       category: "JavaScript",
     },
-    {
-      id: "2",
-      title: "React Hooks Explained",
-      creator: "Traversy Media",
-      description:
-        "Learn all React Hooks with practical examples and best practices",
-      thumbnail: "https://i.ytimg.com/vi/TNhaISOUy6Q/maxresdefault.jpg",
-      videoCount: 15,
-      viewCount: 850000,
-      category: "React",
-    },
-    {
-      id: "3",
-      title: "Node.js Crash Course",
-      creator: "Net Ninja",
-      description:
-        "A complete introduction to Node.js, Express and MongoDB for beginners",
-      thumbnail: "https://i.ytimg.com/vi/zb3Qk8SG5Ms/maxresdefault.jpg",
-      videoCount: 12,
-      viewCount: 550000,
-      category: "Node.js",
-    },
-    {
-      id: "4",
-      title: "CSS Grid and Flexbox",
-      creator: "Kevin Powell",
-      description:
-        "Master modern CSS layout techniques with real-world examples",
-      thumbnail: "https://i.ytimg.com/vi/qZv-rNx0jEA/maxresdefault.jpg",
-      videoCount: 8,
-      viewCount: 325000,
-      category: "CSS",
-    },
-    {
-      id: "5",
-      title: "TypeScript Full Tutorial",
-      creator: "Programming with Mosh",
-      description:
-        "Everything you need to know about TypeScript in one comprehensive course",
-      thumbnail: "https://i.ytimg.com/vi/d56mG7DezGs/maxresdefault.jpg",
-      videoCount: 28,
-      viewCount: 1100000,
-      category: "TypeScript",
-    },
-    {
-      id: "6",
-      title: "Python for Data Science",
-      creator: "Corey Schafer",
-      description:
-        "Learn Python, Pandas, NumPy, Matplotlib, and data visualization techniques",
-      thumbnail: "https://i.ytimg.com/vi/ZyhVh-qRZPA/maxresdefault.jpg",
-      videoCount: 35,
-      viewCount: 2150000,
-      category: "Python",
-    },
-    {
-      id: "7",
-      title: "Machine Learning Fundamentals",
-      creator: "3Blue1Brown",
-      description:
-        "Visual and intuitive explanations of machine learning concepts for beginners",
-      thumbnail: "https://i.ytimg.com/vi/aircAruvnKk/maxresdefault.jpg",
-      videoCount: 15,
-      viewCount: 3200000,
-      category: "Machine Learning",
-    },
-    {
-      id: "8",
-      title: "Web Security Essentials",
-      creator: "PwnFunction",
-      description:
-        "Learn essential web security concepts and how to protect your applications",
-      thumbnail: "https://i.ytimg.com/vi/3AgDSw0dM34/maxresdefault.jpg",
-      videoCount: 12,
-      viewCount: 420000,
-      category: "Security",
-    },
-    {
-      id: "9",
-      title: "GraphQL Complete Course",
-      creator: "Ben Awad",
-      description:
-        "Learn GraphQL from scratch with React and Node.js integration",
-      thumbnail: "https://i.ytimg.com/vi/ed8SzALpx1Q/maxresdefault.jpg",
-      videoCount: 22,
-      viewCount: 580000,
-      category: "GraphQL",
-    },
-    {
-      id: "10",
-      title: "Docker and Kubernetes Tutorial",
-      creator: "TechWorld with Nana",
-      description:
-        "Comprehensive guide to containerization and orchestration for DevOps",
-      thumbnail: "https://i.ytimg.com/vi/jPdIRX6q4jA/maxresdefault.jpg",
-      videoCount: 18,
-      viewCount: 1450000,
-      category: "DevOps",
-    },
-    {
-      id: "11",
-      title: "Data Structures and Algorithms",
-      creator: "Clement Mihailescu",
-      description:
-        "Master the core concepts of DSA with real interview questions",
-      thumbnail: "https://i.ytimg.com/vi/09_LlHjoEiY/maxresdefault.jpg",
-      videoCount: 35,
-      viewCount: 1850000,
-      category: "Algorithms",
-    },
-    {
-      id: "12",
-      title: "React Native for Beginners",
-      creator: "Academind",
-      description:
-        "Build cross-platform mobile apps with React Native from scratch",
-      thumbnail: "https://i.ytimg.com/vi/6ZnfsJ6mM5c/maxresdefault.jpg",
-      videoCount: 28,
-      viewCount: 920000,
-      category: "React Native",
-    },
-    {
-      id: "13",
-      title: "Unity Game Development",
-      creator: "Brackeys",
-      description:
-        "Create your own 3D games with Unity game engine step-by-step",
-      thumbnail: "https://i.ytimg.com/vi/j48LtUkZRjU/maxresdefault.jpg",
-      videoCount: 40,
-      viewCount: 2500000,
-      category: "Game Development",
-    },
-    {
-      id: "14",
-      title: "Flutter App Development",
-      creator: "London App Brewery",
-      description: "Build beautiful cross-platform apps with Flutter and Dart",
-      thumbnail: "https://i.ytimg.com/vi/I9ceqw5Ny-4/maxresdefault.jpg",
-      videoCount: 32,
-      viewCount: 1100000,
-      category: "Flutter",
-    },
   ];
 
-  // Filter playlists based on search query
   const filteredPlaylists = playlists.filter(
     (playlist) =>
       playlist.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -284,7 +141,6 @@ function Page() {
 
   return (
     <div>
-      {/* Full-width sticky background that appears when scrolling */}
       {isSticky && (
         <div
           className="fixed top-0 right-0 z-40 bg-blue-800 shadow-md transition-all duration-300"
@@ -298,7 +154,6 @@ function Page() {
         />
       )}
 
-      {/* Updated gradient banner with horizontal layout */}
       <div
         id="banner"
         ref={bannerRef}
@@ -316,14 +171,11 @@ function Page() {
               </p>
             </div>
 
-            {/* Search Container - position is measured for sticky positioning */}
             <div
               ref={searchContainerRef}
               className="md:w-[500px] lg:w-[550px] relative"
             >
-              {/* Search input with search icon */}
               <div className="relative">
-                {/* Search input */}
                 <input
                   ref={searchRef}
                   type="text"
@@ -346,22 +198,23 @@ function Page() {
                           zIndex: 50,
                           left: stickySearchLeft,
                           transform: "none",
-                          // Only apply transition when sidebar state changes
-                          transition: sidebarStateChanged ? "left 0.3s ease" : "none",
+                          transition: sidebarStateChanged
+                            ? "left 0.3s ease"
+                            : "none",
                         }
                       : {}
                   }
                 />
 
-                {/* Search icon - moved after input to always be on top */}
                 {isSticky ? (
                   <div
                     className="fixed z-[70] pointer-events-none"
                     style={{
                       top: "21px",
                       left: stickySearchLeft + 10,
-                      // Apply transition only when sidebar state changes
-                      transition: sidebarStateChanged ? "left 0.3s ease" : "none",
+                      transition: sidebarStateChanged
+                        ? "left 0.3s ease"
+                        : "none",
                     }}
                   >
                     <Search
@@ -385,7 +238,6 @@ function Page() {
         </div>
       </div>
 
-      {/* Spacer div to prevent content jump when search becomes sticky */}
       {isSticky && <div className="h-16 md:h-6"></div>}
 
       <div className="container mx-auto px-4 sm:px-6 md:px-8 pb-16">
