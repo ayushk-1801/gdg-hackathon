@@ -16,7 +16,8 @@ import {
 import { ConfigureCourseDialog } from "@/components/course/configure-course-dialog";
 import { SuccessDialog } from "@/components/course/success-dialog";
 import { ArrowRight } from "lucide-react";
-import { useCourseCreationStore } from "@/store/useCourseCreationStore";
+import { useCourseCreationStore } from "@/stores/course-creation-store";
+import { useRouter } from "next/navigation";
 
 // Define popular course categories
 const POPULAR_CATEGORIES = [
@@ -27,6 +28,8 @@ const POPULAR_CATEGORIES = [
 ];
 
 export default function CreateCoursePage() {
+  const router = useRouter();
+
   const {
     url,
     loading,
@@ -47,6 +50,13 @@ export default function CreateCoursePage() {
     calculateTotalDuration
   } = useCourseCreationStore();
 
+  // Function to navigate to explore page with search query
+  const navigateToExplore = (categoryName: string) => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('q', categoryName);
+    router.push(`/dashboard/explore?${searchParams.toString()}`);
+  };
+
   return (
     <AuroraBackground>
       <div className="flex-1 py-8 flex flex-col items-center justify-center min-h-screen">
@@ -64,7 +74,7 @@ export default function CreateCoursePage() {
               transition={{ delay: 0.2, duration: 0.5 }}
             >
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                What YouTube playlist
+                Which YouTube playlist
                 <br />
                 do you want to transform?
               </h1>
@@ -125,6 +135,7 @@ export default function CreateCoursePage() {
                     variant="outline"
                     size="sm"
                     className="rounded-full"
+                    onClick={() => navigateToExplore(category.name)}
                   >
                     {category.name}
                   </Button>

@@ -2,15 +2,12 @@
 
 import React from "react";
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
   Sparkles,
-  LucideIcon,
   Moon,
   Sun,
+  Settings,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -34,17 +31,6 @@ import {
 } from "@/components/ui/sidebar";
 import { User } from "@/types";
 
-type DropdownOption = {
-  icon: LucideIcon;
-  label: string;
-  onClick?: () => void;
-};
-
-type DropdownSection = {
-  items: DropdownOption[];
-  hasDivider?: boolean;
-};
-
 const DROPDOWN_SECTIONS = ({
   setTheme,
   theme,
@@ -67,19 +53,9 @@ const DROPDOWN_SECTIONS = ({
   {
     items: [
       {
-        icon: BadgeCheck,
-        label: "Account",
-        onClick: () => console.log("Account clicked"),
-      },
-      {
-        icon: CreditCard,
-        label: "Billing",
-        onClick: () => console.log("Billing clicked"),
-      },
-      {
-        icon: Bell,
-        label: "Notifications",
-        onClick: () => console.log("Notifications clicked"),
+        icon: Settings,
+        label: "Settings",
+        onClick: () => console.log("Settings clicked"),
       },
       {
         icon: theme === "dark" ? Sun : Moon,

@@ -1,7 +1,8 @@
 "use client";
 
-import { Search, Sparkles, Home, Plus, Compass } from "lucide-react";
+import { Sparkles, Home, Plus, Compass } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   SidebarMenu,
@@ -11,11 +12,17 @@ import {
 } from "@/components/ui/sidebar";
 
 export function NavMain() {
+  const pathname = usePathname();
   const primaryUrls = ["/dashboard/", "/dashboard/create"];
 
   const mappedItems = navMain.map((item) => ({
     ...item,
     isPrimary: primaryUrls.includes(item.url),
+    isActive: 
+      item.title === "Create" ? false :
+      pathname === item.url || 
+      (item.url !== "#" && pathname.startsWith(item.url) && item.url !== "/dashboard/" ? true : 
+       item.url === "/dashboard/" && pathname === "/dashboard"),
   }));
 
   return (
@@ -27,7 +34,7 @@ export function NavMain() {
               asChild
               isActive={item.isActive}
               className={
-                item.isPrimary
+                item.title === "Create"
                   ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground/90"
                   : ""
               }
@@ -39,7 +46,6 @@ export function NavMain() {
               <Link href={item.url}>
                 <item.icon className="h-5 w-5" />
                 <span>{item.title}</span>
-                {/* {item.badge && <span className="ml-auto">{item.badge}</span>} */}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -51,11 +57,6 @@ export function NavMain() {
 
 const navMain = [
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
     title: "Ask AI",
     url: "#",
     icon: Sparkles,
@@ -64,7 +65,6 @@ const navMain = [
     title: "Home",
     url: "/dashboard/",
     icon: Home,
-    isActive: true,
   },
   {
     title: "Explore",

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { YouTubePlaylist } from '@/types';
 
-// Extract playlist ID from a YouTube URL
 function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
   const match = url.match(listRegex);
@@ -9,7 +8,6 @@ function extractPlaylistId(url: string): string | null {
 }
 
 interface CourseCreationState {
-  // Basic state
   url: string;
   loading: boolean;
   error: string | null;
@@ -19,7 +17,6 @@ interface CourseCreationState {
   playlistData: YouTubePlaylist | null;
   selectedVideos: Set<number>;
 
-  // Actions
   setUrl: (url: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   toggleVideoSelection: (index: number) => void;
@@ -29,7 +26,6 @@ interface CourseCreationState {
   setConfigDialogOpen: (open: boolean) => void;
   setSuccessDialogOpen: (open: boolean) => void;
   
-  // Utilities
   calculateTotalDuration: () => string;
 }
 
@@ -45,7 +41,6 @@ const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist
 };
 
 export const useCourseCreationStore = create<CourseCreationState>((set, get) => ({
-  // Initial state
   url: "",
   loading: false,
   error: null,
@@ -55,7 +50,6 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
   playlistData: null,
   selectedVideos: new Set<number>(),
 
-  // Actions
   setUrl: (url) => set({ url }),
   
   handleSubmit: async (e) => {
@@ -116,7 +110,6 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
   handleGenerate: () => {
     set({ loading: true });
     
-    // Simulate course generation
     setTimeout(() => {
       set({
         loading: false,
@@ -148,10 +141,8 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       if (selectedVideos.has(index)) {
         const parts = video.duration.split(':');
         if (parts.length === 2) {
-          // MM:SS format
           totalMinutes += parseInt(parts[0]);
         } else if (parts.length === 3) {
-          // HH:MM:SS format
           totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
         }
       }

@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import Image from "next/image";
 import {
@@ -15,13 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { YouTubePlaylist } from "@/types";
 
 interface ConfigureCourseDialogProps {
@@ -103,139 +95,60 @@ export function ConfigureCourseDialog({
                 </div>
               </div>
               
-              <Tabs defaultValue="videos" className="flex-1 flex flex-col overflow-hidden">
-                <TabsList className="grid w-full grid-cols-3 flex-shrink-0">
-                  <TabsTrigger value="videos">Videos</TabsTrigger>
-                  <TabsTrigger value="settings">Settings</TabsTrigger>
-                  <TabsTrigger value="advanced">Advanced</TabsTrigger>
-                </TabsList>
-                <TabsContent value="videos" className="space-y-4 pt-4 flex-1 overflow-hidden flex flex-col">
-                  <div className="space-y-2 flex-1 flex flex-col overflow-hidden">
-                    <div className="flex items-center justify-between flex-shrink-0">
-                      <h3 className="font-medium">Videos in Playlist</h3>
-                      <Button variant="outline" size="sm" onClick={onSelectAll}>
-                        {selectedVideos.size === playlistData.videos.length ? "Deselect All" : "Select All"}
-                      </Button>
-                    </div>
-                    <div className="overflow-y-auto flex-1">
-                      <div className="space-y-2 pb-2">
-                        {playlistData.videos.map((video, index) => (
-                          <div
-                            key={index}
-                            className={`flex items-center gap-3 rounded-md border p-2 ${
-                              selectedVideos.has(index) ? "bg-muted/40" : ""
-                            }`}
-                          >
-                            <div className="h-12 w-20 overflow-hidden rounded bg-muted flex-shrink-0">
-                              <Image
-                                src={video.thumbnail || "/placeholder.svg"}
-                                alt=""
-                                className="object-cover"
-                                width={80}
-                                height={48}
-                                unoptimized
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="truncate text-sm font-medium" title={video.title}>
-                                {video.title}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {video.duration}
-                              </p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <Button 
-                                variant={selectedVideos.has(index) ? "default" : "ghost"} 
-                                size="sm" 
-                                className="h-8 w-8 p-0"
-                                onClick={() => onSelectVideo(index)}
-                              >
-                                <Check className={`h-4 w-4 ${selectedVideos.has(index) ? "opacity-100" : "opacity-30"}`} />
-                                <span className="sr-only">
-                                  {selectedVideos.has(index) ? "Deselect" : "Select"}
-                                </span>
-                              </Button>
-                            </div>
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="space-y-2 flex-1 flex flex-col overflow-hidden">
+                  <div className="flex items-center justify-between flex-shrink-0">
+                    <h3 className="font-medium">Videos in Playlist</h3>
+                    <Button variant="outline" size="sm" onClick={onSelectAll}>
+                      {selectedVideos.size === playlistData.videos.length ? "Deselect All" : "Select All"}
+                    </Button>
+                  </div>
+                  <div className="overflow-y-auto flex-1">
+                    <div className="space-y-2 pb-2">
+                      {playlistData.videos.map((video, index) => (
+                        <div
+                          key={index}
+                          className={`flex items-center gap-3 rounded-md border p-2 ${
+                            selectedVideos.has(index) ? "bg-muted/40" : ""
+                          }`}
+                        >
+                          <div className="h-12 w-20 overflow-hidden rounded bg-muted flex-shrink-0">
+                            <Image
+                              src={video.thumbnail || "/placeholder.svg"}
+                              alt=""
+                              className="object-cover"
+                              width={80}
+                              height={48}
+                              unoptimized
+                            />
                           </div>
-                        ))}
-                      </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="truncate text-sm font-medium" title={video.title}>
+                              {video.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {video.duration}
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <Button 
+                              variant={selectedVideos.has(index) ? "default" : "ghost"} 
+                              size="sm" 
+                              className="h-8 w-8 p-0"
+                              onClick={() => onSelectVideo(index)}
+                            >
+                              <Check className={`h-4 w-4 ${selectedVideos.has(index) ? "opacity-100" : "opacity-30"}`} />
+                              <span className="sr-only">
+                                {selectedVideos.has(index) ? "Deselect" : "Select"}
+                              </span>
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </TabsContent>
-                <TabsContent value="settings" className="space-y-4 pt-4 overflow-auto">
-                  <div className="grid gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="summary-length">Summary Length</Label>
-                      <Select defaultValue="standard">
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select summary length" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="brief">
-                            Brief (1-2 paragraphs)
-                          </SelectItem>
-                          <SelectItem value="standard">
-                            Standard (3-4 paragraphs)
-                          </SelectItem>
-                          <SelectItem value="detailed">
-                            Detailed (5+ paragraphs)
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="quiz-questions">
-                        Quiz Questions Per Video
-                      </Label>
-                      <Select defaultValue="3">
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select number of questions" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="2">2 questions</SelectItem>
-                          <SelectItem value="3">3 questions</SelectItem>
-                          <SelectItem value="5">5 questions</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="advanced" className="space-y-4 pt-4 overflow-auto">
-                  <div className="grid gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="language">Summary Language</Label>
-                      <Select defaultValue="english">
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="english">English</SelectItem>
-                          <SelectItem value="spanish">Spanish</SelectItem>
-                          <SelectItem value="french">French</SelectItem>
-                          <SelectItem value="german">German</SelectItem>
-                          <SelectItem value="chinese">Chinese</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="difficulty">Quiz Difficulty</Label>
-                      <Select defaultValue="beginner">
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select difficulty" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">
-                            Intermediate
-                          </SelectItem>
-                          <SelectItem value="advanced">Advanced</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </div>
           )}
 
