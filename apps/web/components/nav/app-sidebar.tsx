@@ -6,23 +6,20 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
-import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
+import { PanelLeftIcon } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { state, toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar();
   const { data: session } = authClient.useSession();
-
-  useEffect(() => {
-    if (state === "expanded") {
-      toggleSidebar();
-    }
-  }, [state, toggleSidebar]);
 
   return (
     <Sidebar collapsible="icon" {...props} className="z-50">
@@ -41,9 +38,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
         <SidebarGroup className="mt-auto">
           <NavSecondary />
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="sm"
+                onClick={toggleSidebar}
+                tooltip={{
+                  children: "Toggle Sidebar",
+                  side: "right",
+                }}
+              >
+                <PanelLeftIcon className="h-4 w-4" />
+                <span>Toggle Sidebar</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>{/* Optional footer content */}</SidebarFooter>
+      <SidebarFooter></SidebarFooter>
     </Sidebar>
   );
 }

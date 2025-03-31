@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import {
   Dialog,
@@ -28,6 +28,17 @@ export function SuccessDialog({
   videoCount,
   totalDuration,
 }: SuccessDialogProps) {
+  // Render a generating status indicator
+  const renderGeneratingStatus = (label: string, progress: number = 0) => (
+    <div className="flex justify-between text-sm items-center">
+      <span className="font-medium">{label}</span>
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-500">
+        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+        Generating...
+      </span>
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md overflow-hidden p-6">
@@ -38,19 +49,11 @@ export function SuccessDialog({
           className="flex flex-col"
         >
           <DialogHeader className="text-center">
-            <motion.div
-              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            >
-              <Check className="h-8 w-8 text-primary" />
-            </motion.div>
-            <DialogTitle className="text-xl mt-4">
-              Course Created Successfully!
+            <DialogTitle className="text-xl">
+              Generating Your Course
             </DialogTitle>
             <DialogDescription>
-              Your course has been generated and is ready to use
+              We're preparing your learning materials in the background
             </DialogDescription>
           </DialogHeader>
 
@@ -69,27 +72,10 @@ export function SuccessDialog({
               </p>
               
               <div className="mt-4 space-y-2">
-                <div className="flex justify-between text-sm items-center">
-                  <span className="font-medium">Summaries</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    <Check className="mr-1 h-3 w-3" />
-                    Generated
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="font-medium">Quizzes</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    <Check className="mr-1 h-3 w-3" />
-                    Generated
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="font-medium">Key Points</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    <Check className="mr-1 h-3 w-3" />
-                    Generated
-                  </span>
-                </div>
+                {renderGeneratingStatus("Summaries")}
+                {renderGeneratingStatus("Quizzes")}
+                {renderGeneratingStatus("Useful Links")}
+                {renderGeneratingStatus("Course Structure")}
               </div>
             </div>
           </motion.div>
@@ -99,7 +85,9 @@ export function SuccessDialog({
               <Link href="/dashboard">Back to Dashboard</Link>
             </Button>
             <Button asChild className="w-full sm:w-auto">
-              <Link href="/dashboard/courses/1">View Course</Link>
+              <Link href="/dashboard/courses/1?view=generation">
+                View Generation Progress
+              </Link>
             </Button>
           </DialogFooter>
         </motion.div>
