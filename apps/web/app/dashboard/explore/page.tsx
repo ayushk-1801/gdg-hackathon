@@ -242,7 +242,7 @@ function Page() {
             {/* Search Container - position is measured for sticky positioning */}
             <div
               ref={searchContainerRef}
-              className="md:w-96 lg:w-[420px] relative"
+              className="md:w-[500px] lg:w-[550px] relative"
             >
               {/* Search input with search icon */}
               <div className="relative">
