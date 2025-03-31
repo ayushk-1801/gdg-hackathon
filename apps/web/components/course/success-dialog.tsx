@@ -3,31 +3,34 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { useCourseCreationStore } from "@/stores/course-creation-store";
 
-interface SuccessDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+interface SuccessPageProps {
   courseTitle: string;
   videoCount: number;
   totalDuration: string;
 }
 
-export function SuccessDialog({
-  open,
-  onOpenChange,
+export function SuccessPage({
   courseTitle,
   videoCount,
   totalDuration,
-}: SuccessDialogProps) {
+}: SuccessPageProps) {
+  const router = useRouter();
+  const resetState = useCourseCreationStore((state) => state.resetState);
+  
+  // Navigation handlers
+  const handleBackToDashboard = () => {
+    resetState(); // Reset state before navigating
+    router.push("/dashboard");
+  };
+  
+  const handleViewProgress = () => {
+    resetState(); // Reset state before navigating
+    router.push("/dashboard/courses/1?view=generation");
+  };
+  
   // Render a generating status indicator
   const renderGeneratingStatus = (label: string, progress: number = 0) => (
     <div className="flex justify-between text-sm items-center">
@@ -40,58 +43,62 @@ export function SuccessDialog({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md overflow-hidden p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-col"
-        >
-          <DialogHeader className="text-center">
-            <DialogTitle className="text-xl">
-              Generating Your Course
-            </DialogTitle>
-            <DialogDescription>
-              We're preparing your learning materials in the background
-            </DialogDescription>
-          </DialogHeader>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-4xl mx-auto px-4 h-[calc(100vh-120px)]"
+    >
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+          Generating Your Course
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          We're preparing your learning materials in the background
+        </p>
+      </div>
 
-          <motion.div
-            className="my-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
+      <motion.div
+        className="max-w-md mx-auto my-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+      >
+        <div className="rounded-lg border bg-card/50 backdrop-blur-sm p-6">
+          <h3 className="font-semibold line-clamp-2 text-lg" title={courseTitle}>
+            {courseTitle || "YouTube Course"}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {videoCount} videos • {totalDuration}
+          </p>
+          
+          <div className="mt-6 space-y-3">
+            {renderGeneratingStatus("Summaries")}
+            {renderGeneratingStatus("Quizzes")}
+            {renderGeneratingStatus("Useful Links")}
+            {renderGeneratingStatus("Course Structure")}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Improved button placement with onClick handlers */}
+      <div className="pt-4 mt-4 border-t max-w-md mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <Button 
+            variant="outline" 
+            className="flex-1"
+            onClick={handleBackToDashboard}
           >
-            <div className="rounded-lg border bg-muted/50 p-5">
-              <h3 className="font-semibold line-clamp-2 text-base" title={courseTitle}>
-                {courseTitle || "YouTube Course"}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {videoCount} videos • {totalDuration}
-              </p>
-              
-              <div className="mt-4 space-y-2">
-                {renderGeneratingStatus("Summaries")}
-                {renderGeneratingStatus("Quizzes")}
-                {renderGeneratingStatus("Useful Links")}
-                {renderGeneratingStatus("Course Structure")}
-              </div>
-            </div>
-          </motion.div>
-
-          <DialogFooter className="flex flex-col sm:flex-row justify-center gap-3 mt-2">
-            <Button variant="outline" asChild className="w-full sm:w-auto">
-              <Link href="/dashboard">Back to Dashboard</Link>
-            </Button>
-            <Button asChild className="w-full sm:w-auto">
-              <Link href="/dashboard/courses/1?view=generation">
-                View Generation Progress
-              </Link>
-            </Button>
-          </DialogFooter>
-        </motion.div>
-      </DialogContent>
-    </Dialog>
+            Back to Dashboard
+          </Button>
+          <Button 
+            className="flex-1"
+            onClick={handleViewProgress}
+          >
+            View Progress
+          </Button>
+        </div>
+      </div>
+    </motion.div>
   );
 }

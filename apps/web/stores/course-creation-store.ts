@@ -155,5 +155,17 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       return `${hours}h ${minutes}m`;
     }
     return `${minutes}m`;
+  },
+
+  resetState: () => {
+    set({
+      url: '',
+      loading: false,
+      error: null,
+      step: 1,
+      successDialogOpen: false,
+      playlistData: null,
+      selectedVideos: new Set(),
+    });
   }
 }));
