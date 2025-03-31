@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ConfigureCourseDialog } from "@/components/course/configure-course-dialog";
+import { ConfigureCourseForm } from "@/components/course/configure-course-dialog";
 import { SuccessDialog } from "@/components/course/success-dialog";
 import { ArrowRight } from "lucide-react";
 import { useCourseCreationStore } from "@/stores/course-creation-store";
@@ -35,7 +35,6 @@ export default function CreateCoursePage() {
     loading,
     error,
     step,
-    configDialogOpen,
     successDialogOpen,
     playlistData,
     selectedVideos,
@@ -45,7 +44,6 @@ export default function CreateCoursePage() {
     handleSelectAll,
     handleGenerate,
     handleBack,
-    setConfigDialogOpen,
     setSuccessDialogOpen,
     calculateTotalDuration
   } = useCourseCreationStore();
@@ -59,33 +57,27 @@ export default function CreateCoursePage() {
 
   return (
     <AuroraBackground>
-      <div className="flex-1 py-8 flex flex-col items-center justify-center min-h-screen">
+      <div className="container mx-auto py-12 min-h-screen flex flex-col">
         {/* Step 1: URL Input directly on page */}
         {step === 1 && (
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="space-y-8 text-center max-w-3xl w-full px-4"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="space-y-8 text-center max-w-3xl mx-auto w-full px-4 flex-1 flex flex-col justify-center"
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            >
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Which YouTube playlist
-                <br />
-                do you want to transform?
-              </h1>
-            </motion.div>
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+              Which YouTube playlist
+              <br />
+              do you want to transform?
+            </h1>
 
             <motion.form
               onSubmit={handleSubmit}
               className="mx-auto max-w-2xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
               {error && (
                 <Alert variant="destructive" className="mb-4">
@@ -124,9 +116,9 @@ export default function CreateCoursePage() {
 
               <motion.div
                 className="mt-8 flex flex-wrap justify-center gap-2"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
               >
                 {POPULAR_CATEGORIES.map((category) => (
                   <Button
@@ -146,7 +138,7 @@ export default function CreateCoursePage() {
                 className="mt-4 flex justify-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
               >
                 <TooltipProvider>
                   <Tooltip>
@@ -173,19 +165,21 @@ export default function CreateCoursePage() {
           </motion.div>
         )}
 
-        {/* Configure Course Dialog Component (Step 2) */}
-        <ConfigureCourseDialog
-          open={configDialogOpen}
-          onOpenChange={setConfigDialogOpen}
-          playlistData={playlistData}
-          selectedVideos={selectedVideos}
-          onSelectVideo={toggleVideoSelection}
-          onSelectAll={handleSelectAll}
-          onBack={handleBack}
-          onGenerate={handleGenerate}
-          loading={loading}
-          calculateTotalDuration={calculateTotalDuration}
-        />
+        {/* Step 2: Configure Course Form directly on the page */}
+        {step === 2 && playlistData && (
+          <div className="flex-1">
+            <ConfigureCourseForm
+              playlistData={playlistData}
+              selectedVideos={selectedVideos}
+              onSelectVideo={toggleVideoSelection}
+              onSelectAll={handleSelectAll}
+              onBack={handleBack}
+              onGenerate={handleGenerate}
+              loading={loading}
+              calculateTotalDuration={calculateTotalDuration}
+            />
+          </div>
+        )}
 
         {/* Success Dialog Component (Step 3) */}
         <SuccessDialog
