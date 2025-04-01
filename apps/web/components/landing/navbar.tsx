@@ -3,11 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Youtube, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient } from "@/lib/auth-client";
+import { Space_Mono } from 'next/font/google';
+
+const spaceMono = Space_Mono({ 
+  weight: ['400', '700'],
+  subsets: ['latin']
+})
 
 export default function Navbar() {
   const [mounted, setMounted] = useState(false);
@@ -27,10 +33,9 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-slate-200/80 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60">
       <div className="container mx-auto grid grid-cols-[auto_1fr_auto] h-18 items-center px-4 sm:px-6 gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           <Link href="/" className="flex items-center group">
-            <Youtube className="h-7 w-7 text-rose-500 group-hover:text-rose-400 transition-colors duration-300" />
-            <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 group-hover:from-rose-400 group-hover:to-orange-400 transition-all duration-300">
+            <span className={`text-xl font-bold ${spaceMono.className} bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 group-hover:from-rose-400 group-hover:to-orange-400 transition-all duration-300`}>
               Benkyoshi
             </span>
           </Link>
@@ -44,7 +49,7 @@ export default function Navbar() {
             Features
           </Link>
           <Link
-            href="#resources"
+            href="/resources"
             className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 hover:underline decoration-rose-500 decoration-2 underline-offset-4"
           >
             Resources
@@ -53,7 +58,7 @@ export default function Navbar() {
             href="#docs"
             className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 hover:underline decoration-rose-500 decoration-2 underline-offset-4"
           >
-            Docs
+            About Us
           </Link>
         </nav>
 

@@ -108,7 +108,7 @@ export default function LandingPage() {
         {/* Features Section */}
         <section
           id="features"
-          className="py-28 border-t border-slate-200 dark:border-zinc-800/50"
+          className="py-28  border-slate-200 dark:border-zinc-800/50"
         >
           <div className="">
             <motion.div
@@ -138,7 +138,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 viewport={{ once: true }}
-                className=" backdrop-blur-sm p-8 border-r border-b border-slate-200 dark:border-zinc-800/50 hover:border-slate-300 dark:hover:border-zinc-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-rose-600/5"
+                className=" backdrop-blur-sm p-8 border-r border-b border-slate-200 dark:border-zinc-800/50"
               >
                 <h3 className="text-xl font-bold mb-2">
                   YouTube Playlist Import
@@ -167,7 +167,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="backdrop-blur-sm p-8 rounded-xl border-l border-b border-slate-200 dark:border-zinc-800/50 hover:border-slate-300 dark:hover:border-zinc-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-rose-600/5"
+                className="backdrop-blur-sm p-8 border-l border-b border-slate-200 dark:border-zinc-800/50"
               >
                 <h3 className="text-xl font-bold mb-2">
                   Interactive Course Structure
@@ -181,10 +181,10 @@ export default function LandingPage() {
                       <div className="h-8 w-8 rounded bg-rose-600 flex items-center justify-center text-white font-bold">
                         1
                       </div>
-                      <div className="h-8 w-8 rounded bg-slate-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-white hover:bg-slate-300 dark:hover:bg-zinc-700 transition-colors">
+                      <div className="h-8 w-8 rounded bg-slate-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-white">
                         2
                       </div>
-                      <div className="h-8 w-8 rounded bg-slate-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-white hover:bg-slate-300 dark:hover:bg-zinc-700 transition-colors">
+                      <div className="h-8 w-8 rounded bg-slate-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-white">
                         3
                       </div>
                     </div>
@@ -204,7 +204,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true }}
-                className=" backdrop-blur-sm p-8 border-t border-r border-slate-200 dark:border-zinc-800/50 hover:border-slate-300 dark:hover:border-zinc-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-rose-600/5"
+                className=" backdrop-blur-sm p-8 border-t border-r border-slate-200 dark:border-zinc-800/50"
               >
                 <h3 className="text-xl font-bold mb-2">
                   AI-Generated Notes & Quizzes
@@ -214,10 +214,10 @@ export default function LandingPage() {
                 </p>
                 <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 h-64 flex items-center justify-center shadow-inner">
                   <div className="w-full">
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-200 dark:bg-zinc-800 mb-4 hover:bg-slate-300 dark:hover:bg-zinc-700 transition-colors">
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-200 dark:bg-zinc-800 mb-4">
                       <div className="h-6 w-6 rounded-full bg-rose-600"></div>
                       <div className="text-sm">Generating chapter notes...</div>
-                      <div className="ml-auto bg-slate-300 dark:bg-zinc-700 rounded p-1 hover:bg-slate-400 dark:hover:bg-zinc-600 transition-colors">
+                      <div className="ml-auto bg-slate-300 dark:bg-zinc-700 rounded p-1">
                         <ArrowRight className="h-4 w-4" />
                       </div>
                     </div>
@@ -241,7 +241,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
                 viewport={{ once: true }}
-                className="backdrop-blur-sm p-8 border-l border-t border-slate-200 dark:border-zinc-800/50 hover:border-slate-300 dark:hover:border-zinc-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-rose-600/5"
+                className="backdrop-blur-sm p-8 border-l border-t border-slate-200 dark:border-zinc-800/50"
               >
                 <h3 className="text-xl font-bold mb-2">Progress Tracking</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mb-6">
@@ -711,7 +711,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
 
         {/* CTA Section */}
         <section className="py-28 border-t border-slate-200 dark:border-zinc-800/50">
