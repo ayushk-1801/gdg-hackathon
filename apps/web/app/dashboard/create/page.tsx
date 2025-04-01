@@ -4,7 +4,7 @@ import type React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, InfoIcon, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ConfigureCourseForm } from "@/components/course/configure-course-dialog";
