@@ -21,7 +21,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white relative">
       {/* Spotlight effect positioned behind everything */}
       <div className="absolute inset-0 overflow-hidden">
-        <Spotlight 
+        <Spotlight
           gradientFirst="radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 50%, hsla(350, 100%, 45%, 0) 80%)"
           gradientSecond="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 80%, transparent 100%)"
           gradientThird="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .06) 0, hsla(350, 100%, 45%, .02) 80%, transparent 100%)"
@@ -30,7 +30,7 @@ export default function LandingPage() {
           duration={8}
         />
       </div>
-      
+
       <Navbar />
 
       <main className="px-4 md:px-8 lg:px-20 xl:px-40 relative">
@@ -107,15 +107,15 @@ export default function LandingPage() {
           >
             <div className="w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
               <video
-              autoPlay
-              loop
-              muted
-              controls
-              playsInline
-              className="w-full h-auto object-contain rounded-xl bg-gray-600"
+                autoPlay
+                loop
+                muted
+                controls
+                playsInline
+                className="w-full h-auto object-contain rounded-xl bg-gray-600"
               >
-              <source src="/hero-video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
+                <source src="/hero-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
             </div>
           </motion.div>
@@ -292,7 +292,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* How It Works */}
+        {/* AI Features Section */}
         <section className="py-28 border-t border-slate-200 dark:border-zinc-800/50">
           <div className="">
             <motion.div
@@ -303,32 +303,17 @@ export default function LandingPage() {
               className="mb-20"
             >
               <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-700 dark:from-white dark:to-zinc-400">
-                First-class learning experience.
+                Powered by AI at every step.
               </h2>
               <p className="text-xl text-zinc-700 dark:text-zinc-300 max-w-2xl leading-relaxed">
-                Every feature is carefully crafted to provide
+                Our intelligent platform leverages advanced AI to
                 <span className="font-semibold text-zinc-900 dark:text-white">
                   {" "}
-                  the best student experience
+                  enhance every aspect of your learning experience
                 </span>
-                . Save heartache and ship faster. Let us handle the complexity.
+                . From content organization to personalized feedback.
               </p>
             </motion.div>
-
-            <div className="flex flex-col md:flex-row gap-6 mb-20">
-              <Button
-                variant="outline"
-                className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all duration-300"
-              >
-                Read the docs
-              </Button>
-              <Button
-                variant="link"
-                className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-all duration-300"
-              >
-                Browse examples <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -338,125 +323,215 @@ export default function LandingPage() {
               className="bg-slate-100/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-xl p-6 overflow-hidden border border-slate-200 dark:border-zinc-800/50 shadow-xl shadow-slate-200/50 dark:shadow-rose-600/5"
             >
               <div className="flex items-center mb-4">
-                <div className="text-sm font-medium">Comment threads</div>
+                <div className="text-sm font-medium">AI-Powered Features</div>
                 <ArrowRight className="ml-2 h-4 w-4 text-zinc-400 dark:text-zinc-600" />
               </div>
 
               <div className="bg-white dark:bg-zinc-950 rounded-lg p-6 shadow-inner">
-                <div className="flex gap-4 mb-6">
-                  <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-zinc-800"></div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <div className="font-medium">Student</div>
-                      <div className="text-xs text-zinc-500">4h ago</div>
-                    </div>
-                    <div className="text-sm mt-1">
-                      <span className="text-rose-600 dark:text-rose-400">
-                        @Instructor
-                      </span>{" "}
-                      Can I make it look like my brand?
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 px-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* AI Feature 1 */}
+                  <div className="flex gap-4 items-start border border-slate-200 dark:border-zinc-800 rounded-lg p-4">
+                    <div className="h-10 w-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1"
-                        >
-                          <path
-                            d="M12 4V20M4 12H20"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        Reply
-                      </Button>
+                        <path
+                          d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M2.5 9.5H21.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M2.5 14.5H21.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M12 2.5V21.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M16.5 2.5C17.8668 4.39464 18.6272 6.63914 18.75 9C18.6272 11.3609 17.8668 13.6054 16.5 15.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M7.5 2.5C6.13316 4.39464 5.37284 6.63914 5.25 9C5.37284 11.3609 6.13316 13.6054 7.5 15.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">Smart Content Analysis</div>
+                      <div className="text-sm text-zinc-500 mt-1">
+                        Our AI analyzes video content to identify key topics,
+                        concepts and learning objectives
+                      </div>
+                      <div className="mt-3 text-xs inline-flex items-center px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+                        <span className="mr-1">●</span> Topic Extraction
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex gap-4 ml-12">
-                  <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-zinc-800"></div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <div className="font-medium">Instructor</div>
-                      <div className="text-xs text-zinc-500">4h ago</div>
+                  {/* AI Feature 2 */}
+                  <div className="flex gap-4 items-start border border-slate-200 dark:border-zinc-800 rounded-lg p-4">
+                    <div className="h-10 w-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M14 3V7C14 7.26522 14.1054 7.51957 14.2929 7.70711C14.4804 7.89464 14.7348 8 15 8H19"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M17 21H7C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H14L19 8V19C19 19.5304 18.7893 20.0391 18.4142 20.4142C18.0391 20.7893 17.5304 21 17 21Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M9 7H10"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M9 13H15"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M9 17H15"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </div>
-                    <div className="text-sm mt-1">
-                      <span className="text-rose-600 dark:text-rose-400">
-                        @Student
-                      </span>{" "}
-                      Yes! Try updating{" "}
-                      <code className="bg-slate-100 dark:bg-zinc-800 px-1 rounded">
-                        --lb-radius
-                      </code>{" "}
-                      and{" "}
-                      <code className="bg-slate-100 dark:bg-zinc-800 px-1 rounded">
-                        --lb-accent
-                      </code>{" "}
-                      for example.
+                    <div className="flex-1">
+                      <div className="font-medium">
+                        Automated Summary Generation
+                      </div>
+                      <div className="text-sm text-zinc-500 mt-1">
+                        AI generates comprehensive summary from video
+                        transcripts for easy reference
+                      </div>
+                      <div className="mt-3 text-xs inline-flex items-center px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
+                        <span className="mr-1">●</span> Up to 98% accuracy
+                      </div>
                     </div>
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 px-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  </div>
+
+                  {/* AI Feature 3 */}
+                  <div className="flex gap-4 items-start border border-slate-200 dark:border-zinc-800 rounded-lg p-4">
+                    <div className="h-10 w-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1"
-                        >
-                          <path
-                            d="M12 4V20M4 12H20"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        Reply
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 px-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                        <path
+                          d="M9 11L12 14L22 4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">
+                        Adaptive Quiz Generation
+                      </div>
+                      <div className="text-sm text-zinc-500 mt-1">
+                        AI creates personalized quizzes based on content and
+                        your learning progress
+                      </div>
+                      <div className="mt-3 text-xs inline-flex items-center px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400">
+                        <span className="mr-1">●</span> Multiple Choice
+                        Questions
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI Feature 4 */}
+                  <div className="flex gap-4 items-start border border-slate-200 dark:border-zinc-800 rounded-lg p-4">
+                    <div className="h-10 w-10 rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        👍 1
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 px-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M12 4V20M4 12H20"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </Button>
+                        <path
+                          d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M19.4 15C19.1277 15.6171 19.0689 16.2985 19.2281 16.9499C19.3873 17.6014 19.7566 18.1892 20.29 18.62L20.35 18.68C20.7884 19.1181 21.1168 19.6685 21.3073 20.2769C21.4978 20.8852 21.5453 21.5326 21.4464 22.1635C21.3475 22.7943 21.1045 23.3927 20.7371 23.9081C20.3696 24.4234 19.8878 24.8409 19.33 25.13C18.7718 25.4191 18.1514 25.5701 17.5203 25.5701C16.8891 25.5701 16.2687 25.4191 15.71 25.13C15.1482 24.8421 14.6629 24.4265 14.29 23.91L14.23 23.85C13.7993 23.3167 13.2115 22.9473 12.56 22.7881C11.9086 22.6289 11.2272 22.6878 10.61 22.96C9.99987 23.2228 9.48331 23.6653 9.1256 24.2348C8.76789 24.8043 8.58634 25.4745 8.60001 26.16V26.37C8.60001 27.6656 8.08573 28.9079 7.17304 29.8206C6.26034 30.7333 5.01814 31.2476 3.72251 31.2476C2.42689 31.2476 1.18469 30.7333 0.271995 29.8206C-0.640702 28.9079 -1.15498 27.6656 -1.15498 26.37V26.29C-1.14493 25.5842 -1.33946 24.8931 -1.71333 24.3095C-2.0872 23.7258 -2.61809 23.2769 -3.24998 23.02C-3.86721 22.7478 -4.54858 22.6889 -5.2 22.8481C-5.85142 23.0073 -6.43926 23.3766 -6.86998 23.91L-6.92999 23.97C-7.30277 24.4082 -7.77318 24.7566 -8.30153 24.9871C-8.82989 25.2176 -9.40734 25.325 -9.99998 25.3C-11.1935 25.3 -12.3381 24.8206 -13.182 23.9768C-14.0258 23.133 -14.5052 21.9884 -14.5052 20.795C-14.5052 19.6016 -14.0258 18.457 -13.182 17.6132C-12.3381 16.7693 -11.1935 16.29 -9.99998 16.29H-9.80997C-9.0941 16.28 -8.40301 16.0854 -7.81935 15.7116C-7.2357 15.3377 -6.7868 14.8068 -6.52998 14.175C-6.25775 13.5573 -6.19893 12.8759 -6.35808 12.2245C-6.51723 11.573 -6.88661 10.9852 -7.41999 10.555C-7.85872 10.1817 -8.20291 9.70926 -8.42365 9.17558C-8.64439 8.64191 -8.73507 8.06357 -8.68737 7.48718C-8.63967 6.9108 -8.45492 6.35147 -8.14701 5.85494C-7.83911 5.3584 -7.41658 4.93949 -6.91001 4.635C-6.40344 4.33052 -5.82828 4.14877 -5.23968 4.10426C-4.65107 4.05974 -4.05966 4.15342 -3.51483 4.3784C-2.97 4.60338 -2.48843 4.95284 -2.10998 5.39L-2.04999 5.455C-1.62166 5.9883 -1.0339 6.35673 -0.374975 6.54721C0.283949 6.7377 0.965272 6.73854 1.62499 6.54999H1.67998C2.29283 6.28721 2.80938 5.84468 3.16709 5.27516C3.5248 4.70565 3.70635 4.03544 3.69269 3.35V3.14C3.69269 1.84437 4.20696 0.602174 5.11966 -0.310525C6.03235 -1.22322 7.27455 -1.7375 8.57018 -1.7375C9.8658 -1.7375 11.108 -1.22322 12.0207 -0.310525C12.9334 0.602174 13.4477 1.84437 13.4477 3.14V3.22C13.4358 3.90996 13.6123 4.58781 13.977 5.17033C14.3416 5.75286 14.8735 6.21177 15.5 6.47C16.1172 6.74225 16.7986 6.80107 17.45 6.64192C18.1014 6.48277 18.6893 6.11339 19.12 5.58L19.18 5.52C19.5528 5.0818 20.0232 4.73341 20.5516 4.50287C21.0799 4.27232 21.6574 4.16497 22.25 4.19C23.4434 4.19 24.588 4.66937 25.4318 5.51323C26.2757 6.35709 26.755 7.50163 26.755 8.695C26.755 9.88837 26.2757 11.0329 25.4318 11.8768C24.588 12.7207 23.4434 13.2 22.25 13.2H22.06C21.37 13.21 20.7022 13.4046 20.1185 13.7785C19.5348 14.1523 19.0859 14.6832 18.83 15.315V15.315"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">Personalization Engine</div>
+                      <div className="text-sm text-zinc-500 mt-1">
+                        AI adapts content delivery based on your learning style
+                        and pace
+                      </div>
+                      <div className="mt-3 text-xs inline-flex items-center px-2 py-1 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400">
+                        <span className="mr-1">●</span> Learns as you learn
+                      </div>
                     </div>
                   </div>
                 </div>

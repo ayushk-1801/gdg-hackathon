@@ -1,12 +1,10 @@
 import React from "react";
-import { Youtube } from "lucide-react";
-import Link from "next/link";
-import { Space_Mono } from 'next/font/google'
+import { Space_Mono } from "next/font/google";
 
-const spaceMono = Space_Mono({ 
-  weight: ['400', '700'],
-  subsets: ['latin']
-})
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
 
 const Footer = () => {
   return (
@@ -14,7 +12,9 @@ const Footer = () => {
       <div className="w-full px-2 sm:px-4 overflow-hidden">
         <div className="flex justify-center items-center flex-col">
           <div className="w-full text-center pb-8">
-            <span className={`text-[5rem] sm:text-[7rem] md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold text-zinc-900 dark:text-white tracking-wider ${spaceMono.className} leading-none`}>
+            <span
+              className={`text-[5rem] sm:text-[7rem] md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold text-zinc-900 dark:text-white tracking-wider ${spaceMono.className} leading-none`}
+            >
               Benkyoshi
             </span>
           </div>
