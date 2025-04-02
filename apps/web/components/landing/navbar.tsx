@@ -66,7 +66,7 @@ export default function Navbar() {
 
         {/* Buttons */}
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex mr-2">
+          <div className="hidden sm:flex">
             <ThemeToggle />
           </div>
 
@@ -82,7 +82,7 @@ export default function Navbar() {
             <>
               <Button
                 variant="ghost"
-                className="hidden xs:inline-flex text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300"
+                className="hidden sm:inline-flex text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300"
                 onClick={() => handleNavigation("/auth/signup")}
               >
                 Sign up
@@ -119,7 +119,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white/70 dark:bg-zinc-900/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-zinc-800/30"
+            className="md:hidden border-b border-slate-200/20 dark:border-zinc-800/20 bg-gradient-to-b from-white/40 to-white/20 dark:from-zinc-950/40 dark:to-zinc-950/10 backdrop-blur-md supports-[backdrop-filter]:from-white/30 supports-[backdrop-filter]:to-white/10 dark:supports-[backdrop-filter]:from-zinc-950/30 dark:supports-[backdrop-filter]:to-zinc-950/5"
           >
             <div className="container mx-auto py-4 px-4 flex flex-col space-y-3">
               <Link
@@ -143,7 +143,7 @@ export default function Navbar() {
               >
                 About Us
               </Link>
-              <div className="pt-2 border-t border-slate-200/50 dark:border-zinc-800/30 flex items-center justify-between">
+              <div className="pt-2 border-t border-slate-200/20 dark:border-zinc-800/20 flex items-center justify-between">
                 <ThemeToggle />
                 {session ? (
                   <Button

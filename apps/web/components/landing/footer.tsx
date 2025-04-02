@@ -13,7 +13,7 @@ const Footer = () => {
         <div className="flex justify-center items-center flex-col">
           <div className="w-full text-center pb-8">
             <span
-              className={`text-[5rem] sm:text-[7rem] md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold text-zinc-900 dark:text-white tracking-wider ${spaceMono.className} leading-none`}
+              className={`text-[4rem] sm:text-[7rem] md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold text-zinc-900 dark:text-white tracking-wider ${spaceMono.className} leading-none`}
             >
               Benkyoshi
             </span>
