@@ -105,13 +105,14 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.8 }}
             className="mt-24 relative"
           >
-            <div className="aspect-[2/1] w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
+            <div className="w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
               <video
               autoPlay
               loop
               muted
+              controls
               playsInline
-              className="w-full h-full object-cover rounded-xl bg-gray-600"
+              className="w-full h-auto object-contain rounded-xl bg-gray-600"
               >
               <source src="/hero-video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
