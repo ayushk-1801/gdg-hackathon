@@ -40,7 +40,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center rounded-xl bg-slate-100/80 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 text-sm shadow-lg border border-slate-200/50 dark:border-zinc-800/50"
+            className="inline-flex items-center rounded-xl bg-slate-100/80 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 text-xs sm:text-sm shadow-lg border border-slate-200/50 dark:border-zinc-800/50"
           >
             <span className="mr-3 rounded-sm bg-rose-600 px-1.5 py-0.5 text-xs font-medium text-white">
               New
@@ -53,73 +53,73 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="py-10 md:py-10 relative z-10">
-          <div className="mx-auto max-w-5xl text-center space-y-10">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-800 dark:from-white dark:via-zinc-200 dark:to-zinc-400"
-            >
-              Transform YouTube content
-              <br className="mt-2" />
-              <span className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl mt-2 block">
-                into engaging courses
-              </span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="mt-10 text-xl text-zinc-700 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed"
-            >
-              The best learning platforms in the AI era aren't solo
-              experiences—they're collaborative. Benkyoshi provides customizable
-              pre-built features to make your courses engaging, interactive, and
-              AI-ready.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.6 }}
-              className="mt-14 flex flex-col sm:flex-row gap-6 justify-center"
-            >
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-10 py-7 text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
+          <section className="py-10 md:py-10 relative z-10">
+            <div className="mx-auto max-w-5xl text-center space-y-10">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-800 dark:from-white dark:via-zinc-200 dark:to-zinc-400"
               >
-                Get Started
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-10 py-7 text-base backdrop-blur-sm transition-all duration-300"
+                Transform YouTube content
+                <br className="mt-2" />
+                <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mt-2 block">
+            into engaging courses
+                </span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="mt-10 text-base sm:text-lg md:text-xl text-zinc-700 dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed"
               >
-                Explore courses <ArrowRight className="h-4 w-4" />
-              </Button>
-            </motion.div>
-          </div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-            className="mt-24 relative"
-          >
-            <div className="w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
-              <video
-                autoPlay
-                loop
-                muted
-                controls
-                playsInline
-                className="w-full h-auto object-contain rounded-xl bg-gray-600"
+                The best learning platforms in the AI era aren't solo
+                experiences—they're collaborative. Benkyoshi provides customizable
+                pre-built features to make your courses engaging, interactive, and
+                AI-ready.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+                className="mt-14 flex flex-col sm:flex-row gap-6 justify-center"
               >
-                <source src="/hero-video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                <Button
+            size="lg"
+            className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
+                >
+            Get Started
+                </Button>
+                <Button
+            variant="outline"
+            size="lg"
+            className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base backdrop-blur-sm transition-all duration-300"
+                >
+            Explore courses <ArrowRight className="h-4 w-4" />
+                </Button>
+              </motion.div>
             </div>
-          </motion.div>
-        </section>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="mt-16 sm:mt-24 relative"
+            >
+              <div className="w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
+                <video
+            autoPlay
+            loop
+            muted
+            controls
+            playsInline
+            className="w-full h-auto object-contain rounded-xl bg-gray-600"
+                >
+            <source src="/hero-video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+                </video>
+              </div>
+            </motion.div>
+          </section>
 
         {/* Features Section */}
         <section
