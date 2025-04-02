@@ -18,20 +18,22 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white">
-      <Navbar />
-
-      <main className="px-40 relative">
-        {/* Spotlight effect behind announcement and hero */}
+    <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white relative">
+      {/* Spotlight effect positioned behind everything */}
+      <div className="absolute inset-0 overflow-hidden">
         <Spotlight 
           gradientFirst="radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 50%, hsla(350, 100%, 45%, 0) 80%)"
           gradientSecond="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 80%, transparent 100%)"
           gradientThird="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .06) 0, hsla(350, 100%, 45%, .02) 80%, transparent 100%)"
-          translateY={-100}
-          xOffset={150}
+          translateY={-50}
+          xOffset={100}
           duration={8}
         />
-        
+      </div>
+      
+      <Navbar />
+
+      <main className="px-4 md:px-8 lg:px-20 xl:px-40 relative">
         {/* Announcement Banner */}
         <div className="w-full flex justify-center pt-6 relative z-10">
           <motion.div
