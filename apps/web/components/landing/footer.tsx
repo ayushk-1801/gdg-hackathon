@@ -10,7 +10,7 @@ const spaceMono = Space_Mono({
 
 const Footer = () => {
   return (
-    <footer className="border-t pt-10 border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-zinc-900">
+    <footer className="border-t pt-10 border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-zinc-900 shadow-[0px_-8px_15px_rgba(0,0,0,0.1)] dark:shadow-[0px_-8px_15px_rgba(0,0,0,0.35)] rounded-t-[60px]">
       <div className="w-full px-2 sm:px-4 overflow-hidden">
         <div className="flex justify-center items-center flex-col">
           <div className="w-full text-center pb-8">
