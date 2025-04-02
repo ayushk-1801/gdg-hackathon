@@ -83,9 +83,9 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300"
-                onClick={() => handleNavigation("/auth/signin")}
+                onClick={() => handleNavigation("/auth/signup")}
               >
-                Sign in
+                Sign up
               </Button>
               <Button
                 variant="outline"

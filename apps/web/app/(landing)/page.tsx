@@ -88,14 +88,14 @@ export default function LandingPage() {
                 size="lg"
                 className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-10 py-7 text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
               >
-                Book a demo
+                Get Started
               </Button>
               <Button
                 variant="outline"
                 size="lg"
                 className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-10 py-7 text-base backdrop-blur-sm transition-all duration-300"
               >
-                Start today for free <ArrowRight className="ml-2.5 h-4 w-4" />
+                Explore courses <ArrowRight className="h-4 w-4" />
               </Button>
             </motion.div>
           </div>
@@ -325,7 +325,7 @@ export default function LandingPage() {
                 variant="link"
                 className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-all duration-300"
               >
-                Browse examples <ArrowRight className="ml-2.5 h-4 w-4" />
+                Browse examples <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
 
@@ -754,7 +754,7 @@ export default function LandingPage() {
                   size="lg"
                   className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-10 py-7 text-base backdrop-blur-sm transition-all duration-300"
                 >
-                  Explore courses <ArrowRight className="ml-2.5 h-4 w-4" />
+                  Explore courses <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </motion.div>
