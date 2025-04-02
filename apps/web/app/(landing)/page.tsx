@@ -106,16 +106,15 @@ export default function LandingPage() {
             className="mt-24 relative"
           >
             <div className="aspect-[2/1] w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
-              <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-black/80 via-transparent to-transparent z-10 rounded-xl"></div>
               <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover rounded-xl"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover rounded-xl bg-gray-600"
               >
-                <source src="/hero-video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
+              <source src="/hero-video.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
               </video>
             </div>
           </motion.div>

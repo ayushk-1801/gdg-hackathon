@@ -32,15 +32,17 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-slate-200/20 dark:border-zinc-800/20 bg-gradient-to-b from-white/40 to-white/20 dark:from-zinc-950/40 dark:to-zinc-950/10 backdrop-blur-md supports-[backdrop-filter]:from-white/30 supports-[backdrop-filter]:to-white/10 dark:supports-[backdrop-filter]:from-zinc-950/30 dark:supports-[backdrop-filter]:to-zinc-950/5">
-      <div className="container mx-auto grid grid-cols-[auto_1fr_auto] h-18 items-center px-4 sm:px-6 gap-4">
-        <div className="flex items-center">
+      <div className="container mx-auto grid grid-cols-3 h-18 items-center px-4 sm:px-6 gap-4">
+        {/* Logo - First Column */}
+        <div className="flex items-center justify-start">
           <Link href="/" className="flex items-center group">
-            <span className={`text-xl font-bold ${spaceMono.className} bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 group-hover:from-rose-400 group-hover:to-orange-400 transition-all duration-300`}>
+            <span className={`text-xl font-bold ${spaceMono.className} bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 group-hover:from-rose-400 group-hover:to-orange-400 transition-all duration-1000`}>
               Benkyoshi
             </span>
           </Link>
         </div>
 
+        {/* Navigation - Second Column */}
         <nav className="hidden md:flex items-center justify-center space-x-10">
           <Link
             href="#features"
@@ -62,6 +64,7 @@ export default function Navbar() {
           </Link>
         </nav>
 
+        {/* Buttons - Third Column */}
         <div className="flex items-center justify-end gap-2">
           <div className="hidden sm:flex">
             <ThemeToggle />
