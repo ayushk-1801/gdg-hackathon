@@ -8,6 +8,7 @@ import Navbar from "@/components/landing/navbar";
 import Footer from "@/components/landing/footer";
 import { motion } from "framer-motion";
 import { ArrowRightIcon } from "@/components/ui/arrow-right";
+import { Spotlight } from "@/components/ui/spotlight-new";
 
 export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
@@ -20,14 +21,24 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white">
       <Navbar />
 
-      <main className="px-40">
+      <main className="px-40 relative">
+        {/* Spotlight effect behind announcement and hero */}
+        <Spotlight 
+          gradientFirst="radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 50%, hsla(350, 100%, 45%, 0) 80%)"
+          gradientSecond="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 80%, transparent 100%)"
+          gradientThird="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .06) 0, hsla(350, 100%, 45%, .02) 80%, transparent 100%)"
+          translateY={-100}
+          xOffset={150}
+          duration={8}
+        />
+        
         {/* Announcement Banner */}
-        <div className="w-full flex justify-center pt-6">
+        <div className="w-full flex justify-center pt-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center rounded-xl bg-slate-100/80 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-0.5 text-sm shadow-lg border border-slate-200/50 dark:border-zinc-800/50"
+            className="inline-flex items-center rounded-xl bg-slate-100/80 dark:bg-zinc-900/80 backdrop-blur-sm px-2 py-1 text-sm shadow-lg border border-slate-200/50 dark:border-zinc-800/50"
           >
             <span className="mr-3 rounded-sm bg-rose-600 px-1.5 py-0.5 text-xs font-medium text-white">
               New
@@ -35,12 +46,12 @@ export default function LandingPage() {
             <span className="mr-3">
               AI-powered course generation ready to use
             </span>
-            <ArrowRightIcon size={12} className="-mr-1 rounded-full" />
+            <ArrowRightIcon size={11} className="-mr-1 rounded-full" />
           </motion.div>
         </div>
 
         {/* Hero Section */}
-        <section className="py-10 md:py-10">
+        <section className="py-10 md:py-10 relative z-10">
           <div className="mx-auto max-w-5xl text-center space-y-10">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -94,13 +105,16 @@ export default function LandingPage() {
           >
             <div className="aspect-[2/1] w-full overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-rose-600/10">
               <div className="absolute inset-0 bg-gradient-to-t from-white/80 dark:from-black/80 via-transparent to-transparent z-10 rounded-xl"></div>
-              <Image
-                src="/placeholder.svg?height=600&width=1200"
-                alt="3D shapes representing course modules"
-                width={1200}
-                height={600}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-full object-cover rounded-xl"
-              />
+              >
+                <source src="/hero-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </motion.div>
         </section>
@@ -175,7 +189,7 @@ export default function LandingPage() {
                 <p className="text-zinc-600 dark:text-zinc-400 mb-6">
                   Organize videos into modules with clear learning objectives.
                 </p>
-                <div className="bg-white dark:bg-zinc-900 p-6 h-64 flex items-center justify-center shadow-inner">
+                <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 h-64 flex items-center justify-center shadow-inner">
                   <div className="w-full">
                     <div className="flex gap-2 mb-4">
                       <div className="h-8 w-8 rounded bg-rose-600 flex items-center justify-center text-white font-bold">
