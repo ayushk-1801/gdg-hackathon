@@ -76,10 +76,23 @@ async function saveResultToDatabase(videoUrl: string, processedResult: any, play
     // If playlist doesn't exist, create it first
     if (existingPlaylist.length === 0) {
       console.log(`Creating new playlist: ${playlistLinkValue}`);
-      await db.insert(playlists).values({
-        playlist_link: playlistLinkValue,
-        title: `Playlist from ${playlistLinkValue}`
-      });
+      // Generate a UUID for the playlist ID
+      const playlistId = uuidv4();
+      console.log(`Generated playlist ID: ${playlistId}`);
+      
+      try {
+        await db.insert(playlists).values({
+          id: playlistId, // Explicitly assign the ID
+          playlist_link: playlistLinkValue,
+          title: `Playlist from ${playlistLinkValue}`
+        });
+        console.log(`Successfully created playlist with ID: ${playlistId}`);
+      } catch (error) {
+        console.error(`Error creating playlist:`, error);
+        throw new Error(`Failed to create playlist: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    } else {
+      console.log(`Using existing playlist with ID: ${existingPlaylist[0]?.id}`);
     }
     
     // Prepare data for video insertion

@@ -15,6 +15,13 @@
       "when": 1743791071685,
       "tag": "0001_cold_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743793485133,
+      "tag": "0002_chief_raza",
+      "breakpoints": true
     }
   ]
 }

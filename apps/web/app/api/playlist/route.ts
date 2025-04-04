@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     
     // Add playlist to database
     await db.insert(playlists).values({
+      id: crypto.randomUUID(),
       playlist_link: playlistUrl,
     }).execute();
     
