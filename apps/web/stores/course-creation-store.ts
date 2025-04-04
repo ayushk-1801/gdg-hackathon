@@ -27,6 +27,7 @@ interface CourseCreationState {
   setSuccessDialogOpen: (open: boolean) => void;
   
   calculateTotalDuration: () => string;
+  resetState: () => void; // Add resetState method to the interface
 }
 
 const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist> => {

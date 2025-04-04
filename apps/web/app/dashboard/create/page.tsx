@@ -30,13 +30,11 @@ export default function CreateCoursePage() {
     loading,
     error,
     step,
-    successDialogOpen,
     playlistData,
     setUrl,
     handleSubmit,
     handleGenerate,
     handleBack,
-    setSuccessDialogOpen,
     calculateTotalDuration,
     resetState,
   } = useCourseCreationStore();
