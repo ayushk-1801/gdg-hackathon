@@ -18,6 +18,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/queue": "*",
+    "axios": "^1.8.4",
     "bullmq": "^5.45.2",
     "dotenv": "^16.3.1"
   },
