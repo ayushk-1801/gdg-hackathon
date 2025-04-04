@@ -44,7 +44,7 @@ export default function CreateCoursePage() {
     if (step === 3) {
       resetState();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Function to navigate to explore page with search query
