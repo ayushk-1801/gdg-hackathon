@@ -3,8 +3,20 @@ import React, { useState, useEffect, useRef } from "react";
 
 
 import { useSidebar } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import quizData from "./sampledata";
+import { set } from "date-fns";
 
+export interface Question {
+  id: number;  
+  question: string;
+  answers: string[];
+  correctAnswer: string;}
+export interface QuizDataType { 
+  questions: Question[];
+}
 function Page() {
+    const [quiz, setQuiz] = useState<QuizDataType>(quizData);
   const { state } = useSidebar(); // Use state instead of collapsed
   const isSidebarCollapsed = state === "collapsed";
 
@@ -17,6 +29,8 @@ function Page() {
   // Track previous sidebar state to detect changes
   const prevSidebarStateRef = useRef(state);
   const [sidebarStateChanged, setSidebarStateChanged] = useState(false);
+
+   
 
   // Effect to detect sidebar state changes
   useEffect(() => {
@@ -108,43 +122,14 @@ function Page() {
   }, [state, isSticky, isSidebarCollapsed]);
 
   //smaple quiz data
-  // QuestionSet.js
-const quiz = {
-	questions: [
-		{
-			id: 1,
-			question: 'What does API stand for?',
-			answers: ['Application Programming Interface',
-				'Advanced Programming Interface',
-				'Application Program Interface',
-				'Automated Programming Interface'],
-			correctAnswer: 'Application Programming Interface',
-		},
 
-		{
-			id: 3,
-			question: `Which programming language is often 
-			used for building web servers?`,
-			answers: ['Java', 'Python', 'JavaScript', 'C#'],
-			correctAnswer: 'JavaScript',
-		},
-		{
-			id: 4,
-			question: 'What is the purpose of SQL?',
-			answers: ['Styling web pages', 'Querying databases',
-				'Creating animations', 'Developing mobile apps'],
-			correctAnswer: 'Querying databases',
-		},
-		{
-			id: 5,
-			question: 'What does MVC stand for in web development?',
-			answers: ['Model View Controller', 'Model Visual Controller',
-				'Model View Component', 'Model Visual Component'],
-			correctAnswer: 'Model View Controller',
-		},
-	],
-};
 
+const handlerMark = (id:number) => {
+      quiz.questions = quiz.questions.filter((question) => question.id !== id);
+      // Update the state or perform any other action as needed 
+      setQuiz({ ...quiz });
+
+};  
 
 
   return (
@@ -194,9 +179,12 @@ const quiz = {
                     </li>
                 ))}
                 </ul>
+                <div className="mt-4 flex items-center justify-between">
                 <p className="mt-4 text-sm text-gray-500">
                 Correct Answer: {question.correctAnswer}
                 </p>
+                <Button variant={"secondary"} onClick={()=>handlerMark(question.id)}>Unmark</Button>
+                </div>
             </div>
         ))}
       </div>
