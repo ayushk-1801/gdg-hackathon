@@ -10,6 +10,10 @@ import { eq } from "drizzle-orm";
 const MODEL_API_URL =
   process.env.MODEL_API_URL || "http://localhost:8000/transcript";
 
+// YouTube API configuration
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+const YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/videos";
+
 /**
  * Extract YouTube ID from a URL
  * @param url YouTube URL
@@ -37,6 +41,41 @@ async function processVideoWithModel(videoUrl: string) {
     console.error("Error calling model API:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(`Model API processing failed: ${errorMessage}`);
+  }
+}
+
+/**
+ * Fetch video details from YouTube API
+ * @param videoId YouTube video ID
+ * @returns Video details including title and thumbnail URL
+ */
+async function fetchYoutubeVideoDetails(videoId: string) {
+  if (!YOUTUBE_API_KEY) {
+    console.warn("YouTube API key not configured. Using default video metadata.");
+    return null;
+  }
+
+  try {
+    const response = await axios.get(YOUTUBE_API_URL, {
+      params: {
+        key: YOUTUBE_API_KEY,
+        id: videoId,
+        part: 'snippet'
+      }
+    });
+
+    if (!response.data || !response.data.items || response.data.items.length === 0) {
+      throw new Error(`No video found with ID: ${videoId}`);
+    }
+
+    const videoData = response.data.items[0].snippet;
+    return {
+      title: videoData.title,
+      thumbnail: videoData.thumbnails?.high?.url || videoData.thumbnails?.default?.url || "",
+    };
+  } catch (error) {
+    console.error("Error fetching YouTube video details:", error);
+    return null;
   }
 }
 
@@ -95,12 +134,16 @@ async function saveResultToDatabase(videoUrl: string, processedResult: any, play
       console.log(`Using existing playlist with ID: ${existingPlaylist[0]?.id}`);
     }
     
+    // Fetch video details from YouTube API
+    console.log(`Fetching YouTube details for video ID: ${videoId}`);
+    const youtubeDetails = await fetchYoutubeVideoDetails(videoId);
+    
     // Prepare data for video insertion
     const videoData = {
       id: uuidv4(),
       videoId: videoId,
-      title: processedResult.title || "",
-      thumbnail: processedResult.thumbnail || "",
+      title: youtubeDetails?.title || processedResult.title || "",
+      thumbnail: youtubeDetails?.thumbnail || processedResult.thumbnail || "",
       playlist_link: playlistLinkValue,
       summary: processedResult.summary || "",
       quizzes: processedResult.mcqs || [],
