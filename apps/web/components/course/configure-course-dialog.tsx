@@ -8,25 +8,13 @@ import {
   ArrowRight,
   Check,
   Loader2,
-  Settings,
-  Sparkles,
-  Info,
   ArrowLeft,
   User,
   Youtube,
 } from "lucide-react";
 import Image from "next/image";
 import { YouTubePlaylist } from "@/types";
-import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ConfigureCourseFormProps {
   playlistData: YouTubePlaylist | null;
@@ -34,7 +22,7 @@ interface ConfigureCourseFormProps {
   onSelectVideo: (index: number) => void;
   onSelectAll: () => void;
   onGenerate: () => void;
-  onBack: () => void; // Added prop for back button functionality
+  onBack: () => void;
   loading: boolean;
   calculateTotalDuration: () => string;
 }
@@ -45,40 +33,28 @@ export function ConfigureCourseForm({
   onSelectVideo,
   onSelectAll,
   onGenerate,
-  onBack, // Added parameter
+  onBack,
   loading,
   calculateTotalDuration,
 }: ConfigureCourseFormProps) {
-  const [courseSettings, setCourseSettings] = useState({
-    includeQuizzes: true,
-    includeProjects: true,
-    difficultyLevel: "intermediate",
-    generationStyle: "comprehensive",
-  });
-
-  const handleSettingsChange = (key: string, value: any) => {
-    setCourseSettings((prev) => ({ ...prev, [key]: value }));
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full max-w-6xl mx-auto px-4 h-[calc(100vh-120px)]"
+      className="w-full max-w-4xl mx-auto px-4 h-[calc(100vh-120px)]"
     >
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl">
           Configure Your Course
         </h1>
         <p className="text-muted-foreground mt-2">
-          Review and customize the course before generating
+          Select videos to include in your course
         </p>
       </div>
 
       {playlistData && (
-        <div className="flex gap-6 h-[calc(100%-80px)]">
-          {/* Main Content */}
+        <div className="h-[calc(100%-80px)] flex flex-col">
           <div className="flex-1 overflow-y-auto pr-2">
             <div className="space-y-6">
               <div className="bg-card/50 backdrop-blur-sm border rounded-xl p-5 flex gap-5">
@@ -130,7 +106,7 @@ export function ConfigureCourseForm({
                       : "Select All"}
                   </Button>
                 </div>
-                <div className="bg-card/50 backdrop-blur-sm border rounded-xl p-4 max-h-[400px] overflow-y-auto">
+                <div className="bg-card/50 backdrop-blur-sm border rounded-xl p-4 max-h-[370px] overflow-y-auto">
                   <div className="space-y-3">
                     {playlistData.videos.map((video, index) => (
                       <div
@@ -174,7 +150,11 @@ export function ConfigureCourseForm({
                             className="h-8 w-8 p-0"
                           >
                             <Check
-                              className={`h-4 w-4 ${selectedVideos.has(index) ? "opacity-100" : "opacity-30"}`}
+                              className={`h-4 w-4 ${
+                                selectedVideos.has(index)
+                                  ? "opacity-100"
+                                  : "opacity-30"
+                              }`}
                             />
                             <span className="sr-only">
                               {selectedVideos.has(index)
@@ -191,209 +171,38 @@ export function ConfigureCourseForm({
             </div>
           </div>
 
-          {/* Sidebar with Customization Options */}
-          <div className="w-96 flex-shrink-0 border-l pl-5">
-            <div className="h-full flex flex-col overflow-hidden">
-              <div className="overflow-y-auto pr-2 flex-1">
-                <div className="flex items-center gap-2 mb-4">
-                  <Settings className="h-5 w-5 text-muted-foreground" />
-                  <h2 className="text-lg font-medium">Customization</h2>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-4 w-4 text-muted-foreground cursor-help ml-1" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-[250px]">
-                        <p className="text-xs">
-                          These settings help customize your course generation.
-                          You can always edit the content after generation.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
+          {/* Action Buttons */}
+          <div className="pt-4 mt-4 border-t">
+            <div className="flex justify-between items-center">
+              {/* Back Button */}
+              <Button
+                size={"lg"}
+                variant="outline"
+                onClick={onBack}
+                className="flex items-center"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
 
-                <div className="space-y-6">
-                  <div className="space-y-5">
-                    <div className="space-y-3">
-                      <Label className="text-sm font-medium">
-                        Course Difficulty
-                      </Label>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div
-                          className={`rounded-md cursor-pointer transition  hover:bg-muted/30 border ${
-                            courseSettings.difficultyLevel === "beginner"
-                              ? "border-2 bg-muted border-emerald-500 hover:border-emerald-600"
-                              : "hover:border-primary/50"
-                          }`}
-                          onClick={() =>
-                            handleSettingsChange("difficultyLevel", "beginner")
-                          }
-                        >
-                          <div className="text-center space-y-1 p-2">
-                            <p className="text-xs font-medium">Beginner</p>
-                            <p className="text-[10px] text-muted-foreground leading-tight">
-                              For newcomers
-                            </p>
-                          </div>
-                        </div>
-                        <div
-                          className={`rounded-md cursor-pointer transition hover:bg-muted/30 border ${
-                            courseSettings.difficultyLevel === "intermediate"
-                              ? "border-2 bg-muted border-blue-500 hover:border-blue-600"
-                              : "hover:border-primary/50"
-                          }`}
-                          onClick={() =>
-                            handleSettingsChange(
-                              "difficultyLevel",
-                              "intermediate"
-                            )
-                          }
-                        >
-                          <div className="text-center space-y-1 p-2">
-                            <p className="text-xs font-medium">Intermediate</p>
-                            <p className="text-[10px] text-muted-foreground leading-tight">
-                              Some experience
-                            </p>
-                          </div>
-                        </div>
-                        <div
-                          className={`rounded-md cursor-pointer transition hover:bg-muted/30 border ${
-                            courseSettings.difficultyLevel === "advanced"
-                              ? "border-2 bg-muted border-purple-500 hover:border-purple-600"
-                              : "hover:border-primary/50"
-                          }`}
-                          onClick={() =>
-                            handleSettingsChange("difficultyLevel", "advanced")
-                          }
-                        >
-                          <div className="text-center space-y-1 p-2">
-                            <p className="text-xs font-medium">Advanced</p>
-                            <p className="text-[10px] text-muted-foreground leading-tight">
-                              Expert level
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Separator className="my-2" />
-
-                    <div className="space-y-3">
-                      <Label className="text-sm font-medium">
-                        Generation Style
-                      </Label>
-                      <div className="space-y-2">
-                        <div
-                          className={`rounded-md border p-3 cursor-pointer transition hover:border-primary/50 hover:bg-muted/30 ${
-                            courseSettings.generationStyle === "concise"
-                              ? "bg-muted border-primary"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            handleSettingsChange("generationStyle", "concise")
-                          }
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-1 h-12 rounded-full bg-primary flex-shrink-0"></div>
-                            <div>
-                              <p className="text-sm font-medium">Concise</p>
-                              <p className="text-xs text-muted-foreground">
-                                Brief and to-the-point content focused on key
-                                concepts
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div
-                          className={`rounded-md border p-3 cursor-pointer transition hover:border-primary/50 hover:bg-muted/30 ${
-                            courseSettings.generationStyle === "comprehensive"
-                              ? "bg-muted border-primary"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            handleSettingsChange(
-                              "generationStyle",
-                              "comprehensive"
-                            )
-                          }
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-1 h-12 rounded-full bg-primary flex-shrink-0"></div>
-                            <div>
-                              <p className="text-sm font-medium">
-                                Comprehensive
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                Balanced coverage with examples and explanations
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div
-                          className={`rounded-md border p-3 cursor-pointer transition hover:border-primary/50 hover:bg-muted/30 ${
-                            courseSettings.generationStyle === "detailed"
-                              ? "bg-muted border-primary"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            handleSettingsChange("generationStyle", "detailed")
-                          }
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-1 h-12 rounded-full bg-primary flex-shrink-0"></div>
-                            <div>
-                              <p className="text-sm font-medium">Detailed</p>
-                              <p className="text-xs text-muted-foreground">
-                                In-depth coverage with thorough explanations and
-                                context
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-4 mt-4 border-t">
-                <div className="flex justify-between items-center">
-                  {/* Back Button */}
-                  <Button
-                    size={"lg"}
-                    variant="outline"
-                    onClick={onBack}
-                    className="flex items-center"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
-                  </Button>
-
-                  {/* Generate Button */}
-                  <Button
-                    size="lg"
-                    onClick={onGenerate}
-                    disabled={loading || selectedVideos.size === 0}
-                    className="flex-1 ml-4"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating Course
-                      </>
-                    ) : (
-                      <>
-                        Generate Course
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
+              {/* Generate Button */}
+              <Button
+                size="lg"
+                onClick={onGenerate}
+                disabled={loading || selectedVideos.size === 0}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating Course
+                  </>
+                ) : (
+                  <>
+                    Generate Course
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>

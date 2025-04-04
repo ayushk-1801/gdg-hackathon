@@ -4,20 +4,15 @@ import type React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, InfoIcon, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { ConfigureCourseForm } from "@/components/course/configure-course-dialog";
-import { SuccessDialog } from "@/components/course/success-dialog";
+import { SuccessPage } from "@/components/course/success-dialog";
 import { ArrowRight } from "lucide-react";
 import { useCourseCreationStore } from "@/stores/course-creation-store";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 // Define popular course categories
 const POPULAR_CATEGORIES = [
@@ -46,7 +41,16 @@ export default function CreateCoursePage() {
     handleBack,
     setSuccessDialogOpen,
     calculateTotalDuration,
+    resetState, // Add this from the store
   } = useCourseCreationStore();
+
+  // Reset to step 1 when component mounts if we're at step 3
+  useEffect(() => {
+    if (step === 3) {
+      resetState();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Function to navigate to explore page with search query
   const navigateToExplore = (categoryName: string) => {
@@ -133,48 +137,6 @@ export default function CreateCoursePage() {
                   </Button>
                 ))}
               </motion.div>
-
-              <motion.div
-                className="mt-4 flex justify-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-muted-foreground"
-                      >
-                        <InfoIcon className="h-4 w-4 mr-1" />
-                        Supported URL formats
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="bottom"
-                      align="center"
-                      className="max-w-base"
-                    >
-                      <div className="text-sm">
-                        <p className="font-medium mb-2">
-                          Supported YouTube URL formats:
-                        </p>
-                        <ul className="">
-                          <li>
-                            https://www.youtube.com/playlist?list=PLAYLIST_ID
-                          </li>
-                          <li>https://youtube.com/playlist?list=PLAYLIST_ID</li>
-                          <li>
-                            https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
-                          </li>
-                        </ul>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </motion.div>
             </motion.form>
           </motion.div>
         )}
@@ -195,14 +157,14 @@ export default function CreateCoursePage() {
           </div>
         )}
 
-        {/* Success Dialog Component (Step 3) */}
-        <SuccessDialog
-          open={successDialogOpen}
-          onOpenChange={setSuccessDialogOpen}
-          courseTitle={playlistData?.title || "YouTube Course"}
-          videoCount={selectedVideos.size}
-          totalDuration={calculateTotalDuration()}
-        />
+        {/* Step 3: Success Page */}
+        {step === 3 && (
+          <SuccessPage
+            courseTitle={playlistData?.title || "YouTube Course"}
+            videoCount={selectedVideos.size}
+            totalDuration={calculateTotalDuration()}
+          />
+        )}
       </div>
     </AuroraBackground>
   );

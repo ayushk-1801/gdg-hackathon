@@ -31,8 +31,8 @@ export default function PlaylistGrid({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[...Array(8)].map((_, i) => (
           <div key={i} className="bg-card dark:bg-card/90 rounded-lg overflow-hidden border border-border">
             <Skeleton className="aspect-video w-full rounded-none rounded-t-lg" />
             <div className="p-4">
@@ -51,7 +51,7 @@ export default function PlaylistGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {playlists.map((playlist) => (
         <PlaylistCard key={playlist.id} playlist={playlist} />
       ))}
