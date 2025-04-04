@@ -36,6 +36,15 @@ async function processVideoWithModel(videoUrl: string) {
   }
 }
 
+/**
+ * Creates a delay for the specified number of milliseconds
+ * @param ms Milliseconds to delay
+ * @returns Promise that resolves after the delay
+ */
+const delay = (ms: number): Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 // Create a worker to process the queue
 const worker = new Worker(
   "youtube-video-processing",
@@ -75,6 +84,11 @@ const worker = new Worker(
       if (processedResult.mcqs?.length > 0) {
         console.log("First question:", processedResult.mcqs[0].question);
       }
+
+      // Wait for 1 minute (60000 milliseconds) after processing
+      console.log(`Waiting for 1 minute before completing job ${job.id}...`);
+      await delay(60000);
+      console.log(`Wait complete for job ${job.id}`);
 
       // Return the processing results
       return {

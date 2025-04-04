@@ -21,13 +21,13 @@ interface CourseCreationState {
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   toggleVideoSelection: (index: number) => void;
   handleSelectAll: () => void;
-  handleGenerate: () => void;
+  handleGenerate: () => Promise<void>;
   handleBack: () => void;
   setConfigDialogOpen: (open: boolean) => void;
   setSuccessDialogOpen: (open: boolean) => void;
   
   calculateTotalDuration: () => string;
-  resetState: () => void; // Add resetState method to the interface
+  resetState: () => void;
 }
 
 const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist> => {
@@ -108,17 +108,53 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
     set({ selectedVideos: newSelectedVideos });
   },
   
-  handleGenerate: () => {
-    set({ loading: true });
+  handleGenerate: async () => {
+    set({ loading: true, error: null });
     
-    setTimeout(() => {
+    try {
+      const { url, playlistData, selectedVideos } = get();
+      
+      if (!playlistData) {
+        throw new Error("Playlist data is missing");
+      }
+      
+      // Prepare the selected indices
+      const selectedIndices = Array.from(selectedVideos);
+      
+      // Make API call to check/add playlist and videos to queue
+      const response = await fetch('/api/playlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playlistUrl: url,
+          playlistData: {
+            ...playlistData,
+            selectedIndices
+          }
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to process playlist');
+      }
+      
+      // Success - move to the next step
       set({
         loading: false,
         step: 3,
         configDialogOpen: false,
         successDialogOpen: true
       });
-    }, 3000);
+      
+    } catch (err: any) {
+      set({ 
+        loading: false, 
+        error: err.message || "An error occurred while processing your request."
+      });
+    }
   },
   
   handleBack: () => {

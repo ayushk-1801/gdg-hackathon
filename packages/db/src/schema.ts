@@ -60,20 +60,35 @@ export const verification = pgTable("verification", {
 
 export const playlists=pgTable("playlists", {
     playlist_link: text("link").primaryKey(),
+    title: text("title").default(""),
 });
+
 export const videos=pgTable("videos", {
     id:text("id").primaryKey(),
     videoId: text("videoId").notNull(),
+    title: text("title").default(""),
+    thumbnail: text("thumbnail").default(""),
     playlist_link: text("link").notNull().references(() => playlists.playlist_link, { onDelete: "cascade" }),
     summary: text("summary").default(""),
     quizzes:jsonb("quiz").default([]),
     refLink:jsonb("refLink").default([])
 });
+
+export const enrollments = pgTable("enrollments", {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    playlistLink: text("playlist_link").notNull().references(() => playlists.playlist_link, { onDelete: "cascade" }),
+    enrolledAt: timestamp("enrolled_at").notNull().defaultNow(),
+    completedAt: timestamp("completed_at"),
+    progress: integer("progress").default(0),
+});
+
 export const schema = {
   user,
   session,
   account,
   verification,
   playlists,
-  videos
+  videos,
+  enrollments
 };

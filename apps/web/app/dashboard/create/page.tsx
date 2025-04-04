@@ -139,6 +139,13 @@ export default function CreateCoursePage() {
         {/* Step 2: Configure Course Form directly on the page */}
         {step === 2 && playlistData && (
           <div className="flex-1">
+            {error && (
+              <Alert variant="destructive" className="mb-4 max-w-3xl mx-auto">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <ConfigureCourseForm
               playlistData={playlistData}
               onBack={handleBack}
