@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import  db  from '@repo/db';
+import db from '@repo/db';
 import { playlists } from '@repo/db/schema';
 import { eq } from 'drizzle-orm';
 import { addPlaylistVideosToQueue } from '@repo/queue';
@@ -8,6 +8,37 @@ function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
   const match = url.match(listRegex);
   return match && match[1] ? match[1] : null;
+}
+
+// Function to fetch playlist title from YouTube API
+async function fetchPlaylistTitle(playlistId: string): Promise<string> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  
+  if (!apiKey) {
+    console.warn('YOUTUBE_API_KEY not set in environment variables');
+    return 'Untitled Playlist'; // Default title if API key is missing
+  }
+  
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${apiKey}`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`YouTube API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.items && data.items.length > 0) {
+      return data.items[0].snippet.title;
+    }
+    
+    return 'Untitled Playlist';
+  } catch (error) {
+    console.error('Error fetching playlist title:', error);
+    return 'Untitled Playlist';
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -38,10 +69,14 @@ export async function POST(req: NextRequest) {
       });
     }
     
-    // Add playlist to database
+    // Fetch the playlist title from YouTube API
+    const playlistTitle = await fetchPlaylistTitle(playlistId);
+    
+    // Add playlist to database with title
     await db.insert(playlists).values({
       id: crypto.randomUUID(),
       playlist_link: playlistUrl,
+      title: playlistTitle, // Add the title to the database
     }).execute();
     
     // Prepare video URLs for queue
