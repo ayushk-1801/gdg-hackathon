@@ -4,13 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  ArrowRight,
-  Loader2,
-  ArrowLeft,
-  User,
-  Youtube,
-} from "lucide-react";
+import { ArrowRight, Loader2, ArrowLeft, User, Youtube } from "lucide-react";
 import Image from "next/image";
 import { YouTubePlaylist } from "@/types";
 import { useState } from "react";
@@ -145,11 +139,7 @@ export function ConfigureCourseForm({
               </Button>
 
               {/* Generate Button */}
-              <Button
-                size="lg"
-                onClick={onGenerate}
-                disabled={loading}
-              >
+              <Button size="lg" onClick={onGenerate} disabled={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
