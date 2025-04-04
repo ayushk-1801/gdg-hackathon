@@ -31,6 +31,7 @@ export default function CreateCoursePage() {
     error,
     step,
     playlistData,
+    courseId,
     setUrl,
     handleSubmit,
     handleGenerate,
@@ -47,11 +48,24 @@ export default function CreateCoursePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Effect to redirect to course page when courseId is available
+  useEffect(() => {
+    if (courseId) {
+      router.push(`/dashboard/courses/${courseId}`);
+    }
+  }, [courseId, router]);
+
   // Function to navigate to explore page with search query
   const navigateToExplore = (categoryName: string) => {
     const searchParams = new URLSearchParams();
     searchParams.set("q", categoryName);
     router.push(`/dashboard/explore?${searchParams.toString()}`);
+  };
+
+  // Custom submit handler that wraps the store's handleSubmit
+  const onSubmit = async (e: React.FormEvent) => {
+    await handleSubmit(e);
+    // If courseId is set during handleSubmit, this will redirect via the useEffect
   };
 
   return (
@@ -72,7 +86,7 @@ export default function CreateCoursePage() {
             </h1>
 
             <motion.form
-              onSubmit={handleSubmit}
+              onSubmit={onSubmit}
               className="mx-auto max-w-2xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { YouTubePlaylist } from '@/types';
+import { useRouter } from "next/navigation";
 
 function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
@@ -16,6 +17,7 @@ interface CourseCreationState {
   successDialogOpen: boolean;
   playlistData: YouTubePlaylist | null;
   selectedVideos: Set<number>;
+  courseId: string | null;
 
   setUrl: (url: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
@@ -28,6 +30,8 @@ interface CourseCreationState {
   
   calculateTotalDuration: () => string;
   resetState: () => void;
+  checkCourseExists: (playlistUrl: string) => Promise<boolean>;
+  enrollUserInCourse: (playlistUrl: string) => Promise<string>;
 }
 
 const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist> => {
@@ -50,6 +54,7 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
   successDialogOpen: false,
   playlistData: null,
   selectedVideos: new Set<number>(),
+  courseId: null,
 
   setUrl: (url) => set({ url }),
   
@@ -63,6 +68,16 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       
       if (!playlistId) {
         throw new Error("Invalid YouTube playlist URL. Please check the URL and try again.");
+      }
+
+      // First check if course already exists
+      const exists = await get().checkCourseExists(url);
+      
+      if (exists) {
+        // Course exists, enroll user and redirect
+        const courseId = await get().enrollUserInCourse(url);
+        set({ courseId });
+        return;
       }
       
       const data = await fetchYouTubePlaylist(playlistId);
@@ -204,5 +219,47 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       playlistData: null,
       selectedVideos: new Set(),
     });
+  },
+
+  // New function to check if course exists
+  checkCourseExists: async (playlistUrl) => {
+    try {
+      const response = await fetch("/api/courses/exists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playlistUrl }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to check course existence");
+      }
+      
+      const { exists } = await response.json();
+      return exists;
+    } catch (err) {
+      console.error("Error checking course existence:", err);
+      return false;
+    }
+  },
+  
+  // New function to enroll user in existing course
+  enrollUserInCourse: async (playlistUrl) => {
+    try {
+      const response = await fetch("/api/courses/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playlistUrl }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to enroll in course");
+      }
+      
+      const { courseId } = await response.json();
+      return courseId;
+    } catch (err: any) {
+      set({ error: err.message });
+      throw err;
+    }
   }
 }));

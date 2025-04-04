@@ -7,7 +7,7 @@ import { addPlaylistVideosToQueue } from '@repo/queue';
 function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
   const match = url.match(listRegex);
-  return match ? match[1] : null;
+  return match && match[1] ? match[1] : null;
 }
 
 export async function POST(req: NextRequest) {
