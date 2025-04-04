@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   ArrowRight,
-  Check,
   Loader2,
   ArrowLeft,
   User,
@@ -18,9 +17,6 @@ import { useState } from "react";
 
 interface ConfigureCourseFormProps {
   playlistData: YouTubePlaylist | null;
-  selectedVideos: Set<number>;
-  onSelectVideo: (index: number) => void;
-  onSelectAll: () => void;
   onGenerate: () => void;
   onBack: () => void;
   loading: boolean;
@@ -29,9 +25,6 @@ interface ConfigureCourseFormProps {
 
 export function ConfigureCourseForm({
   playlistData,
-  selectedVideos,
-  onSelectVideo,
-  onSelectAll,
   onGenerate,
   onBack,
   loading,
@@ -49,7 +42,7 @@ export function ConfigureCourseForm({
           Configure Your Course
         </h1>
         <p className="text-muted-foreground mt-2">
-          Select videos to include in your course
+          Review your course content before generating
         </p>
       </div>
 
@@ -100,25 +93,13 @@ export function ConfigureCourseForm({
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-medium text-lg">Videos in Playlist</h3>
-                  <Button variant="outline" size="sm" onClick={onSelectAll}>
-                    {selectedVideos.size === playlistData.videos.length
-                      ? "Deselect All"
-                      : "Select All"}
-                  </Button>
                 </div>
                 <div className="bg-card/50 backdrop-blur-sm border rounded-xl p-4 max-h-[370px] overflow-y-auto">
                   <div className="space-y-3">
                     {playlistData.videos.map((video, index) => (
                       <div
                         key={index}
-                        className={`flex items-center gap-3 rounded-md border p-3 transition-colors ${
-                          selectedVideos.has(index)
-                            ? "bg-muted/40"
-                            : "hover:bg-muted/20"
-                        }`}
-                        onClick={() => onSelectVideo(index)}
-                        role="button"
-                        tabIndex={0}
+                        className="flex items-center gap-3 rounded-md border p-3 bg-muted/20"
                       >
                         <div className="h-12 w-20 overflow-hidden rounded bg-muted flex-shrink-0">
                           <Image
@@ -140,28 +121,6 @@ export function ConfigureCourseForm({
                           <p className="text-xs text-muted-foreground">
                             {video.duration}
                           </p>
-                        </div>
-                        <div className="flex-shrink-0">
-                          <Button
-                            variant={
-                              selectedVideos.has(index) ? "default" : "ghost"
-                            }
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <Check
-                              className={`h-4 w-4 ${
-                                selectedVideos.has(index)
-                                  ? "opacity-100"
-                                  : "opacity-30"
-                              }`}
-                            />
-                            <span className="sr-only">
-                              {selectedVideos.has(index)
-                                ? "Deselect"
-                                : "Select"}
-                            </span>
-                          </Button>
                         </div>
                       </div>
                     ))}
@@ -189,7 +148,7 @@ export function ConfigureCourseForm({
               <Button
                 size="lg"
                 onClick={onGenerate}
-                disabled={loading || selectedVideos.size === 0}
+                disabled={loading}
               >
                 {loading ? (
                   <>

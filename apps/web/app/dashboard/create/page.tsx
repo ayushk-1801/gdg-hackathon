@@ -32,16 +32,13 @@ export default function CreateCoursePage() {
     step,
     successDialogOpen,
     playlistData,
-    selectedVideos,
     setUrl,
     handleSubmit,
-    toggleVideoSelection,
-    handleSelectAll,
     handleGenerate,
     handleBack,
     setSuccessDialogOpen,
     calculateTotalDuration,
-    resetState, // Add this from the store
+    resetState,
   } = useCourseCreationStore();
 
   // Reset to step 1 when component mounts if we're at step 3
@@ -146,9 +143,6 @@ export default function CreateCoursePage() {
           <div className="flex-1">
             <ConfigureCourseForm
               playlistData={playlistData}
-              selectedVideos={selectedVideos}
-              onSelectVideo={toggleVideoSelection}
-              onSelectAll={handleSelectAll}
               onBack={handleBack}
               onGenerate={handleGenerate}
               loading={loading}
@@ -161,7 +155,7 @@ export default function CreateCoursePage() {
         {step === 3 && (
           <SuccessPage
             courseTitle={playlistData?.title || "YouTube Course"}
-            videoCount={selectedVideos.size}
+            videoCount={playlistData?.videos.length || 0}
             totalDuration={calculateTotalDuration()}
           />
         )}
