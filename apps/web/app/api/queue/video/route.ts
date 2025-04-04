@@ -4,7 +4,7 @@ import { addYoutubeVideoToQueue } from '@repo/queue';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { videoUrl, userId, metadata } = body;
+    const { videoUrl, userId, metadata, playlistUrl } = body;
 
     if (!videoUrl) {
       return NextResponse.json(
@@ -13,8 +13,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!playlistUrl) {
+      return NextResponse.json(
+        { error: 'Playlist URL is required' },
+        { status: 400 }
+      );
+    }
+
     // Add the video to the processing queue
-    const job = await addYoutubeVideoToQueue(videoUrl, userId, metadata);
+    const job = await addYoutubeVideoToQueue(videoUrl, playlistUrl, userId, metadata);
 
     return NextResponse.json(
       { 

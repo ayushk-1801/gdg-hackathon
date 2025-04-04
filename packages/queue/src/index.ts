@@ -35,19 +35,23 @@ export const youtubeQueue = new Queue<VideoJobData>(YOUTUBE_QUEUE_NAME, {
 /**
  * Add a YouTube video URL to the processing queue
  * @param videoUrl - The YouTube video URL to process
- * @param playlistUrl - Optional playlist URL this video belongs to
+ * @param playlistUrl - The playlist URL this video belongs to
  * @param userId - Optional user ID associated with the request
  * @param metadata - Optional additional metadata
  * @returns The created job object
  */
 export async function addYoutubeVideoToQueue(
   videoUrl: string,
-  playlistUrl?: string,
+  playlistUrl: string,
   userId?: string,
   metadata?: Record<string, any>
 ) {
   if (!videoUrl) {
     throw new Error("Video URL is required");
+  }
+  
+  if (!playlistUrl) {
+    throw new Error("Playlist URL is required");
   }
 
   // Basic validation for YouTube URLs
@@ -76,25 +80,29 @@ export async function addYoutubeVideoToQueue(
  * @param videoUrls - Array of video URLs to process
  * @param playlistUrl - The playlist URL these videos belong to
  * @param userId - Optional user ID associated with the request
+ * @param metadata - Optional additional metadata
  * @returns Array of created job objects
  */
 export async function addPlaylistVideosToQueue(
   videoUrls: string[],
   playlistUrl: string,
-  userId?: string
+  userId?: string,
+  metadata: Record<string, any> = {}
 ) {
   if (!videoUrls.length) {
     throw new Error("No video URLs provided");
   }
 
   try {
-    // await youtubeQueue.drain();
-    // await youtubeQueue.clean(0, 1000, "completed"); // clean up to 1000 completed jobs older than 0 ms
-    // await youtubeQueue.clean(0, 1000, "failed"); // clean up to 1000 failed jobs older than 0 ms
+    // Default metadata if none provided
+    const videoMetadata = {
+      ...metadata,
+      playlistLink: playlistUrl, // Ensure playlistLink is always included
+    };
 
     const jobs = await Promise.all(
       videoUrls.map(async (videoUrl) => {
-        return addYoutubeVideoToQueue(videoUrl, playlistUrl, userId);
+        return addYoutubeVideoToQueue(videoUrl, playlistUrl, userId, videoMetadata);
       })
     );
 

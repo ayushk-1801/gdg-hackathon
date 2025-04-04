@@ -52,8 +52,17 @@ export async function POST(req: NextRequest) {
       `https://www.youtube.com/watch?v=${video.videoId}`
     );
     
-    // Add all videos to the queue
-    await addPlaylistVideosToQueue(videoUrls, playlistUrl);
+    // Add all videos to the queue with metadata that includes the playlist link
+    console.log('Adding videos to queue:', videoUrls);
+    console.log('Playlist URL:', playlistUrl);
+    
+    // Pass the playlistUrl specifically as metadata.playlistLink to match what the worker expects
+    await addPlaylistVideosToQueue(
+      videoUrls, 
+      playlistUrl, 
+      undefined, // userId (optional)
+      { playlistLink: playlistUrl } // Include as metadata.playlistLink which is what the worker expects
+    );
     
     return NextResponse.json({ 
       success: true,

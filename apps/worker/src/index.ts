@@ -1,6 +1,10 @@
 import { Worker } from "bullmq";
 import { youtubeQueue } from "@repo/queue";
 import axios from "axios";
+import db from "@repo/db";
+import { videos, playlists } from "@repo/db/schema";
+import { v4 as uuidv4 } from "uuid";
+import { eq } from "drizzle-orm";
 
 // Model service configuration
 const MODEL_API_URL =
@@ -45,6 +49,65 @@ const delay = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+/**
+ * Save video processing results to the database
+ * @param videoUrl YouTube video URL
+ * @param processedResult Processing result from model API
+ * @param playlistLink Optional playlist link if video belongs to a playlist
+ * @returns The database entry
+ */
+async function saveResultToDatabase(videoUrl: string, processedResult: any, playlistLink?: string) {
+  try {
+    const videoId = extractYoutubeId(videoUrl);
+    
+    // Require a valid playlist link
+    if (!playlistLink) {
+      throw new Error("Playlist link is required. Videos must belong to a playlist.");
+    }
+    
+    const playlistLinkValue = playlistLink;
+    
+    // Check if the playlist exists - note we're using playlist_link field
+    const existingPlaylist = await db
+      .select()
+      .from(playlists)
+      .where(eq(playlists.playlist_link, playlistLinkValue));
+    
+    // If playlist doesn't exist, create it first
+    if (existingPlaylist.length === 0) {
+      console.log(`Creating new playlist: ${playlistLinkValue}`);
+      await db.insert(playlists).values({
+        playlist_link: playlistLinkValue,
+        title: `Playlist from ${playlistLinkValue}`
+      });
+    }
+    
+    // Prepare data for video insertion
+    const videoData = {
+      id: uuidv4(),
+      videoId: videoId,
+      title: processedResult.title || "",
+      thumbnail: processedResult.thumbnail || "",
+      playlist_link: playlistLinkValue,
+      summary: processedResult.summary || "",
+      quizzes: processedResult.mcqs || [],
+      refLink: processedResult.references || [],
+    };
+    
+    console.log(`Saving video data to database for video ID: ${videoId}`);
+    
+    // Insert into database
+    const result = await db.insert(videos).values(videoData).returning();
+    if (!result?.[0]) throw new Error('Failed to insert video into database');
+    console.log(`Successfully saved to database with ID: ${result[0].id}`);
+    
+    return result[0];
+  } catch (error) {
+    console.error("Error saving to database:", error);
+    throw new Error(`Database operation failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
 // Create a worker to process the queue
 const worker = new Worker(
   "youtube-video-processing",
@@ -85,17 +148,22 @@ const worker = new Worker(
         console.log("First question:", processedResult.mcqs[0].question);
       }
 
+      // Save the result to database
+      const playlistLink = metadata?.playlistLink || null;
+      const dbEntry = await saveResultToDatabase(videoUrl, processedResult, playlistLink);
+      console.log(`Data saved to database with ID: ${dbEntry.id}`);
+
       // Wait for 1 minute (60000 milliseconds) after processing
       console.log(`Waiting for 1 minute before completing job ${job.id}...`);
       await delay(60000);
       console.log(`Wait complete for job ${job.id}`);
 
-      // Return the processing results
+      // Return basic information and database reference instead of full result
       return {
         success: true,
         videoUrl,
         userId,
-        result: processedResult,
+        videoId: dbEntry.id,
         processedAt: new Date().toISOString(),
       };
     } catch (error) {
