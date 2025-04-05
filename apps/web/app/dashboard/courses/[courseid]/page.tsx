@@ -582,18 +582,13 @@ const CoursePage = () => {
                       ${submittedAnswers[currentQuestionIndex] === false ? 'border-2 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : ''}
                       shadow-md transition-all duration-300 animate-fadeIn
                     `}>
-                      <CardHeader className={`
-                        ${submittedAnswers[currentQuestionIndex] === true ? 'bg-green-50 dark:bg-green-900/20' : ''}
-                        ${submittedAnswers[currentQuestionIndex] === false ? 'bg-red-50 dark:bg-red-900/20' : ''}
-                        ${submittedAnswers[currentQuestionIndex] === undefined ? 'bg-gradient-to-r from-primary/5 to-transparent dark:from-primary/10' : ''}
-                        rounded-t-lg pb-4
-                      `}>
+                      <CardHeader>
                         <CardTitle className="text-lg">Question {currentQuestionIndex + 1}</CardTitle>
-                        <CardDescription className="text-base font-medium text-foreground mt-2">
+                        <CardDescription className="text-base font-medium text-foreground mt-1">
                           {quizQuestions[currentQuestionIndex].question}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="pt-5 pb-3">
+                      <CardContent className="pb-3">
                         <RadioGroup 
                           value={selectedAnswers[currentQuestionIndex]} 
                           onValueChange={(value) => handleAnswerSelect(currentQuestionIndex, value)}
@@ -715,26 +710,7 @@ const CoursePage = () => {
                       </CardFooter>
                     </Card>
                   )}
-                  
-                  {/* Question Navigation Dots */}
-                  <div className="flex justify-center mt-6 gap-2">
-                    {quizQuestions.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentQuestionIndex(index)}
-                        className={`h-3 w-3 rounded-full transition-colors ${
-                          index === currentQuestionIndex
-                            ? 'bg-primary'
-                            : submittedAnswers[index] !== undefined
-                              ? submittedAnswers[index]
-                                ? 'bg-green-500'
-                                : 'bg-red-500'
-                              : 'bg-muted hover:bg-muted-foreground/50'
-                        }`}
-                        aria-label={`Go to question ${index + 1}`}
-                      />
-                    ))}
-                  </div>
+      
                   
                   {/* Quiz Summary - Show when all questions are answered */}
                   {Object.keys(submittedAnswers).length === quizQuestions.length && (
