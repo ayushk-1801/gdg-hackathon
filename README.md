@@ -1,84 +1,178 @@
-# Turborepo starter
+<div align="center">
+  <h1>
+    <img src="https://img.icons8.com/color/48/000000/book.png" alt="Book" width="30"/>
+    <img src="https://img.icons8.com/color/48/000000/graduation-cap.png" alt="Learning" width="30"/>
+    Benkyoshi
+    <img src="https://img.icons8.com/color/48/000000/code.png" alt="Code" width="30"/>
+    <img src="https://img.icons8.com/color/48/000000/brain.png" alt="Intelligence" width="30"/>
+  </h1>
+  
+  <p>A modern monorepo using Turborepo with Next.js web application, Python model service, and BullsMQ worker.</p>
+  
+  <div>
+    <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+    <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+    <img alt="React" src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+    <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+    <img alt="TurboRepo" src="https://img.shields.io/badge/TurboRepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white" />
+    <img alt="Redis" src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
+</div>
 
-This Turborepo starter is maintained by the Turborepo core team.
+## Overview
 
-## Using this example
+This project is structured as a monorepo using Turborepo for efficient builds and development workflows. It consists of multiple interconnected applications and shared packages to create a seamless development experience.
 
-Run the following command:
+## Project Structure
+
+```
+├── apps/                 # Application services
+│   ├── model/            # Python ML model service
+│   ├── web/              # Next.js frontend application
+│   └── worker/           # Background processing worker
+├── packages/             # Shared libraries
+│   ├── db/               # Database utilities and schema
+│   ├── eslint-config/    # ESLint configurations
+│   ├── queue/            # Queue management system
+│   ├── typescript-config/# TypeScript configurations
+│   └── ui/               # Shared UI components
+└── .turbo/               # Turborepo cache and configuration
+```
+
+## Applications
+
+### Web Application (Next.js)
+
+The `web` application is built with Next.js 15 using React 19 and includes:
+
+- UI components with Radix UI and Tailwind CSS
+- Form handling with react-hook-form and zod validation
+- Authentication services
+- State management with Zustand
+- Chart visualization with Recharts
+
+### Python Model Service
+
+The `model` application handles machine learning processing. It's written in Python and provides API endpoints for ML functionalities.
+
+### Worker Service
+
+The `worker` service manages background tasks and asynchronous processing, built with TypeScript.
+
+## Shared Packages
+
+- **db**: Database access layer with Drizzle ORM
+- **ui**: Shared React component library
+- **queue**: Task queue management
+- **eslint-config**: Standardized ESLint configurations
+- **typescript-config**: Shared TypeScript configurations
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18 or later
+- Yarn package manager
+- Docker and Docker Compose (for local development)
+- Python (for the model service)
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 
 ```sh
-npx create-turbo@latest
+yarn install
 ```
 
-## What's inside?
+3. Start the development environment:
 
-This Turborepo includes the following packages/apps:
+```sh
+# Start Docker services (PostgreSQL, Redis, etc.)
+yarn docker:up
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+# Start development servers
+yarn dev
 ```
 
-### Develop
+## Development Workflow
 
-To develop all apps and packages, run the following command:
+### Running in Development Mode
 
+To develop all apps and packages:
+
+```sh
+yarn dev
 ```
-cd my-turborepo
-pnpm dev
+
+### Building for Production
+
+To build all apps and packages:
+
+```sh
+yarn build
 ```
+
+### Type Checking
+
+Run TypeScript type checks across the entire project:
+
+```sh
+yarn check-types
+```
+
+### Linting
+
+Run ESLint across the project:
+
+```sh
+yarn lint
+```
+
+## Docker Commands
+
+The project includes several Docker-related commands for managing services:
+
+```sh
+# Start all Docker services
+yarn docker:up
+
+# Stop all Docker services
+yarn docker:down
+
+# View Docker container logs
+yarn docker:logs
+
+# List running Docker containers
+yarn docker:ps
+
+# Restart Docker services
+yarn docker:restart
+```
+
+## Turborepo Features
+
+This project leverages Turborepo for optimized builds:
+
+- **Task Pipeline**: Efficiently runs tasks with proper dependencies
+- **Caching**: Speeds up builds by caching previous runs
+- **Parallel Execution**: Runs tasks in parallel when possible
 
 ### Remote Caching
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+Turborepo can use [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines:
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+```sh
+# Authenticate with Vercel
+yarn turbo login
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+# Link to your Remote Cache
+yarn turbo link
 ```
 
 ## Useful Links
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+- [Turborepo Documentation](https://turbo.build/repo/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Radix UI Documentation](https://www.radix-ui.com/docs)
