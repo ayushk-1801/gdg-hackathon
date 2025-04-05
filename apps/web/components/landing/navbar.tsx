@@ -45,7 +45,7 @@ export default function Navbar() {
         {/* Navigation - Desktop */}
         <nav className="hidden md:flex items-center justify-center space-x-10">
           <Link
-            href="#features"
+            href="/"
             className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 hover:underline decoration-rose-500 decoration-2 underline-offset-4"
           >
             Features
@@ -74,7 +74,7 @@ export default function Navbar() {
             <Button
               variant="outline"
               className="hidden sm:inline-flex border-slate-300 dark:border-zinc-700 bg-slate-50/50 dark:bg-zinc-900/50 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all duration-300"
-              onClick={() => handleNavigation("/dashboard")}
+              onClick={() => handleNavigation("/dashboard/home")}
             >
               Dashboard
             </Button>
