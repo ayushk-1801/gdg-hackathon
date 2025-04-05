@@ -7,6 +7,9 @@ import { ChevronRight, Bug, CheckCircle, Circle } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export interface Video {
   id: string;
@@ -15,7 +18,8 @@ export interface Video {
   videoId: string;
   summary: string;
   completed: boolean;
-  thumbnail?: string; // Add thumbnail property to Video interface
+  thumbnail?: string;
+  quizzes?: QuizQuestion[];
 }
 
 export interface Course {
@@ -38,6 +42,13 @@ interface UserSession {
   name?: string;
 }
 
+interface QuizQuestion {
+  question: string;   // Changed from "q" to "question"
+  options: string[];
+  answer: string;
+  explanation: string;
+}
+
 const CoursePage = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | undefined>(undefined);
@@ -47,6 +58,13 @@ const CoursePage = () => {
   const [videoError, setVideoError] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const videoRef = useRef<HTMLIFrameElement>(null);
+  
+  // Quiz related states
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [quizLoading, setQuizLoading] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<number, boolean>>({});
+  const [showExplanations, setShowExplanations] = useState<Record<number, boolean>>({});
   
   const router = useRouter();
   const params = useParams();
@@ -130,11 +148,16 @@ const CoursePage = () => {
         
         setCourse(courseData);
         
-        // Set the first video as selected
+        // Set the first video as selected using our new handler
         if (courseData.remainingVideos.length > 0) {
-          setSelectedVideo(courseData.remainingVideos[0]);
+          handleVideoSelection(courseData.remainingVideos[0]);
         } else if (courseData.completedVideos.length > 0) {
-          setSelectedVideo(courseData.completedVideos[0]);
+          handleVideoSelection(courseData.completedVideos[0]);
+        }
+
+        // Log the videos to debug quiz data
+        if (courseData.remainingVideos?.length > 0) {
+          console.log("First video quiz data:", courseData.remainingVideos[0].quizzes);
         }
       } catch (err) {
         console.error('Error fetching course:', err);
@@ -241,6 +264,88 @@ const CoursePage = () => {
     setVideoError(false);
   };
 
+  // Function to fetch quiz questions from the video
+  const fetchQuizQuestions = async (video: Video) => {
+    if (!video) return;
+    
+    setQuizLoading(true);
+    try {
+      // Check if quizzes are already in the video object
+      if (video.quizzes && Array.isArray(video.quizzes) && video.quizzes.length > 0) {
+        console.log("Found quizzes in video object:", JSON.stringify(video.quizzes));
+        setQuizQuestions(video.quizzes);
+        setQuizLoading(false);
+        return;
+      }
+      
+      // If not, fetch them from the API
+      const response = await fetch(`/api/courses/${courseId}/quiz/${video.id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to fetch quiz questions');
+        setQuizQuestions([]);
+        return;
+      }
+      
+      const data = await response.json();
+      console.log("Fetched quiz questions:", JSON.stringify(data.questions));
+      setQuizQuestions(data.questions || []);
+    } catch (err) {
+      console.error('Error fetching quiz questions:', err);
+      setQuizQuestions([]);
+    } finally {
+      setQuizLoading(false);
+    }
+  };
+  
+  // Update selected video and fetch quiz questions
+  const handleVideoSelection = (video: Video) => {
+    setSelectedVideo(video);
+    // Reset quiz states
+    setSelectedAnswers({});
+    setSubmittedAnswers({});
+    setShowExplanations({});
+    // Fetch quiz questions for this video
+    fetchQuizQuestions(video);
+  };
+  
+  // Handle answer selection
+  const handleAnswerSelect = (questionIndex: number, option: string) => {
+    setSelectedAnswers(prev => ({
+      ...prev,
+      [questionIndex]: option
+    }));
+  };
+  
+  // Handle quiz submission for a single question
+  const handleSubmitAnswer = (questionIndex: number) => {
+    const selectedOption = selectedAnswers[questionIndex];
+    const question = quizQuestions[questionIndex];
+    
+    if (!selectedOption || !question) return;
+    
+    const isCorrect = selectedOption === question.answer;
+    
+    setSubmittedAnswers(prev => ({
+      ...prev,
+      [questionIndex]: isCorrect
+    }));
+    
+    setShowExplanations(prev => ({
+      ...prev,
+      [questionIndex]: true
+    }));
+    
+    if (isCorrect) {
+      toast.success("Correct answer!");
+    } else {
+      toast.error("Incorrect answer!");
+    }
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -322,7 +427,7 @@ const CoursePage = () => {
   return (
     <div className="flex h-screen">
       {/* Video Player (now on the left) */}
-      <div className="w-3/4 p-4">
+      <div className="w-3/4 p-4 overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           {selectedVideo && <h2 className="text-2xl font-bold">{selectedVideo.title}</h2>}
         
@@ -392,6 +497,94 @@ const CoursePage = () => {
               <h3 className="text-lg font-medium text-muted-foreground">Summary</h3>
               <p className="text-card-foreground">{selectedVideo.summary}</p>
             </div>
+            
+            {/* Quiz Questions Section - Updated */}
+            <div className="mt-6">
+              <h3 className="text-xl font-semibold mb-4">Practice Quiz</h3>
+              
+              {quizLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                </div>
+              ) : quizQuestions && quizQuestions.length > 0 ? (
+                <div className="space-y-6">
+                  {quizQuestions.map((question, qIndex) => {
+                    console.log(`Rendering question ${qIndex}:`, question);
+                    return (
+                    <Card key={qIndex} className={`
+                      ${submittedAnswers[qIndex] === true ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : ''}
+                      ${submittedAnswers[qIndex] === false ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : ''}
+                    `}>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Question {qIndex + 1}</CardTitle>
+                        <CardDescription className="text-base font-medium">
+                          {typeof question === 'object' && question.question ? question.question : "Question not available"}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {question && question.options && Array.isArray(question.options) ? (
+                          <RadioGroup 
+                            value={selectedAnswers[qIndex]} 
+                            onValueChange={(value) => handleAnswerSelect(qIndex, value)}
+                            className="space-y-2"
+                          >
+                            {question.options.map((option, i) => (
+                              <div key={i} className="flex items-center space-x-2">
+                                <RadioGroupItem 
+                                  value={option} 
+                                  id={`q${qIndex}-option${i}`}
+                                  disabled={submittedAnswers[qIndex] !== undefined}
+                                />
+                                <Label 
+                                  htmlFor={`q${qIndex}-option${i}`}
+                                  className={`
+                                    ${submittedAnswers[qIndex] !== undefined && option === question.answer ? 'text-green-600 font-semibold' : ''}
+                                  `}
+                                >
+                                  {option}
+                                </Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
+                        ) : (
+                          <p className="text-muted-foreground">Options not available</p>
+                        )}
+                        
+                        {/* Display explanation when answer is submitted */}
+                        {showExplanations[qIndex] && question.explanation && (
+                          <div className="mt-4 p-3 bg-muted rounded-md">
+                            <p className="text-sm font-medium">Explanation:</p>
+                            <p className="text-sm">{question.explanation}</p>
+                          </div>
+                        )}
+                      </CardContent>
+                      <CardFooter>
+                        {submittedAnswers[qIndex] === undefined ? (
+                          <Button 
+                            onClick={() => handleSubmitAnswer(qIndex)}
+                            disabled={!selectedAnswers[qIndex]}
+                          >
+                            Submit Answer
+                          </Button>
+                        ) : (
+                          <div className="text-sm font-medium">
+                            {submittedAnswers[qIndex] ? 
+                              <p className="text-green-600">Correct! Good job!</p> : 
+                              <p className="text-red-600">Incorrect. The correct answer is: {question.answer}</p>
+                            }
+                          </div>
+                        )}
+                      </CardFooter>
+                    </Card>
+                  )})}
+                </div>
+              ) : (
+                <div className="p-6 bg-muted rounded-lg text-center">
+                  <p className="text-muted-foreground">No quiz questions available for this video yet.</p>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <div className="flex items-center justify-center h-full">
@@ -423,7 +616,7 @@ const CoursePage = () => {
             .map((video) => (
               <li
                 key={video.id}
-                onClick={() => setSelectedVideo(video)}
+                onClick={() => handleVideoSelection(video)}
                 className={`cursor-pointer p-2 rounded-md mb-2 flex items-center group relative 
                   transition-all duration-200 ease-in-out
                   hover:translate-x-1 hover:shadow-md

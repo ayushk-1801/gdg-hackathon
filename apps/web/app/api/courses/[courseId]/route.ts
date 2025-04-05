@@ -121,33 +121,76 @@ export async function POST(
 
     courseVideos.sort((a, b) => a.id.localeCompare(b.id));
 
+    const formatQuizData = (quizData: any) => {
+      if (!quizData) return [];
+      
+      try {
+        if (Array.isArray(quizData)) {
+          return quizData;
+        } else if (typeof quizData === 'string') {
+          return JSON.parse(quizData);
+        } else if (typeof quizData === 'object') {
+          // Could be an object with quiz questions as values
+          return Object.values(quizData);
+        }
+      } catch (e) {
+        console.error("Error formatting quiz data:", e);
+      }
+      return [];
+    };
+
     const completedVideos = courseVideos
       .filter((video) => completedVideoIds.has(video.id))
-      .map((video) => ({
-        id: video.id,
-        title: video.title,
-        url: `https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`,
-        videoId: video.videoId,
-        summary: video.summary || "No summary available yet.",
-        thumbnail:
-          video.thumbnail ||
-          `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
-        completed: true,
-      }));
+      .map((video) => {
+        console.log(`Processing video ${video.id}, quizzes type:`, typeof video.quizzes);
+        
+        return {
+          id: video.id,
+          title: video.title,
+          url: `https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`,
+          videoId: video.videoId,
+          summary: video.summary || "No summary available yet.",
+          thumbnail:
+            video.thumbnail ||
+            `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
+          completed: true,
+          quizzes: formatQuizData(video.quizzes)
+        };
+      });
 
     const remainingVideos = courseVideos
       .filter((video) => !completedVideoIds.has(video.id))
-      .map((video) => ({
-        id: video.id,
-        title: video.title,
-        url: `https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`,
-        videoId: video.videoId,
-        summary: video.summary || "No summary available yet.",
-        thumbnail:
-          video.thumbnail ||
-          `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
-        completed: false,
-      }));
+      .map((video) => {
+        console.log(`Processing video ${video.id}, quizzes type:`, typeof video.quizzes);
+        
+        return {
+          id: video.id,
+          title: video.title,
+          url: `https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`,
+          videoId: video.videoId,
+          summary: video.summary || "No summary available yet.",
+          thumbnail:
+            video.thumbnail ||
+            `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
+          completed: false,
+          quizzes: formatQuizData(video.quizzes)
+        };
+      });
+
+    // Debug quiz data more thoroughly
+    if (remainingVideos.length > 0) {
+      const firstVideo = remainingVideos[0];
+      console.log("First video quiz data details:", {
+        videoId: firstVideo.id,
+        hasQuizzes: Boolean(firstVideo.quizzes),
+        quizzesType: typeof firstVideo.quizzes,
+        isArray: Array.isArray(firstVideo.quizzes),
+        quizzesLength: Array.isArray(firstVideo.quizzes) ? firstVideo.quizzes.length : 'N/A',
+        sample: Array.isArray(firstVideo.quizzes) && firstVideo.quizzes.length > 0 
+          ? JSON.stringify(firstVideo.quizzes[0]) 
+          : 'No quizzes available'
+      });
+    }
 
     console.log("Video objects for client:", {
       completedCount: completedVideos.length,

@@ -57,11 +57,6 @@ export function NavMain() {
 
 const navMain = [
   {
-    title: "Ask AI",
-    url: "#",
-    icon: Sparkles,
-  },
-  {
     title: "Home",
     url: "/dashboard/home",
     icon: Home,
