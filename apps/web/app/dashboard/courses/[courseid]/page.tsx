@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Bug, CheckCircle, Circle } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
@@ -606,7 +605,7 @@ const CoursePage = () => {
                         <CardHeader>
                           <CardTitle className="text-lg">Question {currentQuestionIndex + 1}</CardTitle>
                           <CardDescription className="text-base font-medium text-foreground mt-1">
-                            {quizQuestions[currentQuestionIndex].question}
+                            {quizQuestions[currentQuestionIndex]?.question}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="pb-3">
@@ -615,12 +614,12 @@ const CoursePage = () => {
                             onValueChange={(value) => handleAnswerSelect(currentQuestionIndex, value)}
                             className="space-y-3"
                           >
-                            {quizQuestions[currentQuestionIndex].options.map((option, i) => (
+                            {quizQuestions[currentQuestionIndex]?.options.map((option, i) => (
                               <div 
                                 key={i} 
                                 className={`
                                   flex items-center space-x-3 p-3 rounded-md transition-all 
-                                  ${submittedAnswers[currentQuestionIndex] !== undefined && option === quizQuestions[currentQuestionIndex].answer ? 
+                                  ${submittedAnswers[currentQuestionIndex] !== undefined && option === quizQuestions[currentQuestionIndex]?.answer ? 
                                     'bg-green-100 dark:bg-green-900/30 ring-2 ring-green-500/40' : ''}
                                   ${submittedAnswers[currentQuestionIndex] === false && option === selectedAnswers[currentQuestionIndex] ? 
                                     'bg-red-100 dark:bg-red-900/30 ring-2 ring-red-500/40' : ''}
@@ -645,7 +644,7 @@ const CoursePage = () => {
                                   htmlFor={`q${currentQuestionIndex}-option${i}`}
                                   className={`
                                     flex-grow cursor-pointer select-none text-base
-                                    ${submittedAnswers[currentQuestionIndex] !== undefined && option === quizQuestions[currentQuestionIndex].answer ? 
+                                    ${submittedAnswers[currentQuestionIndex] !== undefined && option === quizQuestions[currentQuestionIndex]?.answer ? 
                                       'font-semibold text-green-700 dark:text-green-400' : ''}
                                     ${submittedAnswers[currentQuestionIndex] === false && option === selectedAnswers[currentQuestionIndex] ? 
                                       'text-red-700 dark:text-red-400' : ''}
@@ -667,7 +666,7 @@ const CoursePage = () => {
                                 Explanation
                               </h4>
                               <p className="text-sm text-blue-700 dark:text-blue-200 leading-relaxed">
-                                {quizQuestions[currentQuestionIndex].explanation}
+                                {quizQuestions[currentQuestionIndex]?.explanation}
                               </p>
                             </div>
                           )}

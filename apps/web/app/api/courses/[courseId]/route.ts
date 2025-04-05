@@ -180,16 +180,18 @@ export async function POST(
     // Debug quiz data more thoroughly
     if (remainingVideos.length > 0) {
       const firstVideo = remainingVideos[0];
-      console.log("First video quiz data details:", {
-        videoId: firstVideo.id,
-        hasQuizzes: Boolean(firstVideo.quizzes),
-        quizzesType: typeof firstVideo.quizzes,
-        isArray: Array.isArray(firstVideo.quizzes),
-        quizzesLength: Array.isArray(firstVideo.quizzes) ? firstVideo.quizzes.length : 'N/A',
-        sample: Array.isArray(firstVideo.quizzes) && firstVideo.quizzes.length > 0 
-          ? JSON.stringify(firstVideo.quizzes[0]) 
-          : 'No quizzes available'
-      });
+      if (firstVideo) {
+        console.log("First video quiz data details:", {
+          videoId: firstVideo.id,
+          hasQuizzes: Boolean(firstVideo.quizzes),
+          quizzesType: typeof firstVideo.quizzes,
+          isArray: Array.isArray(firstVideo.quizzes),
+          quizzesLength: Array.isArray(firstVideo.quizzes) ? firstVideo.quizzes.length : 'N/A',
+          sample: Array.isArray(firstVideo.quizzes) && firstVideo.quizzes.length > 0 
+            ? JSON.stringify(firstVideo.quizzes[0]) 
+            : 'No quizzes available'
+        });
+      }
     }
 
     console.log("Video objects for client:", {
