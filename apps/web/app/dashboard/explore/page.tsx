@@ -32,7 +32,7 @@ function Page() {
     const fetchPlaylists = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/playlists');
+        const response = await fetch('/api/explore');
         const data = await response.json();
 
         if (data.success) {
@@ -260,7 +260,7 @@ function Page() {
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} />
+            <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} href={`/dashboard/explore/${filteredPlaylists[0]?.id}`} />
           </div>
         )}
       </div>

@@ -7,9 +7,12 @@ import { Playlist } from "./types";
 export default function PlaylistGrid({
   playlists,
   isLoading = false,
+  
+  href,
 }: {
   playlists: Playlist[];
   isLoading?: boolean;
+  href?: string;
 }) {
   if (isLoading) {
     return (
@@ -35,7 +38,7 @@ export default function PlaylistGrid({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {playlists.map((playlist) => (
-        <PlaylistCard key={playlist.id} playlist={playlist} />
+        <PlaylistCard key={playlist.id} playlist={playlist} href={href} />
       ))}
     </div>
   );
