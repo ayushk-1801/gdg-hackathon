@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Bug, CheckCircle, Circle } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +15,7 @@ export interface Video {
   videoId: string;
   summary: string;
   completed: boolean;
+  thumbnail?: string; // Add thumbnail property to Video interface
 }
 
 export interface Course {
@@ -43,7 +45,6 @@ const CoursePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [videoError, setVideoError] = useState<boolean>(false);
-  const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const videoRef = useRef<HTMLIFrameElement>(null);
   
@@ -240,11 +241,6 @@ const CoursePage = () => {
     setVideoError(false);
   };
 
-  // Toggle debug information panel
-  const toggleDebug = () => {
-    setShowDebugInfo(prev => !prev);
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -296,43 +292,16 @@ const CoursePage = () => {
       <div className="w-3/4 p-4">
         <div className="flex justify-between items-center mb-4">
           {selectedVideo && <h2 className="text-2xl font-bold">{selectedVideo.title}</h2>}
-          <Button variant="outline" size="sm" onClick={toggleDebug}>
-            <Bug className="h-4 w-4 mr-2" /> Debug
-          </Button>
+        
         </div>
         
-        {showDebugInfo && (
-          <div className="mb-4 p-4 border border-warning bg-warning/20 text-warning-foreground rounded-md">
-            <h3 className="font-bold mb-2">Debug Information</h3>
-            <p>Videos found: {course?.completedVideos.length || 0} completed, {course?.remainingVideos.length || 0} remaining</p>
-            
-            {selectedVideo && (
-              <>
-                <h4 className="font-semibold mt-2">Current Video:</h4>
-                <ul className="list-disc pl-5">
-                  <li>ID: {selectedVideo.id}</li>
-                  <li>Video ID: {selectedVideo.videoId}</li>
-                  <li>Title: {selectedVideo.title}</li>
-                  <li>URL: <pre className="bg-muted p-1 mt-1 overflow-x-auto">{selectedVideo.url}</pre></li>
-                </ul>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2"
-                  onClick={() => window.open(`https://www.youtube.com/watch?v=${selectedVideo.videoId}`, '_blank')}
-                >
-                  Open in YouTube
-                </Button>
-              </>
-            )}
-          </div>
-        )}
+
         
         {selectedVideo ? (
           <>
-            <div className="flex items-center">
+            <div className="flex flex-col">
               {!videoError ? (
-                <div className="w-4/5 relative" style={{ paddingBottom: "45%" }}>
+                <div className="w-full relative" style={{ paddingBottom: "56.25%" }}>
                   <iframe
                     ref={videoRef}
                     src={selectedVideo.url}
@@ -345,7 +314,7 @@ const CoursePage = () => {
                   ></iframe>
                 </div>
               ) : (
-                <div className="w-4/5 bg-card flex items-center justify-center rounded-lg" style={{ height: "500px" }}>
+                <div className="w-full bg-card flex items-center justify-center rounded-lg" style={{ height: "500px" }}>
                   <div className="text-center p-4">
                     <p className="text-muted-foreground mb-4">Failed to load video</p>
                     <p className="text-sm text-muted-foreground mb-4">URL: {selectedVideo.url}</p>
@@ -363,55 +332,16 @@ const CoursePage = () => {
                   </div>
                 </div>
               )}
-              
-              <div className="ml-4 flex flex-col space-y-2">
-                {selectedVideo.completed ? (
-                  <>
-                    <Button 
-                      variant="secondary"
-                      onClick={() => handleVideoComplete(false)}
-                      disabled={isUpdating || !userSession}
-                      className="bg-success hover:bg-success/90"
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Completed
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleVideoComplete(false)}
-                      disabled={isUpdating || !userSession}
-                      size="sm"
-                    >
-                      Mark as not done
-                    </Button>
-                  </>
-                ) : (
-                  <Button 
-                    onClick={() => handleVideoComplete(true)}
-                    disabled={isUpdating || !userSession}
-                    className="flex items-center"
-                  >
-                    <Circle className="h-4 w-4 mr-2" />
-                    Mark as Done
-                  </Button>
-                )}
-              </div>
             </div>
             
-            {/* Progress status bar */}
-            <div className="mt-4 mb-4">
-              <div className="flex justify-between text-sm mb-1">
-                <span>Course Progress</span>
-                <span>{isNaN(course.enrollment.progress) ? 0 : course.enrollment.progress}%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2.5">
-                <div 
-                  className="bg-primary h-2.5 rounded-full" 
-                  style={{ 
-                    width: `${isNaN(course.enrollment.progress) ? 0 : course.enrollment.progress}%` 
-                  }}
-                ></div>
-              </div>
+            <div className="mt-4 flex justify-between items-center">
+              <Button 
+                className="flex items-center gap-2"
+                onClick={() => router.push(`/dashboard/courses/${courseId}/quiz/${selectedVideo.id}`)}
+              >
+                Take a Quiz
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
             
             {/* Video Summary */}
@@ -440,51 +370,55 @@ const CoursePage = () => {
           ></div>
         </div>
 
-        {/* Completed Videos */}
-        {course.completedVideos.length > 0 && (
-          <>
-            <h3 className="text-lg font-medium text-muted-foreground">
-              <CheckCircle className="inline-block mr-1 h-5 w-5" /> Completed ({course.completedVideos.length})
-            </h3>
-            <ul>
-              {course.completedVideos.map((video) => (
-                <li
-                  key={video.id}
-                  onClick={() => setSelectedVideo(video)}
-                  className={`cursor-pointer p-2 rounded-md mb-2 flex items-center ${
-                    selectedVideo?.id === video.id ? "bg-primary text-primary-foreground" : "bg-secondary/50"
+        {/* All Videos in Sequence */}
+        <h3 className="text-lg font-medium text-muted-foreground mb-2">
+          Course Videos
+        </h3>
+        <ul>
+          {[...course.completedVideos, ...course.remainingVideos]
+            .sort((a, b) => a.title.localeCompare(b.title))
+            .map((video) => (
+              <li
+                key={video.id}
+                onClick={() => setSelectedVideo(video)}
+                className={`cursor-pointer p-2 rounded-md mb-2 flex items-center group relative 
+                  transition-all duration-200 ease-in-out
+                  hover:translate-x-1 hover:shadow-md
+                  ${
+                    selectedVideo?.id === video.id
+                      ? video.completed 
+                        ? "bg-green-600/80 text-white ring-1 ring-green-500 shadow-sm" 
+                        : "bg-primary text-primary-foreground ring-1 ring-primary shadow-sm"
+                      : video.completed
+                        ? "bg-green-100/80 text-foreground dark:bg-green-900/20 hover:bg-green-200/80 dark:hover:bg-green-800/30"
+                        : "bg-secondary/50 hover:bg-secondary/70"
                   }`}
-                >
-                  <CheckCircle className="h-4 w-4 mr-2 text-success" />
-                  <span className="truncate">{video.title}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-
-        {/* Remaining Videos */}
-        {course.remainingVideos.length > 0 && (
-          <>
-            <h3 className="text-lg font-medium text-muted-foreground mt-4">
-              <Circle className="inline-block mr-1 h-5 w-5" /> Remaining ({course.remainingVideos.length})
-            </h3>
-            <ul>
-              {course.remainingVideos.map((video) => (
-                <li
-                  key={video.id}
-                  onClick={() => setSelectedVideo(video)}
-                  className={`cursor-pointer p-2 rounded-md mb-2 flex items-center ${
-                    selectedVideo?.id === video.id ? "bg-primary text-primary-foreground" : "bg-secondary/50"
-                  }`}
-                >
-                  <Circle className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="truncate">{video.title}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
+              >
+                {/* Video thumbnail */}
+                <div className="flex-shrink-0 mr-2 h-12 w-16 rounded overflow-hidden relative shadow-sm group-hover:shadow">
+                  {video.thumbnail ? (
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={`https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`}
+                      alt={video.title}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                  
+                  {/* Removed the "Done" button that was here */}
+                </div>
+                
+                <div className="flex items-center min-w-0 flex-1">
+                  <span className="break-words text-sm font-medium group-hover:font-semibold line-clamp-2">{video.title}</span>
+                </div>
+              </li>
+            ))}
+        </ul>
       </div>
     </div>
   );

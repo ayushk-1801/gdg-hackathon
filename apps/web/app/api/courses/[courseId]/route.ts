@@ -105,6 +105,7 @@ export async function POST(
         url: `https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`,
         videoId: video.videoId,
         summary: video.summary || "No summary available yet.",
+        thumbnail: video.thumbnail || `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
         completed: true
       }));
 
@@ -116,6 +117,7 @@ export async function POST(
         url: `https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`,
         videoId: video.videoId,
         summary: video.summary || "No summary available yet.",
+        thumbnail: video.thumbnail || `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
         completed: false
       }));
 
