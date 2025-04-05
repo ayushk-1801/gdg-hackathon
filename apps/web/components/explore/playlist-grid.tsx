@@ -1,34 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { PlaylistCard } from "@/components/explore/playlist-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Playlist } from "./types";
 
 export default function PlaylistGrid({
   playlists,
+  isLoading = false,
 }: {
-  playlists: Array<{
-    id: string;
-    title: string;
-    creator: string;
-    description: string;
-    thumbnail: string;
-    videoCount: number;
-    viewCount: number;
-    category: string;
-  }>;
+  playlists: Playlist[];
+  isLoading?: boolean;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

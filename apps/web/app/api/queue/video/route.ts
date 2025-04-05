@@ -1,28 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { addVideoJob } from '@repo/worker/queue';
+import { addYoutubeVideoToQueue } from '@repo/queue';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { videoId } = body;
+    const { videoUrl, userId, metadata, playlistUrl } = body;
 
-    if (!videoId) {
+    if (!videoUrl) {
       return NextResponse.json(
-        { error: 'Video ID is required' },
+        { error: 'Video URL is required' },
         { status: 400 }
       );
     }
 
-    const job = await addVideoJob(videoId);
+    if (!playlistUrl) {
+      return NextResponse.json(
+        { error: 'Playlist URL is required' },
+        { status: 400 }
+      );
+    }
+
+    const job = await addYoutubeVideoToQueue(videoUrl, playlistUrl, userId, metadata);
 
     return NextResponse.json(
-      { success: true, jobId: job.id },
+      { 
+        success: true, 
+        id: job.id,
+        status: 'queued' 
+      },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error adding job to queue:', error);
+    console.error('Error adding video to queue:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
     return NextResponse.json(
-      { error: 'Failed to add job to queue' },
+      { 
+        success: false,
+        error: errorMessage
+      },
       { status: 500 }
     );
   }

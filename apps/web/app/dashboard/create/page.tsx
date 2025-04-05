@@ -30,18 +30,14 @@ export default function CreateCoursePage() {
     loading,
     error,
     step,
-    successDialogOpen,
     playlistData,
-    selectedVideos,
+    courseId,
     setUrl,
     handleSubmit,
-    toggleVideoSelection,
-    handleSelectAll,
     handleGenerate,
     handleBack,
-    setSuccessDialogOpen,
     calculateTotalDuration,
-    resetState, // Add this from the store
+    resetState,
   } = useCourseCreationStore();
 
   // Reset to step 1 when component mounts if we're at step 3
@@ -49,14 +45,27 @@ export default function CreateCoursePage() {
     if (step === 3) {
       resetState();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Effect to redirect to course page when courseId is available
+  useEffect(() => {
+    if (courseId) {
+      router.push(`/dashboard/courses/${courseId}`);
+    }
+  }, [courseId, router]);
 
   // Function to navigate to explore page with search query
   const navigateToExplore = (categoryName: string) => {
     const searchParams = new URLSearchParams();
     searchParams.set("q", categoryName);
     router.push(`/dashboard/explore?${searchParams.toString()}`);
+  };
+
+  // Custom submit handler that wraps the store's handleSubmit
+  const onSubmit = async (e: React.FormEvent) => {
+    await handleSubmit(e);
+    // If courseId is set during handleSubmit, this will redirect via the useEffect
   };
 
   return (
@@ -77,7 +86,7 @@ export default function CreateCoursePage() {
             </h1>
 
             <motion.form
-              onSubmit={handleSubmit}
+              onSubmit={onSubmit}
               className="mx-auto max-w-2xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -144,11 +153,15 @@ export default function CreateCoursePage() {
         {/* Step 2: Configure Course Form directly on the page */}
         {step === 2 && playlistData && (
           <div className="flex-1">
+            {error && (
+              <Alert variant="destructive" className="mb-4 max-w-3xl mx-auto">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <ConfigureCourseForm
               playlistData={playlistData}
-              selectedVideos={selectedVideos}
-              onSelectVideo={toggleVideoSelection}
-              onSelectAll={handleSelectAll}
               onBack={handleBack}
               onGenerate={handleGenerate}
               loading={loading}
@@ -161,7 +174,7 @@ export default function CreateCoursePage() {
         {step === 3 && (
           <SuccessPage
             courseTitle={playlistData?.title || "YouTube Course"}
-            videoCount={selectedVideos.size}
+            videoCount={playlistData?.videos.length || 0}
             totalDuration={calculateTotalDuration()}
           />
         )}

@@ -166,7 +166,7 @@ function Page() {
     <div>
       {isSticky && (
         <div
-          className="fixed top-0 right-0 z-40 bg-blue-800 shadow-md transition-all duration-300"
+          className="fixed top-0 right-0 z-40 bg-gradient-to-r from-rose-600 to-orange-600 shadow-md transition-all duration-300"
           style={{
             height: "65px",
             left: isSidebarCollapsed
@@ -180,7 +180,7 @@ function Page() {
       <div
         id="banner"
         ref={bannerRef}
-        className="w-full bg-gradient-to-br from-indigo-950 via-blue-800 to-blue-600 mb-10"
+        className="w-full bg-gradient-to-br from-rose-600 via-rose-500 to-orange-500 mb-10"
       >
         <div className="container mx-auto py-14 px-6 md:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -188,7 +188,7 @@ function Page() {
               <h1 className="text-3xl font-bold text-white mb-3">
                 Continue Your Journey
               </h1>
-              <p className="text-blue-100">
+              <p className="text-rose-100">
                 Push harder than yesterday if you want a different tomorrow.
               </p>
             </div>
@@ -202,7 +202,7 @@ function Page() {
                   ref={searchRef}
                   type="text"
                   placeholder="Search playlists, creators, or topics..."
-                  className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-lg bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-lg bg-white/10 backdrop-blur-sm text-white placeholder-rose-100 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Search playlists"

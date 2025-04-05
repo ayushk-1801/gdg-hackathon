@@ -4,6 +4,7 @@ import PlaylistGrid from "@/components/explore/playlist-grid";
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
+import { Playlist } from "@/components/explore/types";
 
 function Page() {
   const searchParams = useSearchParams();
@@ -19,10 +20,35 @@ function Page() {
   const [containerPosition, setContainerPosition] = useState({ right: 0 });
   const [searchBarWidth, setSearchBarWidth] = useState(0);
   const [stickySearchLeft, setStickySearchLeft] = useState(0);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Track previous sidebar state to detect changes
   const prevSidebarStateRef = useRef(state);
   const [sidebarStateChanged, setSidebarStateChanged] = useState(false);
+
+  // Fetch playlists from API
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/playlists');
+        const data = await response.json();
+
+        if (data.success) {
+          setPlaylists(data.data);
+        } else {
+          console.error('Failed to fetch playlists:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching playlists:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlaylists();
+  }, []);
 
   // Effect to detect sidebar state changes
   useEffect(() => {
@@ -116,21 +142,6 @@ function Page() {
     };
   }, [state, isSticky, isSidebarCollapsed, searchBarWidth]);
 
-  // Sample playlist data
-  const playlists = [
-    {
-      id: "1",
-      title: "Complete JavaScript Course 2023",
-      creator: "Web Dev Simplified",
-      description:
-        "Master JavaScript with this comprehensive course for beginners to advanced developers",
-      thumbnail: "https://i.ytimg.com/vi/W6NZfCO5SIk/maxresdefault.jpg",
-      videoCount: 42,
-      viewCount: 1250000,
-      category: "JavaScript",
-    },
-  ];
-
   const filteredPlaylists = playlists.filter(
     (playlist) =>
       playlist.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -143,7 +154,7 @@ function Page() {
     <div>
       {isSticky && (
         <div
-          className="fixed top-0 right-0 z-40 bg-blue-800 shadow-md transition-all duration-300"
+          className="fixed top-0 right-0 z-40 bg-gradient-to-r from-rose-600 to-orange-600 shadow-md transition-all duration-300"
           style={{
             height: "65px",
             left: isSidebarCollapsed
@@ -157,7 +168,7 @@ function Page() {
       <div
         id="banner"
         ref={bannerRef}
-        className="w-full bg-gradient-to-br from-indigo-950 via-blue-800 to-blue-600 mb-10"
+        className="w-full bg-gradient-to-br from-rose-600 via-rose-500 to-orange-500 mb-10"
       >
         <div className="container mx-auto py-14 px-6 md:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -165,7 +176,7 @@ function Page() {
               <h1 className="text-3xl font-bold text-white mb-3">
                 Explore Educational Playlists
               </h1>
-              <p className="text-blue-100">
+              <p className="text-rose-100">
                 Discover curated learning paths and educational content from top
                 creators
               </p>
@@ -180,7 +191,7 @@ function Page() {
                   ref={searchRef}
                   type="text"
                   placeholder="Search playlists, creators, or topics..."
-                  className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-lg bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-lg bg-white/10 backdrop-blur-sm text-white placeholder-rose-100 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Search playlists"
@@ -249,7 +260,7 @@ function Page() {
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredPlaylists} />
+            <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} />
           </div>
         )}
       </div>

@@ -1,17 +1,7 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { PlayCircle, User } from "lucide-react";
-
-interface Playlist {
-  id: string;
-  title: string;
-  creator: string;
-  description: string;
-  thumbnail: string;
-  videoCount: number;
-  viewCount: number;
-  category: string;
-}
+import { Playlist } from "./types";
 
 export function PlaylistCard({ playlist }: { playlist: Playlist }) {
   return (
@@ -43,9 +33,6 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
             <User className="h-3.5 w-3.5 mr-1" />
             <span>{playlist.creator}</span>
           </div>
-          <Badge variant="secondary" className="text-xs hover:bg-secondary/80">
-            {playlist.category}
-          </Badge>
         </div>
       </div>
     </div>

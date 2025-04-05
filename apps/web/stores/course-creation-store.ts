@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { YouTubePlaylist } from '@/types';
+import { useRouter } from "next/navigation";
+import { authClient } from '@/lib/auth-client';
 
 function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
@@ -16,17 +18,32 @@ interface CourseCreationState {
   successDialogOpen: boolean;
   playlistData: YouTubePlaylist | null;
   selectedVideos: Set<number>;
+  courseId: string | null;
 
   setUrl: (url: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   toggleVideoSelection: (index: number) => void;
   handleSelectAll: () => void;
-  handleGenerate: () => void;
+  handleGenerate: () => Promise<void>;
   handleBack: () => void;
   setConfigDialogOpen: (open: boolean) => void;
   setSuccessDialogOpen: (open: boolean) => void;
   
   calculateTotalDuration: () => string;
+  resetState: () => void;
+  checkCourseExists: (playlistUrl: string) => Promise<boolean>;
+  enrollUserInCourse: (playlistUrl: string) => Promise<{
+    courseId: string;
+    title?: string;
+    playlistUrl: string;
+    enrollment?: {
+      id: string;
+      enrolledAt: Date;
+      progress: number;
+      completedAt: Date | null;
+    };
+    status: string;
+  }>;
 }
 
 const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist> => {
@@ -49,6 +66,7 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
   successDialogOpen: false,
   playlistData: null,
   selectedVideos: new Set<number>(),
+  courseId: null,
 
   setUrl: (url) => set({ url }),
   
@@ -62,6 +80,16 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       
       if (!playlistId) {
         throw new Error("Invalid YouTube playlist URL. Please check the URL and try again.");
+      }
+
+      // First check if course already exists
+      const exists = await get().checkCourseExists(url);
+      
+      if (exists) {
+        // Course exists, enroll user and get enrollment data
+        const enrollmentData = await get().enrollUserInCourse(url);
+        set({ courseId: enrollmentData.courseId });
+        return;
       }
       
       const data = await fetchYouTubePlaylist(playlistId);
@@ -107,17 +135,66 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
     set({ selectedVideos: newSelectedVideos });
   },
   
-  handleGenerate: () => {
-    set({ loading: true });
+  handleGenerate: async () => {
+    set({ loading: true, error: null });
     
-    setTimeout(() => {
+    try {
+      const { url, playlistData, selectedVideos } = get();
+      
+      if (!playlistData) {
+        throw new Error("Playlist data is missing");
+      }
+      
+      // Prepare the selected indices
+      const selectedIndices = Array.from(selectedVideos);
+      
+      // Get current user session
+      const { data: session } = await authClient.getSession();
+      
+      // Make API call to check/add playlist and videos to queue
+      const response = await fetch('/api/playlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playlistUrl: url,
+          playlistData: {
+            ...playlistData,
+            selectedIndices
+          },
+          // Send user information if available
+          userId: session?.user?.id,
+          userEmail: session?.user?.email
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to process playlist');
+      }
+      
+      const responseData = await response.json();
+      
+      // Set courseId from response if available
+      if (responseData.playlistId) {
+        set({ courseId: responseData.playlistId });
+      }
+      
+      // Success - move to the next step
       set({
         loading: false,
         step: 3,
         configDialogOpen: false,
         successDialogOpen: true
       });
-    }, 3000);
+      
+    } catch (err: any) {
+      set({ 
+        loading: false, 
+        error: err.message || "An error occurred while processing your request."
+      });
+    }
   },
   
   handleBack: () => {
@@ -167,5 +244,61 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       playlistData: null,
       selectedVideos: new Set(),
     });
+  },
+
+  // New function to check if course exists
+  checkCourseExists: async (playlistUrl) => {
+    try {
+      const response = await fetch("/api/courses/exists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playlistUrl }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to check course existence");
+      }
+      
+      const { exists } = await response.json();
+      return exists;
+    } catch (err) {
+      console.error("Error checking course existence:", err);
+      return false;
+    }
+  },
+  
+  // Updated function to enroll user in existing course and return full enrollment data
+  enrollUserInCourse: async (playlistUrl) => {
+    try {
+      // Get current user session info
+      const { data: session } = await authClient.getSession()
+      
+      // Check if user is authenticated
+      if (!session?.user) {
+        throw new Error("You must be logged in to enroll in a course");
+      }
+      
+      // Send enrollment request with user data
+      const response = await fetch("/api/courses/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          playlistUrl,
+          userId: session.user.id,
+          userEmail: session.user.email
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to enroll in course");
+      }
+      
+      const enrollmentData = await response.json();
+      return enrollmentData;
+    } catch (err: any) {
+      set({ error: err.message || "Failed to enroll in course" });
+      throw err;
+    }
   }
 }));
