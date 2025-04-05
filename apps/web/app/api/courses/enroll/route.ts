@@ -3,7 +3,6 @@ import db from "@repo/db";
 import { playlists, enrollments, user } from "@repo/db/schema";
 import { eq, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { authClient } from "@/lib/auth-client";
 
 export async function POST(request: Request) {
   try {
@@ -80,6 +79,20 @@ export async function POST(request: Request) {
       enrollment = existingEnrollment[0];
     }
 
+    if(!playlist){
+      return NextResponse.json(
+        { error: "Playlist not found" },
+        { status: 404 }
+      );
+    }
+
+    if(!enrollment){
+      return NextResponse.json(
+        { error: "Enrollment not found" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
       courseId: playlist.id,
       playlistUrl: playlist.playlist_link,
@@ -88,7 +101,7 @@ export async function POST(request: Request) {
         id: enrollment.id,
         enrolledAt: enrollment.enrolledAt,
         progress: enrollment.progress,
-        completedAt: enrollment.completedAt || null,
+        completedAt: null,
       },
       message: isNewEnrollment 
         ? "Successfully enrolled in course" 
