@@ -1,14 +1,24 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import PlaylistGrid from "@/components/explore/playlist-grid";
 import { Search } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Playlist } from "@/components/explore/types";
 
-function Page() {
+// Loading fallback component
+function ExploreLoading() {
+  return (
+    <div className="py-20 text-center">
+      <p>Loading playlists...</p>
+    </div>
+  );
+}
+
+// Content component with search params
+function ExploreContent() {
+  const { useSearchParams } = require("next/navigation");
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("q") || "";
+  const initialQuery = searchParams?.get("q") || "";
   const { state } = useSidebar(); // Use state instead of collapsed
   const isSidebarCollapsed = state === "collapsed";
 
@@ -265,6 +275,14 @@ function Page() {
         )}
       </div>
     </div>
+  );
+}
+
+function Page() {
+  return (
+    <Suspense fallback={<ExploreLoading />}>
+      <ExploreContent />
+    </Suspense>
   );
 }
 

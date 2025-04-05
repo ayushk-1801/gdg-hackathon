@@ -1,12 +1,11 @@
 import { create } from 'zustand';
 import { YouTubePlaylist } from '@/types';
-import { useRouter } from "next/navigation";
 import { authClient } from '@/lib/auth-client';
 
 function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
   const match = url.match(listRegex);
-  return match ? match[1] : null;
+  return match && match[1] ? match[1] : null;
 }
 
 interface CourseCreationState {
@@ -218,9 +217,9 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       if (selectedVideos.has(index)) {
         const parts = video.duration.split(':');
         if (parts.length === 2) {
-          totalMinutes += parseInt(parts[0]);
+          totalMinutes += parseInt(parts[0] || '0');
         } else if (parts.length === 3) {
-          totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+          totalMinutes += parseInt(parts[0] || '0') * 60 + parseInt(parts[1] || '0');
         }
       }
     });

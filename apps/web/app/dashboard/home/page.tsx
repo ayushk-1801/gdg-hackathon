@@ -1,21 +1,41 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import PlaylistGrid from "@/components/explore/playlist-grid";
 import { Search, BookOpen, BarChart2 } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
-function Page() {
+// Loading fallback component
+function HomeLoading() {
+  return (
+    <div className="py-20 text-center">
+      <p>Loading your dashboard...</p>
+    </div>
+  );
+}
+
+// Content component that uses useSearchParams
+function HomeContent() {
   const router = useRouter();
+  const { useSearchParams } = require("next/navigation");
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("q") || "";
+  const initialQuery = searchParams?.get("q") || "";
   const { state } = useSidebar();
   const { data: session } = authClient.useSession();
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [enrolledPlaylists, setEnrolledPlaylists] = useState([]);
+  const [enrolledPlaylists, setEnrolledPlaylists] = useState<Array<{
+    id: string;
+    title: string;
+    creator: string;
+    description: string;
+    category: string;
+    thumbnail: string;
+    videoCount: number;
+    viewCount: number;
+  }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -144,11 +164,19 @@ function Page() {
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredEnrollments} />
+            <PlaylistGrid playlists={filteredEnrollments} href={`/dashboard/courses/${enrolledPlaylists[0]?.id}`} />
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function Page() {
+  return (
+    <Suspense fallback={<HomeLoading />}>
+      <HomeContent />
+    </Suspense>
   );
 }
 

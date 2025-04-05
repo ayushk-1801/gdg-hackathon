@@ -6,14 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { courseid: string } }
+  { params }: { params: Promise<{ courseid: string }> }
 ) {
   try {
-    const courseId = params.courseid;
+    const { courseid: courseId } = await params;
     const url = new URL(req.url);
     const userId = url.searchParams.get("userId");
 
-    // Fetch the course details with proper drizzle syntax
     const courseData = await db
       .select()
       .from(playlists)
@@ -27,17 +26,16 @@ export async function GET(
       );
     }
 
-    // Fetch all videos for this playlist with proper drizzle syntax
-    const courseVideos = await db
+    const courseVideos = courseData.playlist_link ? await db
       .select()
       .from(videos)
-      .where(eq(videos.playlist_link, courseData.playlist_link));
+      .where(eq(videos.playlist_link, courseData.playlist_link))
+    : [];
 
-    // Check if the user is enrolled
     let isEnrolled = false;
     let enrollmentId = null;
 
-    if (userId) {
+    if (userId && courseData.playlist_link) {
       const enrollment = await db
         .select()
         .from(enrollments)
@@ -72,11 +70,11 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { courseid: string } }
+  { params }: { params: Promise<{ courseid: string }> }
 ) {
   try {
     const { userId } = await req.json();
-    const courseId = params.courseid;
+    const courseId = (await params).courseid;
 
     if (!userId) {
       return NextResponse.json(
@@ -85,7 +83,6 @@ export async function POST(
       );
     }
 
-    // Check if user exists with proper drizzle syntax
     const userExists = await db
       .select()
       .from(user)
@@ -99,7 +96,6 @@ export async function POST(
       );
     }
 
-    // Check if course exists with proper drizzle syntax
     const course = await db
       .select()
       .from(playlists)
@@ -113,7 +109,13 @@ export async function POST(
       );
     }
 
-    // Check if already enrolled with proper drizzle syntax
+    if (!course.playlist_link) {
+      return NextResponse.json(
+        { error: "Invalid course playlist" },
+        { status: 400 }
+      );
+    }
+
     const existingEnrollment = await db
       .select()
       .from(enrollments)
@@ -136,7 +138,6 @@ export async function POST(
       );
     }
 
-    // Create new enrollment with proper drizzle syntax
     const enrollmentId = uuidv4();
     await db
       .insert(enrollments)

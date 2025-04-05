@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Search } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "@/components/landing/navbar";
 import Footer from "@/components/landing/footer";
-import { Spotlight } from "@/components/ui/spotlight-new";
 import PlaylistGrid from "@/components/explore/playlist-grid";
 import { Playlist } from "@/components/explore/types";
 
-export default function ResourcesPage() {
-  const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("q") || "";
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+// Create a separate client component for the search functionality
+function ResourcesContent() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Import useSearchParams inside this component
+  const { useSearchParams } = require("next/navigation");
+  const searchParams = useSearchParams();
+  
+  // Set initial query from URL parameters
+  useEffect(() => {
+    const initialQuery = searchParams?.get("q") || "";
+    setSearchQuery(initialQuery);
+  }, [searchParams]);
 
   // Fetch playlists from API
   useEffect(() => {
@@ -47,23 +54,9 @@ export default function ResourcesPage() {
       playlist.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       playlist.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white relative">
-      {/* Spotlight effect positioned behind everything */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* <Spotlight
-          gradientFirst="radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 50%, hsla(350, 100%, 45%, 0) 80%)"
-          gradientSecond="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 80%, transparent 100%)"
-          gradientThird="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .06) 0, hsla(350, 100%, 45%, .02) 80%, transparent 100%)"
-          translateY={-50}
-          xOffset={100}
-          duration={8}
-        /> */}
-      </div>
-
-      <Navbar />
-
+    <>
       <div className="w-full bg-gradient-to-br from-rose-600 via-rose-500 to-orange-500 relative z-10">
         <div className="container mx-auto py-14 px-6 md:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -116,8 +109,6 @@ export default function ResourcesPage() {
       </div>
       
       <main className="container mx-auto px-4 sm:px-6 md:px-8 pb-16 relative z-10">
-     
-
         {/* Resources Grid */}
         {searchQuery && filteredPlaylists.length === 0 ? (
           <div className="text-center py-16 my-6">
@@ -140,9 +131,33 @@ export default function ResourcesPage() {
             <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} />
           </div>
         )}
-
-        
       </main>
+    </>
+  );
+}
+
+// Loading fallback component
+function ResourcesLoading() {
+  return (
+    <div className="py-20 text-center">
+      <p>Loading resources...</p>
+    </div>
+  );
+}
+
+export default function ResourcesPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white relative">
+      {/* Spotlight effect positioned behind everything */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Spotlight component removed for brevity */}
+      </div>
+
+      <Navbar />
+
+      <Suspense fallback={<ResourcesLoading />}>
+        <ResourcesContent />
+      </Suspense>
 
       <Footer />
     </div>

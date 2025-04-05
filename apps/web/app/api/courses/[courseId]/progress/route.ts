@@ -12,10 +12,10 @@ import { nanoid } from "nanoid";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    const courseId = params.courseId;
+    const courseId = (await params).courseId;
 
     const { userId, userEmail, videoId, completed } = await request.json();
 
