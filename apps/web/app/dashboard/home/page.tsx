@@ -5,55 +5,43 @@ import { Search, BookOpen, BarChart2 } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const { state } = useSidebar();
+  const { data: session } = authClient.useSession();
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [enrolledPlaylists, setEnrolledPlaylists] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
 
-  // Sample playlist data
-  const playlists = [
-    {
-      id: "1",
-      title: "HTML & CSS Full Course - Beginner to Pro",
-      creator: "FreeCodeCamp",
-      description:
-        "Learn HTML and CSS from scratch and build responsive web pages with modern techniques.",
-      thumbnail: "https://i.ytimg.com/vi/mU6anWqZJcc/maxresdefault.jpg",
-      videoCount: 50,
-      viewCount: 1500000,
-      category: "Frontend Development",
-    },
-    {
-      id: "2",
-      title: "Node.js Crash Course",
-      creator: "Traversy Media",
-      description:
-        "Master Node.js with this crash course covering Express, MongoDB, and REST APIs.",
-      thumbnail: "https://img.youtube.com/vi/fBNz5xF-Kx4/maxresdefault.jpg",
-      videoCount: 30,
-      viewCount: 900000,
-      category: "Backend Development",
-    },
-    {
-      id: "3",
-      title: "React JS Full Course 2024",
-      creator: "Academind",
-      description:
-        "A complete React course covering hooks, state management, and best practices for modern web apps.",
-      thumbnail: "https://i.ytimg.com/vi/Dorf8i6lCuk/maxresdefault.jpg",
-      videoCount: 45,
-      viewCount: 1200000,
-      category: "React Development",
-    },
-  ];
+  // Fetch enrolled playlists
+  useEffect(() => {
+    const fetchEnrolledPlaylists = async () => {
+      if (!session?.user?.id) return;
 
-  const filteredPlaylists = playlists.filter(
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/home?userId=${session.user.id}`);
+        if (!response.ok) throw new Error("Failed to fetch enrollments");
+        const data = await response.json();
+        setEnrolledPlaylists(data);
+      } catch (error) {
+        console.error("Error fetching enrolled playlists:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEnrolledPlaylists();
+  }, [session?.user?.id]);
+
+  const filteredEnrollments = enrolledPlaylists.filter(
     (playlist) =>
       playlist.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       playlist.creator.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -130,15 +118,33 @@ function Page() {
           </div>
         </div>
 
-        {searchQuery && filteredPlaylists.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center py-10">
+            <p className="text-gray-500">Loading your enrolled courses...</p>
+          </div>
+        ) : filteredEnrollments.length === 0 ? (
           <div className="text-center py-16 my-6">
-            <p className="text-lg text-gray-600">
-              No playlists found matching &quot;{searchQuery}&quot;
-            </p>
+            {searchQuery ? (
+              <p className="text-lg text-gray-600">
+                No enrolled playlists found matching &quot;{searchQuery}&quot;
+              </p>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-lg text-gray-600">
+                  You haven&apos;t enrolled in any playlists yet
+                </p>
+                <Button
+                  variant="default"
+                  onClick={() => router.push("/explore")}
+                >
+                  Explore Playlists
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredPlaylists} />
+            <PlaylistGrid playlists={filteredEnrollments} />
           </div>
         )}
       </div>
