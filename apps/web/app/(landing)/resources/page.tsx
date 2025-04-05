@@ -22,7 +22,7 @@ export default function ResourcesPage() {
     const fetchPlaylists = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/playlists');
+        const response = await fetch('/api/explore');
         const data = await response.json();
 
         if (data.success) {
@@ -52,14 +52,14 @@ export default function ResourcesPage() {
     <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-zinc-950 dark:via-black dark:to-zinc-950 text-zinc-900 dark:text-white relative">
       {/* Spotlight effect positioned behind everything */}
       <div className="absolute inset-0 overflow-hidden">
-        <Spotlight
+        {/* <Spotlight
           gradientFirst="radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 50%, hsla(350, 100%, 45%, 0) 80%)"
           gradientSecond="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .08) 0, hsla(350, 100%, 55%, .04) 80%, transparent 100%)"
           gradientThird="radial-gradient(50% 50% at 50% 50%, hsla(350, 100%, 85%, .06) 0, hsla(350, 100%, 45%, .02) 80%, transparent 100%)"
           translateY={-50}
           xOffset={100}
           duration={8}
-        />
+        /> */}
       </div>
 
       <Navbar />
