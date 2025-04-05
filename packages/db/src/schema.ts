@@ -90,6 +90,21 @@ export const enrollments = pgTable("enrollments", {
   progress: integer("progress").default(0),
 });
 
+export const videoProgress = pgTable("video_progress", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  videoId: text("video_id")
+    .notNull()
+    .references(() => videos.id, { onDelete: "cascade" }),
+  enrollmentId: text("enrollment_id")
+    .notNull()
+    .references(() => enrollments.id, { onDelete: "cascade" }),
+  completed: boolean("completed").default(false),
+  completedAt: timestamp("completed_at"),
+});
+
 export const schema = {
   user,
   session,
@@ -98,4 +113,5 @@ export const schema = {
   playlists,
   videos,
   enrollments,
+  videoProgress, // Add the new table to the schema
 };

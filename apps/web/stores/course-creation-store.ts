@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { YouTubePlaylist } from '@/types';
 import { useRouter } from "next/navigation";
+import { authClient } from '@/lib/auth-client';
 
 function extractPlaylistId(url: string): string | null {
   const listRegex = /[&?]list=([^&]+)/;
@@ -31,7 +32,18 @@ interface CourseCreationState {
   calculateTotalDuration: () => string;
   resetState: () => void;
   checkCourseExists: (playlistUrl: string) => Promise<boolean>;
-  enrollUserInCourse: (playlistUrl: string) => Promise<string>;
+  enrollUserInCourse: (playlistUrl: string) => Promise<{
+    courseId: string;
+    title?: string;
+    playlistUrl: string;
+    enrollment?: {
+      id: string;
+      enrolledAt: Date;
+      progress: number;
+      completedAt: Date | null;
+    };
+    status: string;
+  }>;
 }
 
 const fetchYouTubePlaylist = async (playlistId: string): Promise<YouTubePlaylist> => {
@@ -74,9 +86,9 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       const exists = await get().checkCourseExists(url);
       
       if (exists) {
-        // Course exists, enroll user and redirect
-        const courseId = await get().enrollUserInCourse(url);
-        set({ courseId });
+        // Course exists, enroll user and get enrollment data
+        const enrollmentData = await get().enrollUserInCourse(url);
+        set({ courseId: enrollmentData.courseId });
         return;
       }
       
@@ -242,23 +254,37 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
     }
   },
   
-  // New function to enroll user in existing course
+  // Updated function to enroll user in existing course and return full enrollment data
   enrollUserInCourse: async (playlistUrl) => {
     try {
+      // Get current user session info
+      const { data: session } = await authClient.getSession()
+      
+      // Check if user is authenticated
+      if (!session?.user) {
+        throw new Error("You must be logged in to enroll in a course");
+      }
+      
+      // Send enrollment request with user data
       const response = await fetch("/api/courses/enroll", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playlistUrl }),
+        body: JSON.stringify({ 
+          playlistUrl,
+          userId: session.user.id,
+          userEmail: session.user.email
+        }),
       });
       
       if (!response.ok) {
-        throw new Error("Failed to enroll in course");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to enroll in course");
       }
       
-      const { courseId } = await response.json();
-      return courseId;
+      const enrollmentData = await response.json();
+      return enrollmentData;
     } catch (err: any) {
-      set({ error: err.message });
+      set({ error: err.message || "Failed to enroll in course" });
       throw err;
     }
   }
