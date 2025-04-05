@@ -7,7 +7,6 @@ import { authClient } from "@/lib/auth-client";
 
 export async function POST(request: Request) {
   try {
-    // Get data from request including user information
     const { playlistUrl, userId, userEmail } = await request.json();
     
     if (!playlistUrl) {
@@ -24,7 +23,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify user exists in the database
     const existingUser = await db
       .select()
       .from(user)
@@ -38,7 +36,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if the playlist exists
     const existingPlaylist = await db
       .select()
       .from(playlists)
@@ -54,7 +51,6 @@ export async function POST(request: Request) {
     
     const playlist = existingPlaylist[0];
 
-    // Check if the user is already enrolled
     const existingEnrollment = await db
       .select()
       .from(enrollments)
@@ -67,7 +63,6 @@ export async function POST(request: Request) {
     let enrollment;
     let isNewEnrollment = false;
 
-    // If not enrolled, create enrollment
     if (existingEnrollment.length === 0) {
       const enrollmentId = nanoid();
       const newEnrollment = {

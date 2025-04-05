@@ -11,7 +11,6 @@ export async function POST(
   try {
     const courseId = params.courseId;
     
-    // Get user data from request body instead of session
     const { userId, userEmail, videoId, completed } = await request.json();
     
     if (!userId || !userEmail) {
@@ -28,7 +27,6 @@ export async function POST(
       );
     }
 
-    // Verify user exists and credentials match
     const userData = await db
       .select()
       .from(user)
@@ -42,7 +40,6 @@ export async function POST(
       );
     }
     
-    // Get the course info
     const courseData = await db
       .select()
       .from(playlists)
@@ -58,7 +55,6 @@ export async function POST(
     
     const course = courseData[0];
     
-    // Verify the user is enrolled in this course
     const enrollmentData = await db
       .select()
       .from(enrollments)
@@ -77,7 +73,6 @@ export async function POST(
     
     const enrollment = enrollmentData[0];
     
-    // Check if this specific video progress exists already
     const existingProgress = await db
       .select()
       .from(videoProgress)
@@ -88,9 +83,7 @@ export async function POST(
       ))
       .limit(1);
     
-    // Update or create video progress record
     if (existingProgress.length === 0) {
-      // Create new progress record for this video
       const progressId = nanoid();
       await db.insert(videoProgress).values({
         id: progressId,
@@ -99,11 +92,10 @@ export async function POST(
         enrollmentId: enrollment.id,
         completed,
         completedAt: completed ? new Date() : null,
-        watchTimeSeconds: 0, // You could get this from the client
-        lastPosition: 0, // You could get this from the client
+        watchTimeSeconds: 0,
+        lastPosition: 0,
       });
     } else {
-      // Update existing progress record
       await db
         .update(videoProgress)
         .set({
@@ -113,13 +105,11 @@ export async function POST(
         .where(eq(videoProgress.id, existingProgress[0].id));
     }
     
-    // Get all videos to calculate overall progress
     const allVideos = await db
       .select()
       .from(videos)
       .where(eq(videos.playlist_link, course.playlist_link));
     
-    // Get all completed videos for this user/enrollment
     const completedVideos = await db
       .select()
       .from(videoProgress)
@@ -129,12 +119,10 @@ export async function POST(
         eq(videoProgress.completed, true)
       ));
     
-    // Calculate progress safely to avoid NaN
     let newProgress = 0;
     const totalVideos = allVideos.length;
     const completedCount = completedVideos.length;
     
-    // Only calculate percentage if we have videos
     if (totalVideos > 0) {
       newProgress = Math.min(
         100, 
@@ -144,7 +132,6 @@ export async function POST(
     
     console.log(`Progress update: ${completedCount}/${totalVideos} videos (${newProgress}%)`);
     
-    // Update enrollment with new progress (with validation)
     if (!isNaN(newProgress)) {
       await db
         .update(enrollments)

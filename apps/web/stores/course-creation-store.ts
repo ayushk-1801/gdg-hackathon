@@ -148,6 +148,9 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       // Prepare the selected indices
       const selectedIndices = Array.from(selectedVideos);
       
+      // Get current user session
+      const { data: session } = await authClient.getSession();
+      
       // Make API call to check/add playlist and videos to queue
       const response = await fetch('/api/playlist', {
         method: 'POST',
@@ -159,13 +162,23 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
           playlistData: {
             ...playlistData,
             selectedIndices
-          }
+          },
+          // Send user information if available
+          userId: session?.user?.id,
+          userEmail: session?.user?.email
         }),
       });
       
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to process playlist');
+      }
+      
+      const responseData = await response.json();
+      
+      // Set courseId from response if available
+      if (responseData.playlistId) {
+        set({ courseId: responseData.playlistId });
       }
       
       // Success - move to the next step

@@ -4,6 +4,7 @@ import PlaylistGrid from "@/components/explore/playlist-grid";
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
+import { Playlist } from "@/components/explore/types";
 
 function Page() {
   const searchParams = useSearchParams();
@@ -19,10 +20,35 @@ function Page() {
   const [containerPosition, setContainerPosition] = useState({ right: 0 });
   const [searchBarWidth, setSearchBarWidth] = useState(0);
   const [stickySearchLeft, setStickySearchLeft] = useState(0);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Track previous sidebar state to detect changes
   const prevSidebarStateRef = useRef(state);
   const [sidebarStateChanged, setSidebarStateChanged] = useState(false);
+
+  // Fetch playlists from API
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/playlists');
+        const data = await response.json();
+
+        if (data.success) {
+          setPlaylists(data.data);
+        } else {
+          console.error('Failed to fetch playlists:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching playlists:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlaylists();
+  }, []);
 
   // Effect to detect sidebar state changes
   useEffect(() => {
@@ -115,21 +141,6 @@ function Page() {
       resizeObserver.disconnect();
     };
   }, [state, isSticky, isSidebarCollapsed, searchBarWidth]);
-
-  // Sample playlist data
-  const playlists = [
-    {
-      id: "1",
-      title: "Complete JavaScript Course 2023",
-      creator: "Web Dev Simplified",
-      description:
-        "Master JavaScript with this comprehensive course for beginners to advanced developers",
-      thumbnail: "https://i.ytimg.com/vi/W6NZfCO5SIk/maxresdefault.jpg",
-      videoCount: 42,
-      viewCount: 1250000,
-      category: "JavaScript",
-    },
-  ];
 
   const filteredPlaylists = playlists.filter(
     (playlist) =>
@@ -249,7 +260,7 @@ function Page() {
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredPlaylists} />
+            <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} />
           </div>
         )}
       </div>

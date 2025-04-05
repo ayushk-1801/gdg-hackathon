@@ -62,11 +62,19 @@ export const playlists = pgTable("playlists", {
   id: text("id").primaryKey(),
   playlist_link: text("link").unique(),
   title: text("title").default(""),
+  creator: text("creator").default(""),
+  description: text("description").default(""),
+  thumbnail: text("thumbnail").default(""),
+  videoCount: integer("video_count").default(0),
+  viewCount: integer("view_count").default(0),
+  category: text("category").default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const videos = pgTable("videos", {
   id: text("id").primaryKey(),
-  videoId: text("videoId").notNull(),
+  videoId: text("videoId").notNull().unique(),
   title: text("title").default(""),
   thumbnail: text("thumbnail").default(""),
   playlist_link: text("link")

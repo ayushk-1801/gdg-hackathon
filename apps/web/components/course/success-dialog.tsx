@@ -19,6 +19,7 @@ export function SuccessPage({
 }: SuccessPageProps) {
   const router = useRouter();
   const resetState = useCourseCreationStore((state) => state.resetState);
+  const courseId = useCourseCreationStore((state) => state.courseId);
   
   // Navigation handlers
   const handleBackToDashboard = () => {
@@ -28,7 +29,14 @@ export function SuccessPage({
   
   const handleViewProgress = () => {
     resetState(); // Reset state before navigating
-    router.push("/dashboard/courses/1?view=generation");
+    
+    // Navigate to the specific course using the courseId from the store
+    if (courseId) {
+      router.push(`/dashboard/courses/${courseId}?view=generation`);
+    } else {
+      // Fallback in case courseId is not available
+      router.push("/dashboard/courses?view=generation");
+    }
   };
   
   // Render a generating status indicator

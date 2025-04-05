@@ -14,7 +14,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if the playlist exists in the database
     const existingPlaylist = await db
       .select()
       .from(playlists)

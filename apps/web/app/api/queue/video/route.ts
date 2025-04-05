@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Add the video to the processing queue
     const job = await addYoutubeVideoToQueue(videoUrl, playlistUrl, userId, metadata);
 
     return NextResponse.json(

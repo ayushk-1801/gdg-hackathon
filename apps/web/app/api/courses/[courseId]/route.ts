@@ -76,7 +76,6 @@ export async function POST(
       videoCount: courseVideos.length
     }, null, 2));
 
-    // Get completed videos from video_progress table
     const completedVideoProgress = await db
       .select()
       .from(videoProgress)
@@ -86,17 +85,14 @@ export async function POST(
         eq(videoProgress.completed, true)
       ));
 
-    // Create a set of completed video IDs for easy lookup
     const completedVideoIds = new Set(
       completedVideoProgress.map(progress => progress.videoId)
     );
 
     console.log("Found completed videos:", completedVideoIds.size);
 
-    // Sort videos by their id for consistent ordering
     courseVideos.sort((a, b) => a.id.localeCompare(b.id));
 
-    // Split videos into completed and remaining based on videoProgress records
     const completedVideos = courseVideos
       .filter(video => completedVideoIds.has(video.id))
       .map(video => ({
@@ -121,17 +117,14 @@ export async function POST(
         completed: false
       }));
 
-    // Log the constructed video objects for debugging
     console.log("Video objects for client:", {
       completedCount: completedVideos.length,
       remainingCount: remainingVideos.length
     });
 
-    // Calculate progress safely to avoid NaN
     let newProgress = 0;
     const totalVideos = courseVideos.length;
     
-    // Only calculate percentage if we have videos
     if (totalVideos > 0) {
       newProgress = Math.min(
         100,
@@ -146,7 +139,6 @@ export async function POST(
       currentProgress: enrollment.progress
     });
     
-    // Update enrollment progress if it has changed and is a valid number
     if (newProgress !== enrollment.progress && !isNaN(newProgress)) {
       try {
         await db
@@ -157,12 +149,10 @@ export async function POST(
           })
           .where(eq(enrollments.id, enrollment.id));
           
-        // Update local enrollment object
         enrollment.progress = newProgress;
         console.log("Updated enrollment progress to:", newProgress);
       } catch (updateError) {
         console.error("Failed to update enrollment progress:", updateError);
-        // Continue without failing the request
       }
     }
 
@@ -174,7 +164,7 @@ export async function POST(
       remainingVideos,
       enrollment: {
         id: enrollment.id,
-        progress: newProgress, // Use the safely calculated progress
+        progress: newProgress,
         enrolledAt: enrollment.enrolledAt,
         completedAt: enrollment.completedAt
       },
