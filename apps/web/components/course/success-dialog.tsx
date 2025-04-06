@@ -21,7 +21,7 @@ export function SuccessPage({
   const resetState = useCourseCreationStore((state) => state.resetState);
   const courseId = useCourseCreationStore((state) => state.courseId);
   
-  // Navigation handlers
+  // Navigation handlers - ONLY navigate when buttons are clicked
   const handleBackToDashboard = () => {
     resetState(); // Reset state before navigating
     router.push("/dashboard");
@@ -49,6 +49,8 @@ export function SuccessPage({
       </span>
     </div>
   );
+
+  // No useEffect or other hooks that might cause auto-navigation
 
   return (
     <motion.div

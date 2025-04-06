@@ -74,7 +74,7 @@ export const playlists = pgTable("playlists", {
 
 export const videos = pgTable("videos", {
   id: text("id").primaryKey(),
-  videoId: text("videoId").notNull().unique(),
+  videoId: text("videoId").notNull(),
   title: text("title").default(""),
   thumbnail: text("thumbnail").default(""),
   playlist_link: text("link")

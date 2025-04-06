@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import { youtubeQueue } from "@repo/queue";
+import { clearQueue, youtubeQueue } from "@repo/queue";
 import axios from "axios";
 import db from "@repo/db";
 import { videos, playlists } from "@repo/db/schema";
@@ -238,3 +238,9 @@ worker.on("failed", (job, err) => {
 });
 
 console.log("YouTube video processing worker started");
+
+// clearQueue().then(() => {
+//   console.log("Queue cleared successfully");
+// }).catch(error => {
+//   console.error("Error clearing queue:", error);
+// });

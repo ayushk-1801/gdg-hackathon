@@ -147,10 +147,28 @@ export async function getQueueInfo() {
   };
 }
 
+/**
+ * Clear all jobs from the YouTube processing queue
+ * @returns Object with the status of the operation
+ */
+export async function clearQueue() {
+  try {
+    await youtubeQueue.drain();
+    await youtubeQueue.clean(0, 1000, 'completed'); // clean up to 1000 completed jobs older than 0 ms
+    await youtubeQueue.clean(0, 1000, 'failed');    // clean up to 1000 failed jobs older than 0 ms
+
+    return { success: true, message: "Queue cleared successfully" };
+  } catch (error) {
+    console.error("Failed to clear queue:", error);
+    throw new Error(`Failed to clear queue: ${error}`);
+  }
+}
+
 // Export the queue for external use
 export default {
   youtubeQueue,
   addYoutubeVideoToQueue,
   addPlaylistVideosToQueue,
   getQueueInfo,
+  clearQueue,
 };

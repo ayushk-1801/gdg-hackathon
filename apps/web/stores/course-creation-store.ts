@@ -87,7 +87,14 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       if (exists) {
         // Course exists, enroll user and get enrollment data
         const enrollmentData = await get().enrollUserInCourse(url);
-        set({ courseId: enrollmentData.courseId });
+        set({ 
+          courseId: enrollmentData.courseId,
+          // Update state to show success dialog without redirecting
+          step: 3,
+          configDialogOpen: false,
+          successDialogOpen: true,
+          loading: false
+        });
         return;
       }
       
@@ -100,11 +107,11 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
         playlistData: data, 
         selectedVideos: newSelectedVideos,
         step: 2,
-        configDialogOpen: true
+        configDialogOpen: true,
+        loading: false
       });
     } catch (err: any) {
       set({ error: err.message || "An error occurred while fetching the playlist." });
-    } finally {
       set({ loading: false });
     }
   },
@@ -180,7 +187,7 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
         set({ courseId: responseData.playlistId });
       }
       
-      // Success - move to the next step
+      // Success - move to the next step without redirecting
       set({
         loading: false,
         step: 3,
@@ -266,7 +273,7 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
     }
   },
   
-  // Updated function to enroll user in existing course and return full enrollment data
+  // Updated to only update state without any side effects that might cause redirect
   enrollUserInCourse: async (playlistUrl) => {
     try {
       // Get current user session info
@@ -294,6 +301,8 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       }
       
       const enrollmentData = await response.json();
+      
+      // Return the enrollment data without causing any side effects
       return enrollmentData;
     } catch (err: any) {
       set({ error: err.message || "Failed to enroll in course" });
