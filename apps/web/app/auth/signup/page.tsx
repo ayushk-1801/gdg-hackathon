@@ -65,7 +65,7 @@ function SignUp() {
         data.password,
         fullName,
         "",
-        "/dashboard" 
+        "/dashboard/home" 
       );
       
       if (error) {

@@ -42,7 +42,7 @@ function SignIn() {
         data.email,
         data.password,
         true,
-        "/dashboard"
+        "/dashboard/home"
       );
       
       if (error) {
