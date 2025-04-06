@@ -4,7 +4,7 @@ import { nextCookies } from "better-auth/next-js";
 import db from "@repo/db";
 import { schema } from "@repo/db/schema";
 
-export const auth = betterAuth({
+export const auth: ReturnType<typeof betterAuth> = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
