@@ -30,15 +30,15 @@ export function PlaylistCard({ playlist, href }: PlaylistCardProps) {
           </div>
         </div>
 
-        <div className="p-4">
+        <div className="p-4 flex flex-col h-32">
           <h3 className="font-semibold text-foreground dark:text-white text-lg mb-1 line-clamp-1">
             {playlist.title}
           </h3>
-          <p className="text-foreground/80 dark:text-card-foreground text-sm line-clamp-2 mb-3">
-            {playlist.description}
+          <p className="text-foreground/80 dark:text-card-foreground text-sm line-clamp-2 mb-3 min-h-[40px]">
+            {playlist.description || ""}
           </p>
 
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+          <div className="flex items-center justify-between text-muted-foreground text-xs mt-auto">
             <div className="flex items-center">
               <User className="h-3.5 w-3.5 mr-1" />
               <span>{playlist.creator}</span>
