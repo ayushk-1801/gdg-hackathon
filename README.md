@@ -27,11 +27,21 @@ This project is structured as a monorepo using Turborepo for efficient builds an
 
 ```
 ├── apps/                 # Application services
-│   ├── model/            # Python ML model service
 │   ├── web/              # Next.js frontend application
-│   └── worker/           # Background processing worker
+│   │   ├── app/          # Next.js App Router pages
+│   │   ├── components/   # UI components
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── lib/          # Utility functions and helpers
+│   │   ├── public/       # Static assets
+│   │   ├── server/       # Server-side code
+│   │   ├── stores/       # State management
+│   │   └── types/        # TypeScript type definitions
+│   └── worker/           # Background processing worker with ML integration
+│       └── src/          # Worker service source code
 ├── packages/             # Shared libraries
-│   ├── db/               # Database utilities and schema
+│   ├── db/               # Database utilities and schema with Drizzle
+│   │   ├── drizzle/      # Drizzle migrations
+│   │   └── src/          # Database source code
 │   ├── eslint-config/    # ESLint configurations
 │   ├── queue/            # Queue management system
 │   ├── typescript-config/# TypeScript configurations
@@ -45,36 +55,39 @@ This project is structured as a monorepo using Turborepo for efficient builds an
 
 The `web` application is built with Next.js 15 using React 19 and includes:
 
-- UI components with Radix UI and Tailwind CSS
+- Modern App Router architecture with server and client components
+- UI components with Radix UI and Tailwind CSS v4
 - Form handling with react-hook-form and zod validation
-- Authentication services
+- Authentication services with built-in middleware
 - State management with Zustand
 - Chart visualization with Recharts
 
-### Python Model Service
-
-The `model` application handles machine learning processing. It's written in Python and provides API endpoints for ML functionalities.
-
 ### Worker Service
 
-The `worker` service manages background tasks and asynchronous processing, built with TypeScript.
+The `worker` service manages background tasks and integrates with the machine learning functionality:
+
+- Built with TypeScript for type-safe code
+- Processes queue tasks asynchronously
+- Handles ML model integration and processing
+- Communicates with the web application through the queue system
 
 ## Shared Packages
 
-- **db**: Database access layer with Drizzle ORM
-- **ui**: Shared React component library
-- **queue**: Task queue management
-- **eslint-config**: Standardized ESLint configurations
-- **typescript-config**: Shared TypeScript configurations
+- **db**: Database access layer with Drizzle ORM for PostgreSQL
+- **ui**: Shared React component library with TypeScript and Tailwind
+- **queue**: Task queue management using BullsMQ with Redis
+- **eslint-config**: Standardized ESLint configurations for consistent code quality
+- **typescript-config**: Shared TypeScript configurations for type consistency
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18 or later
-- Yarn package manager
-- Docker and Docker Compose (for local development)
-- Python (for the model service)
+- Yarn package manager (v1.22.19)
+- Docker and Docker Compose (for local development with PostgreSQL and Redis)
+- Git
+- Proper .env configurations (see .env.example files in project directories)
 
 ### Installation
 
