@@ -139,6 +139,24 @@ export async function POST(
       return [];
     };
 
+    const formatRefLinks = (refLink: any) => {
+      if (!refLink) return [];
+      
+      try {
+        if (Array.isArray(refLink)) {
+          return refLink;
+        } else if (typeof refLink === 'string') {
+          return JSON.parse(refLink);
+        } else if (typeof refLink === 'object') {
+          // Could be an object with links as values
+          return Object.values(refLink);
+        }
+      } catch (e) {
+        console.error("Error formatting reference links data:", e);
+      }
+      return [];
+    };
+
     const completedVideos = courseVideos
       .filter((video) => completedVideoIds.has(video.id))
       .map((video) => {
@@ -154,7 +172,8 @@ export async function POST(
             video.thumbnail ||
             `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
           completed: true,
-          quizzes: formatQuizData(video.quizzes)
+          quizzes: formatQuizData(video.quizzes),
+          refLinks: formatRefLinks(video.refLink)
         };
       });
 
@@ -173,7 +192,8 @@ export async function POST(
             video.thumbnail ||
             `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
           completed: false,
-          quizzes: formatQuizData(video.quizzes)
+          quizzes: formatQuizData(video.quizzes),
+          refLinks: formatRefLinks(video.refLink)
         };
       });
 

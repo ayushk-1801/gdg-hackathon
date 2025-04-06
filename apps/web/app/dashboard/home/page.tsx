@@ -164,7 +164,7 @@ function HomeContent() {
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredEnrollments} href={`/dashboard/courses/${enrolledPlaylists[0]?.id}`} />
+            <PlaylistGrid playlists={filteredEnrollments} />
           </div>
         )}
       </div>

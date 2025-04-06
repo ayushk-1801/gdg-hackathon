@@ -9,9 +9,13 @@ import Footer from "@/components/landing/footer";
 import { motion } from "framer-motion";
 import { ArrowRightIcon } from "@/components/ui/arrow-right";
 import { Spotlight } from "@/components/ui/spotlight-new";
+import { YoutubeTranscript } from 'youtube-transcript';
 
 export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
+
+
+  YoutubeTranscript.fetchTranscript('https://youtu.be/8L10w1KoOU8?si=mueMlZ5rfZihuZ3V').then(console.log);
 
   useEffect(() => {
     setMounted(true);

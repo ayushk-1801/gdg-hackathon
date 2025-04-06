@@ -5,10 +5,7 @@ import db from "@repo/db";
 import { videos, playlists } from "@repo/db/schema";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
-
-// Model service configuration
-const MODEL_API_URL =
-  process.env.MODEL_API_URL || "http://localhost:8000/transcript";
+import { processYoutubeVideo } from "./model.js"; // Import the local model function
 
 // YouTube API configuration
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
@@ -27,20 +24,23 @@ function extractYoutubeId(url: string): string {
 }
 
 /**
- * Process the video by sending to the model API
+ * Process the video using the local model
  * @param videoUrl YouTube video URL
  * @returns Model processing result
  */
 async function processVideoWithModel(videoUrl: string) {
   try {
-    const response = await axios.get(MODEL_API_URL, {
-      params: { yt_link: videoUrl },
-    });
-    return response.data;
+    // Use local model instead of API call
+    const result = await processYoutubeVideo(videoUrl);
+    return {
+      summary: result.summary,
+      mcqs: result.questions,
+      references: result.links
+    };
   } catch (error) {
-    console.error("Error calling model API:", error);
+    console.error("Error processing video with model:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    throw new Error(`Model API processing failed: ${errorMessage}`);
+    throw new Error(`Model processing failed: ${errorMessage}`);
   }
 }
 
@@ -147,7 +147,7 @@ async function saveResultToDatabase(videoUrl: string, processedResult: any, play
       playlist_link: playlistLinkValue,
       summary: processedResult.summary || "",
       quizzes: processedResult.mcqs || [],
-      refLink: processedResult.references || [],
+      refLink: processedResult.references || [], // This now stores links in the new format
     };
     
     console.log(`Saving video data to database for video ID: ${videoId}`);
@@ -180,13 +180,6 @@ const worker = new Worker(
 
       // Parse the response if it's a string (sometimes APIs return JSON as string)
       let processedResult = result;
-      if (typeof result === 'string' && result.trim().startsWith('{')) {
-        try {
-          processedResult = JSON.parse(result);
-        } catch (e) {
-          console.warn("Could not parse result as JSON, using as-is");
-        }
-      }
 
       // Log the model API response (limited to avoid console clutter)
       const summaryPreview = processedResult.summary ? 
@@ -209,9 +202,9 @@ const worker = new Worker(
       const dbEntry = await saveResultToDatabase(videoUrl, processedResult, playlistLink);
       console.log(`Data saved to database with ID: ${dbEntry.id}`);
 
-      // Wait for 1 minute (60000 milliseconds) after processing
-      console.log(`Waiting for 1 minute before completing job ${job.id}...`);
-      await delay(60000);
+      // Wait for 30 seconds (30000 milliseconds) after processing
+      console.log(`Waiting for 30 seconds before completing job ${job.id}...`);
+      await delay(15000);
       console.log(`Wait complete for job ${job.id}`);
 
       // Return basic information and database reference instead of full result

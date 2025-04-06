@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import VideoPlayer from './VideoPlayer';
 import VideoSidebar from './VideoSidebar';
 import QuizSection from './QuizSection';
+import LinkSection from './LinkSection';
 import LoadingState from './LoadingState';
 import ErrorState from './ErrorState';
 import { Video, Course } from '../../app/dashboard/courses/[courseid]/page';
@@ -335,6 +336,11 @@ export default function CourseViewer({ courseId }: CourseViewerProps) {
                 setCurrentQuestionIndex={setCurrentQuestionIndex}
                 setShowQuiz={setShowQuiz}
               />
+            )}
+            
+            {/* Add the LinkSection component */}
+            {!showQuiz && (
+              <LinkSection links={selectedVideo.refLinks} />
             )}
           </>
         ) : (

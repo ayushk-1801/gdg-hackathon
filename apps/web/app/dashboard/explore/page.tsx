@@ -270,7 +270,7 @@ function ExploreContent() {
           </div>
         ) : (
           <div className="my-4">
-            <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} href={`/dashboard/explore/${filteredPlaylists[0]?.id}`} />
+            <PlaylistGrid playlists={filteredPlaylists} isLoading={isLoading} href="/dashboard/explore/{id}" />
           </div>
         )}
       </div>

@@ -7,7 +7,6 @@ import { Playlist } from "./types";
 export default function PlaylistGrid({
   playlists,
   isLoading = false,
-  
   href,
 }: {
   playlists: Playlist[];
@@ -38,7 +37,11 @@ export default function PlaylistGrid({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {playlists.map((playlist) => (
-        <PlaylistCard key={playlist.id} playlist={playlist} href={href} />
+        <PlaylistCard 
+          key={playlist.id} 
+          playlist={playlist} 
+          href={href ? href.replace('{id}', playlist.id) : `/dashboard/courses/${playlist.id}`} 
+        />
       ))}
     </div>
   );

@@ -11,6 +11,13 @@ export interface Video {
   completed: boolean;
   thumbnail?: string;
   quizzes?: QuizQuestion[];
+  refLinks?: ResourceLink[];
+}
+
+export interface ResourceLink {
+  title: string;
+  url: string;
+  type?: string;
 }
 
 export interface Course {
@@ -28,7 +35,7 @@ export interface Course {
 }
 
 interface QuizQuestion {
-  question: string;   // Changed from "q" to "question"
+  question: string;
   options: string[];
   answer: string;
   explanation: string;
