@@ -11,7 +11,7 @@ export default function CourseNotFound() {
       <div className="text-center">
         <h1 className="text-2xl font-bold">Course not found</h1>
         <p className="mt-4">The course you are looking for does not exist.</p>
-        <Button className="mt-4" onClick={() => router.push("/dashboard")}>
+        <Button className="mt-4" onClick={() => router.push("/dashboard/home")}>
           Go back to Dashboard
         </Button>
       </div>

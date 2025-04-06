@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Youtube, CheckCircle, Shield, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/navbar";
@@ -88,19 +89,23 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.6 }}
               className="mt-14 flex flex-col sm:flex-row gap-6 justify-center"
             >
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
-              >
-                Get Started
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base backdrop-blur-sm transition-all duration-300"
-              >
-                Explore courses <ArrowRight className="h-4 w-4" />
-              </Button>
+              <Link href="/auth/signup">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
+                >
+                  Get Started
+                </Button>
+              </Link>
+              <Link href="/resources">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base backdrop-blur-sm transition-all duration-300"
+                >
+                  Explore courses <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </motion.div>
           </div>
           <motion.div
@@ -148,7 +153,11 @@ export default function LandingPage() {
                   {" "}
                   structured educational experiences{" "}
                 </span>
-                with AI-enhanced features for deeper learning.
+                with AI-enhanced features for deeper learning in a 
+                <span className="font-semibold text-zinc-900 dark:text-white">
+                  {" "}
+                  distraction-free environment
+                </span>.
               </p>
             </motion.div>
 
@@ -293,6 +302,147 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             </div>
+          </div>
+        </section>
+
+        {/* No Distraction Mode Section */}
+        <section className="py-20 border-t border-slate-200 dark:border-zinc-800/50">
+          <div className="">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              viewport={{ once: true }}
+              className="mb-16"
+            >
+              <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-700 dark:from-white dark:to-zinc-400">
+                Focus on learning, not distractions.
+              </h2>
+              <p className="text-xl text-zinc-700 dark:text-zinc-300 max-w-2xl leading-relaxed">
+                Our distraction-free environment removes ads, recommendations, and visual clutter that typically
+                compete for your attention on YouTube, allowing you to focus entirely on the learning material.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-slate-100/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-xl p-8 overflow-hidden border border-slate-200 dark:border-zinc-800/50 shadow-xl shadow-slate-200/50 dark:shadow-rose-600/5"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <div className="h-12 w-12 rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-6">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M15 9L9 15"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9 9L15 15"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">No Distractions</h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-rose-600 mt-0.5" />
+                      <span className="text-zinc-700 dark:text-zinc-300">No advertisements</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-rose-600 mt-0.5" />
+                      <span className="text-zinc-700 dark:text-zinc-300">No recommended videos</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-rose-600 mt-0.5" />
+                      <span className="text-zinc-700 dark:text-zinc-300">Clean interface for better focus</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-rose-600 mt-0.5" />
+                      <span className="text-zinc-700 dark:text-zinc-300">Immersive learning experience</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-rose-600/20 to-orange-600/20 rounded-lg"></div>
+                  <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 h-full flex items-center justify-center relative z-10 shadow-inner border border-slate-200 dark:border-zinc-800/50">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold mb-4">Focus Mode</div>
+                      <div className="w-24 h-24 mx-auto rounded-full bg-rose-600/10 flex items-center justify-center mb-4">
+                        <svg
+                          width="48"
+                          height="48"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="text-rose-600"
+                        >
+                          <path
+                            d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 4V2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 22V20"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M20 12H22"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M2 12H4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="text-zinc-600 dark:text-zinc-400">
+                        Toggle distraction-free mode with a single click
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 
@@ -818,19 +968,23 @@ export default function LandingPage() {
                 <span className="block mt-3">experience today</span>
               </h2>
               <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-10 py-7 text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
-                >
-                  Get started
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-10 py-7 text-base backdrop-blur-sm transition-all duration-300"
-                >
-                  Explore courses <ArrowRight className="h-4 w-4" />
-                </Button>
+                <Link href="/auth/signup">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-rose-600 to-orange-600 text-white hover:from-rose-700 hover:to-orange-700 px-10 py-7 text-base shadow-lg shadow-rose-600/20 transition-all duration-300 hover:shadow-xl hover:shadow-rose-600/30"
+                  >
+                    Get started
+                  </Button>
+                </Link>
+                <Link href="/resources">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-slate-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white px-10 py-7 text-base backdrop-blur-sm transition-all duration-300"
+                  >
+                    Explore courses <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </motion.div>
           </div>

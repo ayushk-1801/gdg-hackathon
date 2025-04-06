@@ -14,7 +14,7 @@ export default function DashboardLayout({
 
     useEffect(() => {
         if (session) {
-            router.push("/dashboard");
+            router.push("/dashboard/home");
         }
     }, [session, router]);
 
