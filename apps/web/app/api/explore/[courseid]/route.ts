@@ -10,8 +10,6 @@ export async function GET(
 ) {
   try {
     const { courseid: courseId } = await params;
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("userId");
 
     const courseData = await db
       .select()
@@ -32,24 +30,9 @@ export async function GET(
       .where(eq(videos.playlist_link, courseData.playlist_link))
     : [];
 
-    let isEnrolled = false;
-    let enrollmentId = null;
-
-    if (userId && courseData.playlist_link) {
-      const enrollment = await db
-        .select()
-        .from(enrollments)
-        .where(
-          and(
-            eq(enrollments.userId, userId),
-            eq(enrollments.playlistLink, courseData.playlist_link)
-          )
-        )
-        .then((rows) => rows[0]);
-
-      isEnrolled = !!enrollment;
-      enrollmentId = enrollment?.id || null;
-    }
+    // Always return these as false/null since we're not checking user-specific enrollment
+    const isEnrolled = false;
+    const enrollmentId = null;
 
     return NextResponse.json({
       course: {

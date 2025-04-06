@@ -5,11 +5,9 @@ import CourseVideos from "../../../../components/explore-course/CourseVideos";
 import CourseHeader from "../../../../components/explore-course/CourseHeader";
 import CourseNotFound from "../../../../components/explore-course/CourseNotFound";
 
-async function getCourseData(courseId: string, userId?: string) {
+async function getCourseData(courseId: string) {
   try {
-    // Include userId in query params if it exists
-    const queryParams = userId ? `?userId=${userId}` : '';
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/explore/${courseId}${queryParams}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/explore/${courseId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
