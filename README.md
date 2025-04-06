@@ -7,7 +7,7 @@
     <img src="https://img.icons8.com/color/48/000000/brain.png" alt="Intelligence" width="30"/>
   </h1>
   
-  <p>A modern monorepo using Turborepo with Next.js web application, Python model service, and BullsMQ worker.</p>
+  <p>Benkyoshi is an AI-powered platform that transforms YouTube playlists into structured, interactive courses.</p>
   
   <div>
     <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
@@ -18,6 +18,10 @@
     <img alt="Redis" src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
   </div>
 </div>
+
+## About
+
+Benkyoshi is an AI-powered platform that transforms YouTube playlists into structured, interactive courses. It automatically generates notes, quizzes, and modular learning paths using smart content analysis. With real-time progress tracking, personalized learning, and secure access, Benkyoshi makes self-paced education engaging and efficient.
 
 ## Overview
 
