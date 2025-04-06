@@ -41,7 +41,6 @@
     "@repo/db": "*",
     "@repo/queue": "*",
     "@repo/ui": "*",
-    "@repo/worker": "*",
     "@tailwindcss/postcss": "^4.0.15",
     "better-auth": "^1.2.4",
     "class-variance-authority": "^0.7.1",
