@@ -157,14 +157,36 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
       // Get current user session
       const { data: session } = await authClient.getSession();
       
-      // Make API call to check/add playlist and videos to queue
-      const response = await fetch('/api/playlist', {
+      // Step 1: Create the playlist in the database
+      const createResponse = await fetch('/api/playlist/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playlistUrl: url
+        }),
+      });
+      
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json();
+        throw new Error(errorData.error || 'Failed to create playlist');
+      }
+      
+      const createData = await createResponse.json();
+      
+      // Get the playlistId from the creation step
+      const playlistId = createData.playlistId;
+      
+      // Step 2: Process the videos
+      const processResponse = await fetch('/api/playlist/process-videos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           playlistUrl: url,
+          playlistId,
           playlistData: {
             ...playlistData,
             selectedIndices
@@ -175,17 +197,15 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
         }),
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to process playlist');
+      if (!processResponse.ok) {
+        const errorData = await processResponse.json();
+        throw new Error(errorData.error || 'Failed to process videos');
       }
       
-      const responseData = await response.json();
+      const processData = await processResponse.json();
       
-      // Set courseId from response if available
-      if (responseData.playlistId) {
-        set({ courseId: responseData.playlistId });
-      }
+      // Set courseId from the playlist creation response
+      set({ courseId: playlistId });
       
       // Success - move to the next step without redirecting
       set({
@@ -198,16 +218,13 @@ export const useCourseCreationStore = create<CourseCreationState>((set, get) => 
     } catch (err: any) {
       set({ 
         loading: false, 
-        error: err.message || "An error occurred while processing your request."
+        error: err.message || 'An error occurred while generating the course.' 
       });
     }
   },
   
   handleBack: () => {
-    const { step } = get();
-    if (step === 2) {
-      set({ step: 1, configDialogOpen: false });
-    }
+    set({ step: Math.max(1, get().step - 1) });
   },
   
   setConfigDialogOpen: (open) => set({ configDialogOpen: open }),
