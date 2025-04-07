@@ -7,11 +7,11 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
-    "docker:logs": "docker compose logs -f",
-    "docker:ps": "docker compose ps",
-    "docker:restart": "docker compose restart"
+    "docker:up": "docker compose -f docker-compose.dev.yml up -d",
+    "docker:down": "docker compose -f docker-compose.dev.yml down",
+    "docker:logs": "docker compose -f docker-compose.dev.yml logs -f",
+    "docker:ps": "docker compose -f docker-compose.dev.yml ps",
+    "docker:restart": "docker compose -f docker-compose.dev.yml restart"
   },
   "devDependencies": {
     "prettier": "^3.5.3",

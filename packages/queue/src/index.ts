@@ -1,10 +1,12 @@
 import { Queue } from "bullmq";
-import { RedisOptions } from "ioredis";
+import Redis, { Redis as RedisClient, RedisOptions } from "ioredis";
 
 // Redis connection configuration
-const redisOptions: RedisOptions = {
+const redisOptions = {
   host: process.env.REDIS_HOST || "localhost",
   port: parseInt(process.env.REDIS_PORT || "6379"),
+  password: process.env.REDIS_PASSWORD,
+  tls: {}
 };
 
 // Queue name
@@ -46,6 +48,8 @@ export async function addYoutubeVideoToQueue(
   userId?: string,
   metadata?: Record<string, any>
 ) {
+  console.log(process.env.REDIS_HOST, process.env.REDIS_PORT);
+
   if (!videoUrl) {
     throw new Error("Video URL is required");
   }
@@ -172,3 +176,5 @@ export default {
   getQueueInfo,
   clearQueue,
 };
+
+console.log(process.env.REDIS_HOST, process.env.REDIS_PORT);

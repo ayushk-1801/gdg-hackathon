@@ -224,6 +224,8 @@ const worker = new Worker(
     connection: {
       host: process.env.REDIS_HOST || "localhost",
       port: parseInt(process.env.REDIS_PORT || "6379"),
+      password: process.env.REDIS_PASSWORD,
+      tls: {}
     },
   }
 );
@@ -238,6 +240,7 @@ worker.on("failed", (job, err) => {
 });
 
 console.log("YouTube video processing worker started");
+console.log(process.env.REDIS_HOST, process.env.REDIS_PORT);
 
 // clearQueue().then(() => {
 //   console.log("Queue cleared successfully");
