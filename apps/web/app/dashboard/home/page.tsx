@@ -155,7 +155,7 @@ function HomeContent() {
                 </p>
                 <Button
                   variant="default"
-                  onClick={() => router.push("/explore")}
+                  onClick={() => router.push("/dashboard/explore")}
                 >
                   Explore Playlists
                 </Button>
