@@ -113,6 +113,17 @@ export const videoProgress = pgTable("video_progress", {
   completedAt: timestamp("completed_at"),
 });
 
+export const feedback = pgTable("feedback", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
+  category: text("category").notNull(),
+  rating: integer("rating").notNull(),
+  comment: text("comment").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+});
+
 export const schema = {
   user,
   session,
@@ -121,5 +132,6 @@ export const schema = {
   playlists,
   videos,
   enrollments,
-  videoProgress, // Add the new table to the schema
+  videoProgress,
+  feedback,
 };

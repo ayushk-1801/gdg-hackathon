@@ -2,11 +2,12 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Loader2, SmilePlus } from "lucide-react";
+import { Loader2, SmilePlus, CheckCircle, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -55,29 +56,44 @@ const formSchema = z.object({
 });
 
 export function FeedbackDialog() {
-  const { isOpen, close } = useFeedbackStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isOpen, close, status, error, submitFeedback, resetStatus } = useFeedbackStore();
   const [charCount, setCharCount] = useState(0);
-
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       comment: "",
     },
   });
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    try {
-      console.log("Feedback submitted:", values);
+  
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
       form.reset();
       setCharCount(0);
-      close();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
+  }, [isOpen, form]);
+  
+  // Show toast for error state
+  useEffect(() => {
+    if (status === 'error' && error) {
+      toast.error(error);
+    }
+  }, [status, error]);
+  
+  // Show success toast
+  useEffect(() => {
+    if (status === 'success') {
+      toast.success("Thank you for your feedback!");
+    }
+  }, [status]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await submitFeedback({
+      category: values.category,
+      rating: parseInt(values.rating, 10),
+      comment: values.comment,
+    });
   }
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -104,164 +120,188 @@ export function FeedbackDialog() {
     "5": "Very Satisfied",
   };
 
+  const isSubmitting = status === 'submitting';
+  const isSuccess = status === 'success';
+
   return (
-    <Dialog open={isOpen} onOpenChange={close}>
+    <Dialog 
+      open={isOpen} 
+      onOpenChange={(open) => {
+        if (!open) {
+          close();
+          resetStatus();
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-[500px] p-6 gap-6">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl flex items-center gap-2">
-            <SmilePlus className="h-6 w-6 text-primary" />
-            Share your feedback
-          </DialogTitle>
-          <DialogDescription className="text-base">
-            Help us improve our product with your valuable feedback. Your
-            insights matter to us!
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Feedback category</FormLabel>
-                  <FormDescription>
-                    What aspect of our product are you providing feedback on?
-                  </FormDescription>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="ui">User Interface</SelectItem>
-                      <SelectItem value="features">Features</SelectItem>
-                      <SelectItem value="performance">Performance</SelectItem>
-                      <SelectItem value="bugs">Bug Report</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        {isSuccess ? (
+          <div className="py-8 flex flex-col items-center justify-center text-center space-y-4">
+            <CheckCircle className="h-16 w-16 text-green-500 mb-2" />
+            <DialogTitle className="text-2xl">Feedback Submitted!</DialogTitle>
+            <DialogDescription className="text-base">
+              Thank you for sharing your thoughts with us. Your feedback helps us improve!
+            </DialogDescription>
+          </div>
+        ) : (
+          <>
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="text-2xl flex items-center gap-2">
+                <SmilePlus className="h-6 w-6 text-primary" />
+                Share your feedback
+              </DialogTitle>
+              <DialogDescription className="text-base">
+                Help us improve our product with your valuable feedback. Your
+                insights matter to us!
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Feedback category</FormLabel>
+                      <FormDescription>
+                        What aspect of our product are you providing feedback on?
+                      </FormDescription>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="ui">User Interface</SelectItem>
+                          <SelectItem value="features">Features</SelectItem>
+                          <SelectItem value="performance">Performance</SelectItem>
+                          <SelectItem value="bugs">Bug Report</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="rating"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel>How would you rate your experience?</FormLabel>
-                  <FormDescription>
-                    Select an emoji that best represents your experience
-                  </FormDescription>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex flex-wrap justify-between gap-2 sm:gap-0"
-                    >
-                      {Object.entries(ratingEmojis).map(([rating, emoji]) => (
-                        <FormItem
-                          key={rating}
-                          className="flex flex-col items-center space-y-2 flex-1 min-w-[60px]"
+                <FormField
+                  control={form.control}
+                  name="rating"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel>How would you rate your experience?</FormLabel>
+                      <FormDescription>
+                        Select an emoji that best represents your experience
+                      </FormDescription>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-wrap justify-between gap-2 sm:gap-0"
                         >
-                          <FormControl>
-                            <RadioGroupItem
-                              value={rating}
-                              className="sr-only"
-                              id={`rating-${rating}`}
-                            />
-                          </FormControl>
-                          <label
-                            htmlFor={`rating-${rating}`}
-                            className={`
-                              h-14 w-14 rounded-full flex items-center justify-center text-2xl cursor-pointer
-                              border-2 transition-all duration-200 hover:scale-110
-                              ${
-                                field.value === rating
-                                  ? "border-primary bg-primary/10 scale-110"
-                                  : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
-                              }
-                            `}
-                          >
-                            {emoji}
-                          </label>
-                          <span className="text-xs text-center text-muted-foreground">
-                            {
-                              ratingDescriptions[
-                                rating as keyof typeof ratingDescriptions
-                              ]
-                            }
-                          </span>
-                        </FormItem>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                          {Object.entries(ratingEmojis).map(([rating, emoji]) => (
+                            <FormItem
+                              key={rating}
+                              className="flex flex-col items-center space-y-2 flex-1 min-w-[60px]"
+                            >
+                              <FormControl>
+                                <RadioGroupItem
+                                  value={rating}
+                                  className="sr-only"
+                                  id={`rating-${rating}`}
+                                />
+                              </FormControl>
+                              <label
+                                htmlFor={`rating-${rating}`}
+                                className={`
+                                  h-14 w-14 rounded-full flex items-center justify-center text-2xl cursor-pointer
+                                  border-2 transition-all duration-200 hover:scale-110
+                                  ${
+                                    field.value === rating
+                                      ? "border-primary bg-primary/10 scale-110"
+                                      : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
+                                  }
+                                `}
+                              >
+                                {emoji}
+                              </label>
+                              <span className="text-xs text-center text-muted-foreground">
+                                {
+                                  ratingDescriptions[
+                                    rating as keyof typeof ratingDescriptions
+                                  ]
+                                }
+                              </span>
+                            </FormItem>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="comment"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex justify-between items-center">
-                    <FormLabel>Your feedback</FormLabel>
-                    <span
-                      className={`text-xs ${charCount > 450 ? "text-amber-500" : "text-muted-foreground"} ${charCount >= 500 ? "text-destructive" : ""}`}
-                    >
-                      {charCount}/500
-                    </span>
-                  </div>
-                  <FormDescription>
-                    Please share your thoughts, suggestions, or concerns
-                  </FormDescription>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Tell us what you think..."
-                      className="resize-none min-h-[120px] focus-visible:ring-primary"
-                      {...field}
-                      onChange={handleCommentChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="comment"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex justify-between items-center">
+                        <FormLabel>Your feedback</FormLabel>
+                        <span
+                          className={`text-xs ${charCount > 450 ? "text-amber-500" : "text-muted-foreground"} ${charCount >= 500 ? "text-destructive" : ""}`}
+                        >
+                          {charCount}/500
+                        </span>
+                      </div>
+                      <FormDescription>
+                        Please share your thoughts, suggestions, or concerns
+                      </FormDescription>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Tell us what you think..."
+                          className="resize-none min-h-[120px] focus-visible:ring-primary"
+                          {...field}
+                          onChange={handleCommentChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <DialogFooter className="pt-2 gap-2 sm:gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={close}
-                className="transition-all duration-200 hover:bg-secondary"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="transition-all duration-200"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit feedback"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+                <DialogFooter className="pt-2 gap-2 sm:gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={close}
+                    className="transition-all duration-200 hover:bg-secondary"
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="transition-all duration-200"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      "Submit feedback"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

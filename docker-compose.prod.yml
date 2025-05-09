@@ -5,17 +5,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - redis
     environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - NODE_ENV=${NODE_ENV}
-      - DATABASE_URL=${DATABASE_URL}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - REDIS_HOST=smashing-thrush-62570.upstash.io
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=AfRqAAIjcDExN2M3YWUxMDlhYzI0YmVmYTc1M2ZhZTA2ODA4ODQ4OHAxMA
+      - REDIS_URL=rediss://:AfRqAAIjcDExN2M3YWUxMDlhYzI0YmVmYTc1M2ZhZTA2ODA4ODQ4OHAxMA@smashing-thrush-62570.upstash.io:6379
+      - DATABASE_URL=postgresql://gdg_owner:npg_6KgAVNc7Wvbt@ep-holy-glade-a15bd11p-pooler.ap-southeast-1.aws.neon.tech/gdg?sslmode=require
+      - GEMINI_API_KEY=AIzaSyB28WeENOw0MM9vrWYNASxGOZAQ0nWyFlE
+      - YOUTUBE_API_KEY=AIzaSyDJiTaRCMPVcMbA0lDvX0rFmKDJqICcJ9A
+      - NODE_ENV=production
     restart: unless-stopped
-
-volumes:
-  redis-data:

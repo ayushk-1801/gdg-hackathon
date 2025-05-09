@@ -10,7 +10,7 @@ import { signUpUser } from "@/server/users";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
+import { authClient } from "@/lib/auth-client";
 const signUpSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -79,6 +79,17 @@ function SignUp() {
       setServerError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const data = await authClient.signIn.social({
+        provider: "google",
+      })
+      console.log(data);
+    } catch (error) {
+      console.error("Google signin error:", error);
     }
   };
 
@@ -252,6 +263,7 @@ function SignUp() {
                   fillRule="evenodd"
                   clipRule="evenodd"
                   className="w-5 h-5"
+                  onClick={handleGoogleSignIn}
                 >
                   <path
                     d="M326667 170370c0-13704-1112-23704-3518-34074H166667v61851h91851c-1851 15371-11851 38519-34074 54074l-311 2071 49476 38329 3428 342c31481-29074 49630-71852 49630-122593m0 0z"

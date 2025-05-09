@@ -60,13 +60,13 @@ export function EnrollmentButton({ isEnrolled: initialIsEnrolled, enrollmentId: 
 
   const goToCourse = () => {
     if (enrollmentId) {
-      router.push(`/dashboard/learn/${enrollmentId}`);
+      router.push(`/dashboard/home/`);
     }
   };
 
   return isEnrolled ? (
     <Button onClick={goToCourse} className="w-full">
-      Go to Course
+      Go to Courses
     </Button>
   ) : (
     <Button onClick={handleEnrollment} className="w-full">

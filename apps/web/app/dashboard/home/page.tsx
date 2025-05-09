@@ -120,7 +120,7 @@ function HomeContent() {
               variant="outline"
               size="lg"
               className="flex items-center gap-2 shadow-md hover:shadow-lg transition-all bg-white hover:bg-gray-50"
-              onClick={() => router.push("/dashboard/analytics")}
+              // onClick={() => router.push("/dashboard/analytics")}
             >
               <BarChart2 className="h-5 w-5 text-rose-500" />
               <span>Learning Analysis</span>
@@ -130,7 +130,7 @@ function HomeContent() {
               variant="outline"
               size="lg"
               className="flex items-center gap-2 shadow-md hover:shadow-lg transition-all bg-white hover:bg-gray-50"
-              onClick={() => router.push("/dashboard/home/reviewquiz/")}
+              // onClick={() => router.push("/dashboard/home/reviewquiz/")}
             >
               <BookOpen className="h-5 w-5 text-orange-500" />
               <span>Review Questions</span>

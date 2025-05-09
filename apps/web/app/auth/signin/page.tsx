@@ -9,6 +9,7 @@ import { signInUser } from "@/server/users";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { authClient } from "@/lib/auth-client";
 
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -32,6 +33,17 @@ function SignIn() {
       password: '',
     }
   });
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const data = await authClient.signIn.social({
+        provider: "google",
+      })
+      console.log(data);
+    } catch (error) {
+      console.error("Google signin error:", error);
+    }
+  };
 
   const onSubmit = async (data: SignInFormData) => {
     setServerError(null);
@@ -167,6 +179,7 @@ function SignIn() {
                 type="button"
                 variant="outline"
                 className="w-full py-3 flex items-center justify-center space-x-2"
+                onClick={handleGoogleSignIn}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
