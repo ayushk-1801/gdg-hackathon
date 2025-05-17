@@ -6,7 +6,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema.ts",
+    "./js": "./dist/index.js",
+    "./schema.js": "./dist/schema.js"
   },
   "scripts": {
     "build": "tsc",

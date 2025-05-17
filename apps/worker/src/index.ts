@@ -1,8 +1,8 @@
 import { Worker } from "bullmq";
 import { clearQueue, youtubeQueue } from "@repo/queue";
 import axios from "axios";
-import db from "@repo/db";
-import { videos, playlists } from "@repo/db/schema";
+import db from "@repo/db/js";
+import { videos, playlists } from "@repo/db/schema.js";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
 import { processYoutubeVideo } from "./model.js"; // Import the local model function
